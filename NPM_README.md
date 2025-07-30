@@ -31,9 +31,9 @@ console.log(validateCI('1234567a')); // false
 ### Validación con Consulta
 
 ```typescript
-import { validateAndQuery } from 'ci-validation';
+import { validateCIAndQuery } from 'ci-validation';
 
-const result = await validateAndQuery('19119365');
+const result = await validateCIAndQuery('19119365');
 
 if (result.success) {
   console.log('Cédula válida:', result.data);
@@ -102,14 +102,14 @@ if (result.success) {
 }
 ```
 
-### `validateAndQuery(ci: string): Promise<ValidationResult>`
+### `validateCIAndQuery(ci: string): Promise<ValidationResult>`
 
 Combina validación y consulta en una sola función.
 
 ```typescript
-import { validateAndQuery } from 'ci-validation';
+import { validateCIAndQuery } from 'ci-validation';
 
-const result = await validateAndQuery('19119365');
+const result = await validateCIAndQuery('19119365');
 console.log(result);
 ```
 

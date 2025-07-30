@@ -36,8 +36,8 @@ Una API RESTful construida con TypeScript y Express siguiendo los principios SOL
 npm install ci-validation
 
 # Uso básico
-import { validateCI } from 'ci-validation';
-console.log(validateCI('19119365')); // true
+import { validateCIAndQuery } from 'ci-validation';
+console.log(validateCIAndQuery('19119365')); // true
 ```
 
 🔗 **Enlaces del paquete**:
@@ -88,13 +88,13 @@ console.log(validateCI('19119365')); // true
 npm install ci-validation
 
 # Uso básico
-import { validateCI, validateAndQuery } from 'ci-validation';
+import { validateCI, validateCIAndQuery } from 'ci-validation';
 
 // Validación simple
 console.log(validateCI('19119365')); // true
 
 // Validación con consulta
-const result = await validateAndQuery('19119365');
+const result = await validateCIAndQuery('19119365');
 console.log(result);
 ```
 

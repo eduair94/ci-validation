@@ -92,13 +92,13 @@ export async function queryCIInfo(ci: string) {
  *
  * @example
  * ```typescript
- * import { validateAndQuery } from 'ci-validation';
+ * import { validateCIAndQuery } from 'ci-validation';
  *
- * const result = await validateAndQuery('19119365');
+ * const result = await validateCIAndQuery('19119365');
  * console.log(result);
  * ```
  */
-export async function validateAndQuery(ci: string) {
+export async function validateCIAndQuery(ci: string) {
   const isValid = validator.validate(ci);
 
   if (!isValid) {
@@ -124,7 +124,7 @@ export async function validateAndQuery(ci: string) {
 }
 
 // Version info
-export const VERSION = "1.0.0";
+export const VERSION = "1.0.1";
 
 // Default export
 export default {
@@ -132,6 +132,6 @@ export default {
   normalizeCI,
   validateCIFormat,
   queryCIInfo,
-  validateAndQuery,
+  validateCIAndQuery,
   VERSION,
 };

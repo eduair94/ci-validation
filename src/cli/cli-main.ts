@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { normalizeCI, queryCIInfo, validateAndQuery, validateCI, validateCIFormat, VERSION } from "../lib/index";
+import { normalizeCI, queryCIInfo, validateCI, validateCIAndQuery, validateCIFormat, VERSION } from "../lib/index";
 
 const program = new Command();
 
@@ -42,7 +42,7 @@ program
       }
 
       if (options.query) {
-        const result = await validateAndQuery(ci);
+        const result = await validateCIAndQuery(ci);
         if (options.json) {
           console.log(JSON.stringify(result, null, 2));
         } else {
@@ -209,7 +209,7 @@ program
       for (const ci of ciNumbers) {
         try {
           if (options.query) {
-            const result = await validateAndQuery(ci);
+            const result = await validateCIAndQuery(ci);
             results.push(result);
           } else {
             const isValid = validateCI(ci);
