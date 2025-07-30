@@ -1,8 +1,8 @@
-import { ICiValidator } from '../interfaces/ICiValidator';
-import { ICiService } from '../interfaces/ICiService';
-import { UruguayanCiValidator } from '../validators/CiValidator';
-import { LoteriaUyCiService } from '../services/CiService';
-import { CiController } from '../controllers/CiController';
+import { CiController } from "../controllers/CiController";
+import { ICiService } from "../interfaces/ICiService";
+import { ICiValidator } from "../interfaces/ICiValidator";
+import { LoteriaUyCiService } from "../services/CiService";
+import { UruguayanCiValidator } from "../validators/CiValidator";
 
 /**
  * Contenedor de inyección de dependencias simple
@@ -18,7 +18,7 @@ export class DependencyContainer {
     // Crear instancias de las dependencias
     this.ciValidator = new UruguayanCiValidator();
     this.ciService = new LoteriaUyCiService();
-    
+
     // Inyectar dependencias en el controlador
     this.ciController = new CiController(this.ciValidator, this.ciService);
   }

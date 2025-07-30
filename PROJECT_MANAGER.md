@@ -89,7 +89,7 @@ POST /api/ci/validate
 Content-Type: application/json
 
 {
-  "ci": "47073450"
+  "ci": "19119365"
 }
 ```
 
@@ -98,9 +98,9 @@ Content-Type: application/json
 {
   "success": true,
   "data": {
-    "ci": "47073450",
+    "ci": "19119365",
     "isValid": true,
-    "normalizedCi": "47073450",
+    "normalizedCi": "19119365",
     "info": "Datos obtenidos del servicio oficial..."
   }
 }
@@ -230,7 +230,7 @@ src/
   "timestamp": "2025-07-30T12:00:00.000Z",
   "level": "info",
   "message": "CI validation request",
-  "ci": "470734**",
+  "ci": "1911**",
   "ip": "192.168.1.1",
   "duration": 1250
 }

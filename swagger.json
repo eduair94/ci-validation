@@ -1,0 +1,489 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CI Validation API",
+    "description": "API for validating Uruguayan CI (Cédula de Identidad) numbers following SOLID principles",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Eduardo Airaudo",
+      "email": "eduair94@gmail.com",
+      "url": "https://github.com/eduair94/ci-validation"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://ci-validation.vercel.app",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/api/ci/validate": {
+      "post": {
+        "summary": "Validate Uruguayan CI",
+        "description": "Validates a Uruguayan CI (Cédula de Identidad) number using official algorithm and optionally queries external API",
+        "tags": ["Validation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CiValidationRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic validation",
+                  "value": {
+                    "ci": "19119365"
+                  }
+                },
+                "with_api": {
+                  "summary": "Validation with API query",
+                  "value": {
+                    "ci": "1.911.936-5",
+                    "checkWithApi": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CiValidationResponse"
+                },
+                "examples": {
+                  "valid": {
+                    "summary": "Valid CI",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "ci": "1.911.936-5",
+                        "isValid": true,
+                        "normalizedCi": "19119365",
+                        "info": {
+                          "message": "CI is valid",
+                          "source": "algorithm"
+                        }
+                      }
+                    }
+                  },
+                  "invalid": {
+                    "summary": "Invalid CI",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "ci": "1.234.567-8",
+                        "isValid": false,
+                        "normalizedCi": "12345678",
+                        "info": {
+                          "message": "Invalid check digit",
+                          "source": "algorithm"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": {
+                    "message": "CI is required",
+                    "code": "VALIDATION_ERROR"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": {
+                    "message": "Too many requests",
+                    "code": "RATE_LIMIT_EXCEEDED"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": {
+                    "message": "Internal server error",
+                    "code": "INTERNAL_ERROR"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Validate Uruguayan CI via Query Parameter",
+        "description": "Validates a Uruguayan CI (Cédula de Identidad) number using GET request with query parameter",
+        "tags": ["Validation"],
+        "parameters": [
+          {
+            "name": "ci",
+            "in": "query",
+            "required": true,
+            "description": "Uruguayan CI number (7-8 digits)",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]{7,8}$"
+            },
+            "examples": {
+              "valid_ci": {
+                "summary": "Valid CI",
+                "value": "19119365"
+              },
+              "formatted_ci": {
+                "summary": "Formatted CI",
+                "value": "1.911.936-5"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CiValidationResponse"
+                },
+                "examples": {
+                  "valid": {
+                    "summary": "Valid CI",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "ci": "19119365",
+                        "isValid": true,
+                        "normalizedCi": "19119365",
+                        "info": {
+                          "persona": {
+                            "nombre": "JUAN CARLOS",
+                            "apellido": "PEREZ RODRIGUEZ"
+                          },
+                          "status": 0,
+                          "message": ""
+                        }
+                      },
+                      "timestamp": "2025-07-30T20:30:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing or invalid CI parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missing_ci": {
+                    "summary": "Missing CI parameter",
+                    "value": {
+                      "success": false,
+                      "error": "El parámetro \"ci\" es requerido en la query string",
+                      "code": "MISSING_CI"
+                    }
+                  },
+                  "invalid_format": {
+                    "summary": "Invalid CI format",
+                    "value": {
+                      "success": false,
+                      "error": "Formato de cédula inválido. Debe contener entre 7 y 8 dígitos numéricos",
+                      "code": "INVALID_FORMAT"
+                    }
+                  },
+                  "invalid_ci": {
+                    "summary": "Invalid CI check digit",
+                    "value": {
+                      "success": false,
+                      "error": "Cédula inválida: dígito verificador incorrecto",
+                      "code": "INVALID_CI"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Error interno del servidor",
+                  "code": "INTERNAL_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ci/demo": {
+      "get": {
+        "summary": "Demo page",
+        "description": "Serves the interactive demo page for testing CI validation",
+        "tags": ["Demo"],
+        "responses": {
+          "200": {
+            "description": "HTML demo page",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Health check",
+        "description": "Returns the health status of the API",
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "Health status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "status": "healthy",
+                    "timestamp": "2024-01-15T10:30:00.000Z",
+                    "version": "1.0.0",
+                    "uptime": 3600
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CiValidationRequest": {
+        "type": "object",
+        "required": ["ci"],
+        "properties": {
+          "ci": {
+            "type": "string",
+            "description": "The CI number to validate (7-8 digits, may include dots and hyphens)",
+            "example": "1.911.936-5",
+            "pattern": "^[0-9]{7,8}$|^[0-9]{1}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{1}$"
+          },
+          "checkWithApi": {
+            "type": "boolean",
+            "description": "Whether to verify with the official Lotería Nacional API",
+            "default": false,
+            "example": true
+          }
+        }
+      },
+      "CiValidationResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the API call succeeded",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/CiValidationData"
+          }
+        }
+      },
+      "CiValidationData": {
+        "type": "object",
+        "properties": {
+          "ci": {
+            "type": "string",
+            "description": "The original CI number as provided",
+            "example": "1.911.936-5"
+          },
+          "isValid": {
+            "type": "boolean",
+            "description": "Whether the CI is valid",
+            "example": true
+          },
+          "normalizedCi": {
+            "type": "string",
+            "description": "The CI normalized to 8 digits",
+            "example": "19119365"
+          },
+          "info": {
+            "type": "object",
+            "description": "Additional validation information",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "Validation message",
+                "example": "CI is valid"
+              },
+              "source": {
+                "type": "string",
+                "enum": ["algorithm", "api", "both"],
+                "description": "Source of validation",
+                "example": "algorithm"
+              },
+              "apiData": {
+                "type": "object",
+                "description": "Additional data from external API (if available)",
+                "properties": {
+                  "exists": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "lastUpdate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2024-01-15T10:30:00.000Z"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": ["healthy", "unhealthy"],
+                "example": "healthy"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2024-01-15T10:30:00.000Z"
+              },
+              "version": {
+                "type": "string",
+                "example": "1.0.0"
+              },
+              "uptime": {
+                "type": "number",
+                "description": "Uptime in seconds",
+                "example": 3600
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "Error message",
+                "example": "CI is required"
+              },
+              "code": {
+                "type": "string",
+                "description": "Error code",
+                "example": "VALIDATION_ERROR"
+              },
+              "details": {
+                "type": "object",
+                "description": "Additional error details"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key for authentication (if required in future versions)"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Validation",
+      "description": "CI validation operations"
+    },
+    {
+      "name": "Demo",
+      "description": "Demo and testing utilities"
+    },
+    {
+      "name": "Health",
+      "description": "API health and status"
+    }
+  ],
+  "externalDocs": {
+    "description": "Find more info on GitHub",
+    "url": "https://github.com/eduair94/ci-validation"
+  }
+}

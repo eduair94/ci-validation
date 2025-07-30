@@ -1,4 +1,4 @@
-import { ICiValidator } from '../interfaces/ICiValidator';
+import { ICiValidator } from "../interfaces/ICiValidator";
 
 export class UruguayanCiValidator implements ICiValidator {
   private readonly CI_LENGTH = 8;
@@ -26,19 +26,19 @@ export class UruguayanCiValidator implements ICiValidator {
    */
   normalize(ci: string): string {
     const cleanCi = this.sanitize(ci);
-    return cleanCi.padStart(this.CI_LENGTH, '0');
+    return cleanCi.padStart(this.CI_LENGTH, "0");
   }
 
   /**
    * Valida el formato básico de la cédula
    */
   validateFormat(ci: string): boolean {
-    if (!ci || typeof ci !== 'string') {
+    if (!ci || typeof ci !== "string") {
       return false;
     }
 
     const cleanCi = this.sanitize(ci);
-    
+
     // Verificar que solo contenga números después de limpiar
     if (!/^\d+$/.test(cleanCi)) {
       return false;
@@ -58,7 +58,7 @@ export class UruguayanCiValidator implements ICiValidator {
    */
   calculateCheckDigit(ciWithoutCheckDigit: string): number {
     if (ciWithoutCheckDigit.length !== 7) {
-      throw new Error('CI debe tener exactamente 7 dígitos para calcular el verificador');
+      throw new Error("CI debe tener exactamente 7 dígitos para calcular el verificador");
     }
 
     let sum = 0;
@@ -75,6 +75,6 @@ export class UruguayanCiValidator implements ICiValidator {
    * Limpia la cédula de caracteres no numéricos
    */
   private sanitize(ci: string): string {
-    return ci.replace(/\D/g, '');
+    return ci.replace(/\D/g, "");
   }
 }

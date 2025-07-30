@@ -1,38 +1,71 @@
 {
-  "name": "ci-validation-api",
+  "name": "ci-validation",
   "version": "1.0.0",
-  "description": "API para validación de cédulas de identidad uruguayas siguiendo principios SOLID",
-  "main": "dist/index.js",
+  "description": "Uruguayan CI (Cédula de Identidad) validation library and API following SOLID principles",
+  "main": "dist/lib/index.js",
+  "types": "dist/lib/index.d.ts",
+  "bin": {
+    "ci-validate": "dist/cli/index.js"
+  },
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "tsc",
+    "build": "tsc && npm run build:cli",
+    "build:cli": "echo '#!/usr/bin/env node' > dist/cli/cli.js && cat dist/cli/cli-main.js >> dist/cli/cli.js && chmod +x dist/cli/cli.js",
     "start": "node dist/index.js",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix"
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "prepublishOnly": "npm run build",
+    "docs": "node dist/scripts/generate-swagger.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
   "keywords": [
     "uruguay",
     "cedula",
+    "ci",
     "validation",
+    "identity",
+    "document",
     "api",
     "typescript",
-    "express"
+    "express",
+    "cli",
+    "npm-package",
+    "solid-principles"
   ],
-  "author": "Tu nombre",
+  "author": "Eduardo Airaudo <eduair94@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eduair94/ci-validation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eduair94/ci-validation/issues"
+  },
+  "homepage": "https://github.com/eduair94/ci-validation#readme",
   "dependencies": {
     "axios": "^1.6.2",
+    "commander": "^11.1.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
-    "helmet": "^7.1.0"
+    "helmet": "^7.1.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.8",
     "@types/node": "^20.10.4",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
     "@vercel/node": "^3.2.29",

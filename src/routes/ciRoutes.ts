@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { DependencyContainer } from '../utils/dependencyContainer';
+import { Router } from "express";
+import { DependencyContainer } from "../utils/dependencyContainer";
 
 /**
  * Rutas para endpoints relacionados con cédulas de identidad
@@ -13,15 +13,23 @@ export function createCiRoutes(): Router {
    * POST /api/ci/validate
    * Valida una cédula de identidad uruguaya
    */
-  router.post('/validate', async (req, res) => {
+  router.post("/validate", async (req, res) => {
     await ciController.validateCi(req, res);
+  });
+
+  /**
+   * GET /api/ci/validate?ci=xxx
+   * Valida una cédula de identidad uruguaya mediante query parameter
+   */
+  router.get("/validate", async (req, res) => {
+    await ciController.validateCiQuery(req, res);
   });
 
   /**
    * GET /api/ci/demo
    * Endpoint de demostración con cédula de ejemplo
    */
-  router.get('/demo', async (req, res) => {
+  router.get("/demo", async (req, res) => {
     await ciController.demo(req, res);
   });
 

@@ -10,7 +10,16 @@ export interface CiValidationData {
   ci: string;
   isValid: boolean;
   normalizedCi: string;
-  info?: string;
+  info?:
+    | {
+        persona: {
+          nombre: string;
+          apellido: string;
+        };
+        message: string;
+        status: number;
+      }
+    | string;
 }
 
 export interface CiValidationRequest {
@@ -18,7 +27,7 @@ export interface CiValidationRequest {
 }
 
 export interface HealthCheckResponse {
-  status: 'ok' | 'error';
+  status: "ok" | "error";
   timestamp: string;
   uptime?: number;
   version?: string;

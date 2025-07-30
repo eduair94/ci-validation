@@ -1,18 +1,10 @@
-import { Request, Response } from 'express';
-import { ICiValidator } from '../interfaces/ICiValidator';
-import { ICiService } from '../interfaces/ICiService';
-import { 
-  ApiResponse, 
-  CiValidationData, 
-  CiValidationRequest, 
-  HealthCheckResponse 
-} from '../interfaces/ApiResponse';
+import { Request, Response } from "express";
+import { ApiResponse, CiValidationData, CiValidationRequest, HealthCheckResponse } from "../interfaces/ApiResponse";
+import { ICiService } from "../interfaces/ICiService";
+import { ICiValidator } from "../interfaces/ICiValidator";
 
 export class CiController {
-  constructor(
-    private readonly ciValidator: ICiValidator,
-    private readonly ciService: ICiService
-  ) {}
+  constructor(private readonly ciValidator: ICiValidator, private readonly ciService: ICiService) {}
 
   /**
    * Health check endpoint
@@ -20,19 +12,19 @@ export class CiController {
   async healthCheck(req: Request, res: Response): Promise<void> {
     try {
       const healthResponse: HealthCheckResponse = {
-        status: 'ok',
+        status: "ok",
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
-        version: process.env.npm_package_version || '1.0.0'
+        version: process.env.npm_package_version || "1.0.0",
       };
 
       res.status(200).json(healthResponse);
     } catch (error) {
       const errorResponse: HealthCheckResponse = {
-        status: 'error',
-        timestamp: new Date().toISOString()
+        status: "error",
+        timestamp: new Date().toISOString(),
       };
-      
+
       res.status(500).json(errorResponse);
     }
   }
@@ -48,8 +40,8 @@ export class CiController {
         const errorResponse: ApiResponse = {
           success: false,
           error: 'El campo "ci" es requerido',
-          code: 'MISSING_CI',
-          timestamp: new Date().toISOString()
+          code: "MISSING_CI",
+          timestamp: new Date().toISOString(),
         };
         res.status(400).json(errorResponse);
         return;
@@ -59,9 +51,9 @@ export class CiController {
       if (!this.ciValidator.validateFormat(ci)) {
         const errorResponse: ApiResponse = {
           success: false,
-          error: 'Formato de cédula inválido. Debe contener entre 7 y 8 dígitos numéricos',
-          code: 'INVALID_FORMAT',
-          timestamp: new Date().toISOString()
+          error: "Formato de cédula inválido. Debe contener entre 7 y 8 dígitos numéricos",
+          code: "INVALID_FORMAT",
+          timestamp: new Date().toISOString(),
         };
         res.status(400).json(errorResponse);
         return;
@@ -69,13 +61,13 @@ export class CiController {
 
       // Validar cédula completa
       const isValid = this.ciValidator.validate(ci);
-      
+
       if (!isValid) {
         const errorResponse: ApiResponse = {
           success: false,
-          error: 'Cédula inválida: dígito verificador incorrecto',
-          code: 'INVALID_CI',
-          timestamp: new Date().toISOString()
+          error: "Cédula inválida: dígito verificador incorrecto",
+          code: "INVALID_CI",
+          timestamp: new Date().toISOString(),
         };
         res.status(400).json(errorResponse);
         return;
@@ -89,25 +81,100 @@ export class CiController {
         ci: ci,
         isValid: true,
         normalizedCi: normalizedCi,
-        info: queryResult.success ? queryResult.data : queryResult.error
+        info: queryResult.success ? queryResult.data : queryResult.error,
       };
 
       const response: ApiResponse<CiValidationData> = {
         success: true,
         data: validationData,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       res.status(200).json(response);
     } catch (error) {
       const errorResponse: ApiResponse = {
         success: false,
-        error: 'Error interno del servidor',
-        code: 'INTERNAL_ERROR',
-        timestamp: new Date().toISOString()
+        error: "Error interno del servidor",
+        code: "INTERNAL_ERROR",
+        timestamp: new Date().toISOString(),
       };
-      
-      console.error('Error en validateCi:', error);
+
+      console.error("Error en validateCi:", error);
+      res.status(500).json(errorResponse);
+    }
+  }
+
+  /**
+   * Valida una cédula de identidad uruguaya mediante query parameter
+   */
+  async validateCiQuery(req: Request, res: Response): Promise<void> {
+    try {
+      const ci = req.query.ci as string;
+
+      if (!ci) {
+        const errorResponse: ApiResponse = {
+          success: false,
+          error: 'El parámetro "ci" es requerido en la query string',
+          code: "MISSING_CI",
+          timestamp: new Date().toISOString(),
+        };
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      // Validar formato básico
+      if (!this.ciValidator.validateFormat(ci)) {
+        const errorResponse: ApiResponse = {
+          success: false,
+          error: "Formato de cédula inválido. Debe contener entre 7 y 8 dígitos numéricos",
+          code: "INVALID_FORMAT",
+          timestamp: new Date().toISOString(),
+        };
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      // Validar cédula completa
+      const isValid = this.ciValidator.validate(ci);
+
+      if (!isValid) {
+        const errorResponse: ApiResponse = {
+          success: false,
+          error: "Cédula inválida: dígito verificador incorrecto",
+          code: "INVALID_CI",
+          timestamp: new Date().toISOString(),
+        };
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      // Si es válida, consultar información
+      const normalizedCi = this.ciValidator.normalize(ci);
+      const queryResult = await this.ciService.queryCiInfo(normalizedCi);
+
+      const validationData: CiValidationData = {
+        ci: ci,
+        isValid: true,
+        normalizedCi: normalizedCi,
+        info: queryResult.success ? queryResult.data : queryResult.error,
+      };
+
+      const response: ApiResponse<CiValidationData> = {
+        success: true,
+        data: validationData,
+        timestamp: new Date().toISOString(),
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      const errorResponse: ApiResponse = {
+        success: false,
+        error: "Error interno del servidor",
+        code: "INTERNAL_ERROR",
+        timestamp: new Date().toISOString(),
+      };
+
+      console.error("Error en validateCiQuery:", error);
       res.status(500).json(errorResponse);
     }
   }
@@ -118,13 +185,13 @@ export class CiController {
   async demo(req: Request, res: Response): Promise<void> {
     try {
       // Cédula de ejemplo válida (esta es ficticia pero con formato correcto)
-      const demoCi = '47073450';
-      
+      const demoCi = "19119365";
+
       const isValid = this.ciValidator.validate(demoCi);
       const normalizedCi = this.ciValidator.normalize(demoCi);
 
-      let info = 'Cédula de demostración - Sin consulta real al servicio';
-      
+      let info: CiValidationData["info"] = "Cédula de demostración - Sin consulta real al servicio";
+
       // Si la cédula es válida, podemos intentar la consulta real
       if (isValid) {
         const queryResult = await this.ciService.queryCiInfo(normalizedCi);
@@ -137,25 +204,25 @@ export class CiController {
         ci: demoCi,
         isValid: isValid,
         normalizedCi: normalizedCi,
-        info: info
+        info: info,
       };
 
       const response: ApiResponse<CiValidationData> = {
         success: true,
         data: validationData,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       res.status(200).json(response);
     } catch (error) {
       const errorResponse: ApiResponse = {
         success: false,
-        error: 'Error en el endpoint de demostración',
-        code: 'DEMO_ERROR',
-        timestamp: new Date().toISOString()
+        error: "Error en el endpoint de demostración",
+        code: "DEMO_ERROR",
+        timestamp: new Date().toISOString(),
       };
-      
-      console.error('Error en demo:', error);
+
+      console.error("Error en demo:", error);
       res.status(500).json(errorResponse);
     }
   }

@@ -1,8 +1,8 @@
-import axios, { AxiosResponse } from 'axios';
-import { ICiService, CiQueryResponse } from '../interfaces/ICiService';
+import axios, { AxiosResponse } from "axios";
+import { CiQueryResponse, ICiService } from "../interfaces/ICiService";
 
 export class LoteriaUyCiService implements ICiService {
-  private readonly baseUrl = 'http://tramites.loteria.gub.uy/bandejatramites/action';
+  private readonly baseUrl = "http://tramites.loteria.gub.uy/bandejatramites/action";
   private readonly timeout = 10000; // 10 segundos
 
   constructor() {
@@ -16,27 +16,27 @@ export class LoteriaUyCiService implements ICiService {
   async queryCiInfo(ci: string): Promise<CiQueryResponse> {
     try {
       const params = new URLSearchParams({
-        cmdaction: 'obtenercedula',
-        numero: ci
+        cmdaction: "obtenercedula",
+        numero: ci,
       });
 
       const response: AxiosResponse<string> = await axios.post(this.baseUrl, params, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': 'CI-Validation-API/1.0.0'
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent": "CI-Validation-API/1.0.0",
         },
-        timeout: this.timeout
+        timeout: this.timeout,
       });
 
       if (response.status === 200) {
         return {
           success: true,
-          data: response.data
+          data: response.data as any,
         };
       } else {
         return {
           success: false,
-          error: `Respuesta inesperada del servidor: ${response.status}`
+          error: `Respuesta inesperada del servidor: ${response.status}`,
         };
       }
     } catch (error) {
@@ -51,20 +51,20 @@ export class LoteriaUyCiService implements ICiService {
     try {
       // Realizar una consulta de prueba con timeout reducido
       const testParams = new URLSearchParams({
-        cmdaction: 'obtenercedula',
-        numero: '12345678' // CI de prueba
+        cmdaction: "obtenercedula",
+        numero: "12345678", // CI de prueba
       });
 
       await axios.post(this.baseUrl, testParams, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        timeout: 5000 // Timeout reducido para health check
+        timeout: 5000, // Timeout reducido para health check
       });
 
       return true;
     } catch (error) {
-      console.warn('Servicio externo no disponible:', error);
+      console.warn("Servicio externo no disponible:", error);
       return false;
     }
   }
@@ -74,31 +74,31 @@ export class LoteriaUyCiService implements ICiService {
    */
   private handleError(error: any): CiQueryResponse {
     if (axios.isAxiosError(error)) {
-      if (error.code === 'ECONNABORTED') {
+      if (error.code === "ECONNABORTED") {
         return {
           success: false,
-          error: 'Timeout: El servicio no respondió en el tiempo esperado'
+          error: "Timeout: El servicio no respondió en el tiempo esperado",
         };
       }
-      
+
       if (error.response) {
         return {
           success: false,
-          error: `Error del servidor: ${error.response.status} - ${error.response.statusText}`
+          error: `Error del servidor: ${error.response.status} - ${error.response.statusText}`,
         };
       }
-      
+
       if (error.request) {
         return {
           success: false,
-          error: 'Error de conexión: No se pudo conectar con el servicio'
+          error: "Error de conexión: No se pudo conectar con el servicio",
         };
       }
     }
 
     return {
       success: false,
-      error: `Error inesperado: ${error.message || 'Error desconocido'}`
+      error: `Error inesperado: ${error.message || "Error desconocido"}`,
     };
   }
 }

@@ -82,7 +82,7 @@ Abre en tu navegador: `https://tu-app.vercel.app/demo`
 ```bash
 curl -X POST https://tu-app.vercel.app/api/ci/validate \
   -H "Content-Type: application/json" \
-  -d '{"ci":"47073450"}'
+  -d '{"ci":"19119365"}'
 ```
 
 ## Configuración Avanzada

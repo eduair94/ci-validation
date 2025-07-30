@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/lib",
+    "declaration": true,
+    "declarationMap": true,
+    "module": "ESNext",
+    "target": "ES2020",
+    "moduleResolution": "node"
+  },
+  "include": [
+    "src/lib/**/*",
+    "src/interfaces/**/*",
+    "src/validators/**/*",
+    "src/services/**/*"
+  ],
+  "exclude": [
+    "src/index.ts",
+    "src/controllers/**/*",
+    "src/routes/**/*",
+    "src/middleware/**/*",
+    "src/utils/**/*",
+    "src/cli/**/*",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

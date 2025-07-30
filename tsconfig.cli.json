@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/cli",
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "node"
+  },
+  "include": [
+    "src/cli/index.ts",
+    "src/interfaces/**/*",
+    "src/validators/**/*",
+    "src/services/**/*"
+  ],
+  "exclude": [
+    "src/index.ts",
+    "src/controllers/**/*",
+    "src/routes/**/*",
+    "src/middleware/**/*",
+    "src/utils/**/*",
+    "src/lib/**/*",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

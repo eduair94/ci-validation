@@ -16,7 +16,19 @@
       "dest": "/public/index.html"
     },
     {
+      "src": "/api-docs",
+      "dest": "/api/api-docs.ts"
+    },
+    {
+      "src": "/api/swagger.json",
+      "dest": "/api/swagger.json.ts"
+    },
+    {
       "src": "/api/ci/validate",
+      "dest": "/api/validate.ts"
+    },
+    {
+      "src": "/api/validate",
       "dest": "/api/validate.ts"
     },
     {

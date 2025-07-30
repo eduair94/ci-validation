@@ -1,6 +1,13 @@
 export interface CiQueryResponse {
   success: boolean;
-  data?: string;
+  data?: {
+    persona: {
+      nombre: string;
+      apellido: string;
+    };
+    message: string;
+    status: number;
+  };
   error?: string;
 }
 

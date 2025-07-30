@@ -73,7 +73,7 @@ Valida una cédula de identidad uruguaya
 **Request Body:**
 ```json
 {
-  "ci": "47073450"
+  "ci": "19119365"
 }
 ```
 
@@ -82,7 +82,7 @@ Valida una cédula de identidad uruguaya
 {
   "success": true,
   "data": {
-    "ci": "47073450",
+    "ci": "19119365",
     "isValid": true,
     "info": "Información obtenida de la Lotería Nacional..."
   }
