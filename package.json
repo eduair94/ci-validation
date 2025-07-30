@@ -1,42 +1,60 @@
 {
   "name": "ci-validation",
   "version": "1.0.0",
-  "description": "Uruguayan CI (Cédula de Identidad) validation library and API following SOLID principles",
+  "description": "🇺🇾 Complete TypeScript/JavaScript library for validating Uruguayan CI (Cédula de Identidad) with official algorithm and government service integration",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "bin": {
     "ci-validate": "dist/cli/index.js"
   },
+  "exports": {
+    ".": {
+      "import": "./dist/lib/index.js",
+      "require": "./dist/lib/index.js",
+      "types": "./dist/lib/index.d.ts"
+    }
+  },
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "tsc && npm run build:cli",
+    "build": "tsc && npm run build:cli && npm run build:npm",
     "build:cli": "echo '#!/usr/bin/env node' > dist/cli/cli.js && cat dist/cli/cli-main.js >> dist/cli/cli.js && chmod +x dist/cli/cli.js",
+    "build:npm": "cp NPM_README.md dist/README.md",
     "start": "node dist/index.js",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "prepublishOnly": "npm run build",
+    "publish:dry": "npm publish --dry-run",
+    "publish:npm": "npm publish --access public",
     "docs": "node dist/scripts/generate-swagger.js"
   },
   "files": [
     "dist",
-    "README.md",
     "LICENSE",
     "package.json"
   ],
   "keywords": [
     "uruguay",
+    "uruguayan",
     "cedula",
+    "cédula",
     "ci",
     "validation",
+    "validator",
     "identity",
     "document",
     "api",
     "typescript",
-    "express",
+    "javascript",
     "cli",
     "npm-package",
-    "solid-principles"
+    "solid-principles",
+    "government",
+    "official",
+    "algorithm",
+    "check-digit",
+    "latin-america",
+    "south-america"
   ],
   "author": "Eduardo Airaudo <eduair94@gmail.com>",
   "license": "MIT",

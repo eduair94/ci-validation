@@ -1,9 +1,54 @@
 # API de Validación de Cédulas Uruguayas
 
+## 🚨 ALERTA DE SEGURIDAD PÚBLICA 🚨
+
+> ### ⚠️ **IMPORTANTE PARA TODOS LOS URUGUAYOS** ⚠️
+> 
+> **Este proyecto fue desarrollado y hecho público debido a:**
+> 
+> 🔴 **FALTA DE INCENTIVOS MONETARIOS** para reportes de seguridad en entes públicos  
+> 🔴 **AUSENCIA DE PROGRAMAS DE BUG BOUNTY** gubernamentales  
+> 🔴 **NULA RESPUESTA** a reportes responsables de vulnerabilidades  
+> 🔴 **FALTA DE ACCIONES CORRECTIVAS** ante problemas de seguridad reportados  
+> 
+> **🎯 OBJETIVO**: Concientizar a los ciudadanos uruguayos sobre lo **POCO CUIDADO** que está el sistema informático de los entes públicos, donde la información personal de todos nosotros está expuesta sin protección adecuada.
+>
+> **📋 Este trabajo se hace público para:**
+> - Generar presión social para que se solucionen estos problemas
+> - Mostrar la realidad del estado de la ciberseguridad pública
+> - Educar sobre la importancia de proteger datos personales
+> - Exigir transparencia y responsabilidad en la gestión de sistemas públicos
+>
+> Lee el [**📄 Reporte Completo de Vulnerabilidad**](./SECURITY_VULNERABILITY.md) para entender la gravedad del problema.
+
+---
+
+> ⚠️ **CONTEXTO**: Este proyecto fue desarrollado tras descubrir una vulnerabilidad de seguridad en servicios gubernamentales. Lee el [**Reporte de Vulnerabilidad**](./SECURITY_VULNERABILITY.md) para más información.
+
 Una API RESTful construida con TypeScript y Express siguiendo los principios SOLID para validar cédulas de identidad uruguayas y consultar información a través del servicio oficial de la Lotería Nacional.
+
+## 📦 Paquete NPM Disponible
+
+**¡Esta funcionalidad también está disponible como paquete npm!**
+
+```bash
+# Instalar el paquete
+npm install ci-validation
+
+# Uso básico
+import { validateCI } from 'ci-validation';
+console.log(validateCI('19119365')); // true
+```
+
+🔗 **Enlaces del paquete**:
+- **npm**: https://www.npmjs.com/package/ci-validation
+- **Documentación completa**: [NPM_README.md](./NPM_README.md)
+- **Guía de publicación**: [NPM_PUBLISHING.md](./NPM_PUBLISHING.md)
 
 ## 🚀 Características
 
+- **📦 Paquete NPM**: Disponible como librería independiente para proyectos TypeScript/JavaScript
+- **🔧 CLI incluido**: Herramienta de línea de comandos para validación rápida
 - **Validación de CI**: Valida el formato y dígito verificador de cédulas uruguayas
 - **Consulta de datos**: Obtiene información oficial a través de la API de la Lotería Nacional
 - **Arquitectura SOLID**: Implementa los 5 principios SOLID para código mantenible
@@ -36,8 +81,38 @@ Una API RESTful construida con TypeScript y Express siguiendo los principios SOL
 
 ## 🛠️ Instalación
 
+### Como Paquete NPM (Recomendado)
+
 ```bash
-# Clonar el repositorio
+# Instalar la librería
+npm install ci-validation
+
+# Uso básico
+import { validateCI, validateAndQuery } from 'ci-validation';
+
+// Validación simple
+console.log(validateCI('19119365')); // true
+
+// Validación con consulta
+const result = await validateAndQuery('19119365');
+console.log(result);
+```
+
+### Instalación Global (CLI)
+
+```bash
+# Instalar globalmente para usar desde línea de comandos
+npm install -g ci-validation
+
+# Usar el CLI
+ci-validate 19119365
+ci-validate 19119365 --query
+```
+
+### Clonar el Repositorio (Desarrollo)
+
+```bash
+# Clonar repositorio
 git clone <url-del-repo>
 cd ci-validation-api
 
@@ -161,10 +236,10 @@ public/
 
 ### URLs en Producción
 
-- **API Root**: `https://tu-app.vercel.app/`
-- **Health Check**: `https://tu-app.vercel.app/health`
-- **Validación**: `https://tu-app.vercel.app/api/ci/validate`
-- **Demo Page**: `https://tu-app.vercel.app/demo`
+- **API Root**: `https://ci-validation-h3e8.vercel.app/`
+- **Health Check**: `https://ci-validation-h3e8.vercel.app/health`
+- **Validación**: `https://ci-validation-h3e8.vercel.app/api/ci/validate`
+- **Demo Page**: `https://ci-validation-h3e8.vercel.app/demo`
 
 ### Variables de Entorno
 
@@ -216,13 +291,43 @@ La validación sigue el algoritmo oficial uruguayo:
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
+### 📦 Publicar el Paquete NPM
+
+Si tienes permisos de publicación:
+
+```bash
+# Verificar build
+npm run build
+
+# Dry run
+npm run publish:dry
+
+# Publicar
+npm run publish:npm
+
+# O incrementar versión y publicar
+npm version patch  # o minor/major
+npm run publish:npm
+```
+
+Ver [guía completa de publicación](./NPM_PUBLISHING.md) para más detalles.
+
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
 ## 🔗 Enlaces Útiles
 
+### 📖 Documentación Técnica
 - [Documentación de Express](https://expressjs.com/)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [Principios SOLID](https://en.wikipedia.org/wiki/SOLID)
 - [Vercel Documentation](https://vercel.com/docs)
+
+### 📦 Paquete NPM
+- **[📚 Documentación del Paquete NPM](./NPM_README.md)** - Guía completa de uso de la librería
+- **[🚀 Guía de Publicación NPM](./NPM_PUBLISHING.md)** - Instrucciones para publicar actualizaciones
+- **[npm Package](https://www.npmjs.com/package/ci-validation)** - Página oficial del paquete
+
+### ⚠️ Seguridad
+- **[⚠️ Reporte de Vulnerabilidad de Seguridad](./SECURITY_VULNERABILITY.md)** - Información sobre la vulnerabilidad encontrada en servicios gubernamentales

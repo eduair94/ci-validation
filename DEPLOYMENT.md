@@ -57,7 +57,7 @@ vercel --prod
 
 ### 1. Health Check
 ```bash
-curl https://tu-app.vercel.app/health
+curl https://ci-validation-h3e8.vercel.app/health
 ```
 
 Respuesta esperada:
@@ -72,15 +72,15 @@ Respuesta esperada:
 
 ### 2. API Root
 ```bash
-curl https://tu-app.vercel.app/
+curl https://ci-validation-h3e8.vercel.app/
 ```
 
 ### 3. Demo Page
-Abre en tu navegador: `https://tu-app.vercel.app/demo`
+Abre en tu navegador: `https://ci-validation-h3e8.vercel.app/demo`
 
 ### 4. Validación de Cédula
 ```bash
-curl -X POST https://tu-app.vercel.app/api/ci/validate \
+curl -X POST https://ci-validation-h3e8.vercel.app/api/ci/validate \
   -H "Content-Type: application/json" \
   -d '{"ci":"19119365"}'
 ```
@@ -145,7 +145,7 @@ curl -X POST https://tu-app.vercel.app/api/ci/validate \
 
 ### Logs
 ```bash
-vercel logs tu-app.vercel.app
+vercel logs ci-validation-h3e8.vercel.app
 ```
 
 ### Analytics
