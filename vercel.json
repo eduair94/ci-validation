@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/demo",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/api/ci/validate",
+      "dest": "/api/validate.ts"
+    },
+    {
+      "src": "/api/ci/demo",
+      "dest": "/api/demo.ts"
+    },
+    {
+      "src": "/health",
+      "dest": "/api/health.ts"
+    },
+    {
+      "src": "/",
+      "dest": "/api/index.ts"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "api/*.ts": {
+      "maxDuration": 10
+    }
+  }
+}
