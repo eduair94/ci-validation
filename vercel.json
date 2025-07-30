@@ -3,7 +3,11 @@
   "routes": [
     {
       "src": "/demo",
-      "dest": "/public/index.html"
+      "dest": "/api/demo-page.ts"
+    },
+    {
+      "src": "/api/demo",
+      "dest": "/api/demo.ts"
     },
     {
       "src": "/api-docs",
