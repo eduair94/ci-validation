@@ -40,24 +40,9 @@ class App {
         contentSecurityPolicy: {
           directives: {
             defaultSrc: ["'self'"],
-            styleSrc: [
-              "'self'", 
-              "'unsafe-inline'", 
-              "https://cdn.jsdelivr.net", 
-              "https://cdnjs.cloudflare.com",
-              "https://unpkg.com"
-            ],
-            scriptSrc: [
-              "'self'", 
-              "'unsafe-inline'", 
-              "'unsafe-eval'",
-              "https://unpkg.com"
-            ],
-            fontSrc: [
-              "'self'", 
-              "https://cdnjs.cloudflare.com",
-              "https://unpkg.com"
-            ],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://unpkg.com"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://unpkg.com"],
+            fontSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://unpkg.com"],
             imgSrc: ["'self'", "data:", "https:"],
             connectSrc: ["'self'"],
           },
@@ -130,7 +115,7 @@ class App {
           demo: "GET /api/ci/demo",
           demoPage: "GET /demo",
           docs: "GET /api-docs",
-          swaggerJson: "GET /api/swagger.json"
+          swaggerJson: "GET /api/swagger.json",
         },
         documentation: "Ver README.md para más información",
         demoUrl: "/demo",
@@ -145,20 +130,20 @@ class App {
   private setupSwagger(): void {
     try {
       const swaggerPath = path.join(__dirname, "../swagger.json");
-      
+
       if (fs.existsSync(swaggerPath)) {
         const swaggerDocument = JSON.parse(fs.readFileSync(swaggerPath, "utf8"));
-        
+
         // Actualizar URLs del servidor para desarrollo local
         swaggerDocument.servers = [
           {
             url: `http://localhost:${this.port}`,
-            description: "Development server"
+            description: "Development server",
           },
           {
             url: "https://ci-validation.vercel.app",
-            description: "Production server"
-          }
+            description: "Production server",
+          },
         ];
 
         // Configurar Swagger UI

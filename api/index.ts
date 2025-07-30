@@ -37,7 +37,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         demo: "GET /api/demo",
         demoPage: "GET /demo",
         docs: "GET /api-docs",
-        swaggerJson: "GET /api/swagger.json"
+        swaggerJson: "GET /api/swagger.json",
       },
       documentation: "Ver README.md para más información",
       demoUrl: "/demo",

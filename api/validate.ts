@@ -36,11 +36,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // Get CI from body (POST) or query parameter (GET)
     let ci: string;
-    
+
     if (req.method === "POST") {
       const body: CiValidationRequest = req.body;
       ci = body.ci;
-      
+
       if (!ci) {
         const errorResponse: ApiResponse = {
           success: false,
@@ -50,9 +50,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         };
         return res.status(400).json(errorResponse);
       }
-    } else { // GET method
+    } else {
+      // GET method
       ci = req.query.ci as string;
-      
+
       if (!ci) {
         const errorResponse: ApiResponse = {
           success: false,

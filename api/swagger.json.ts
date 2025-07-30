@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // Read swagger.json file
     const swaggerPath = path.join(process.cwd(), "swagger.json");
-    
+
     try {
       const swaggerContent = fs.readFileSync(swaggerPath, "utf8");
       const swaggerDocument = JSON.parse(swaggerContent);
