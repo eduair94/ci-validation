@@ -37,6 +37,20 @@ const result = await validateCIAndQuery('19119365');
 
 if (result.success) {
   console.log('Cédula válida:', result.data);
+  // Output:
+  // {
+  //   "ci": "19119365",
+  //   "isValid": true,
+  //   "normalizedCi": "19119365",
+  //   "info": {
+  //     "persona": {
+  //       "apellido": "LACALLE POU",       
+  //       "nombre": "LUIS ALBERTO"
+  //     },
+  //     "message": "",
+  //     "status": 0
+  //   }
+  // }
 } else {
   console.log('Error:', result.error);
 }
@@ -111,6 +125,23 @@ import { validateCIAndQuery } from 'ci-validation';
 
 const result = await validateCIAndQuery('19119365');
 console.log(result);
+// Output:
+// {        
+//   "success": true,
+//   "data": {
+//     "ci": "19119365",
+//     "isValid": true,
+//     "normalizedCi": "19119365",
+//     "info": {
+//       "persona": {
+//         "apellido": "LACALLE POU",       
+//         "nombre": "LUIS ALBERTO"
+//       },
+//       "message": "",
+//       "status": 0
+//     }
+//   }
+// }
 ```
 
 ## 🏗️ Uso Avanzado con Clases

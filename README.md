@@ -37,7 +37,25 @@ npm install ci-validation
 
 # Uso básico
 import { validateCIAndQuery } from 'ci-validation';
-console.log(validateCIAndQuery('19119365')); // true
+const result = await validateCIAndQuery('19119365');
+console.log(result);
+// Output:
+// {        
+//   "success": true,
+//   "data": {
+//     "ci": "19119365",
+//     "isValid": true,
+//     "normalizedCi": "19119365",
+//     "info": {
+//       "persona": {
+//         "apellido": "LACALLE POU",       
+//         "nombre": "LUIS ALBERTO"
+//       },
+//       "message": "",
+//       "status": 0
+//     }
+//   }
+// }
 ```
 
 🔗 **Enlaces del paquete**:

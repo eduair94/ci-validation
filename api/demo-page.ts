@@ -7,11 +7,11 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     // Read the HTML file
     const htmlPath = join(process.cwd(), "public", "index.html");
     const htmlContent = readFileSync(htmlPath, "utf-8");
-    
+
     // Set proper headers
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.setHeader("Cache-Control", "s-maxage=86400");
-    
+
     return res.status(200).send(htmlContent);
   } catch (error) {
     console.error("Error serving demo page:", error);
