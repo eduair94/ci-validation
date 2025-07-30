@@ -35,7 +35,7 @@
     },
     {
       "src": "/",
-      "dest": "/api/index.ts"
+      "dest": "/api/demo-page.ts"
     }
   ],
   "env": {
