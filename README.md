@@ -27,6 +27,8 @@
 
 Una API RESTful construida con TypeScript y Express siguiendo los principios SOLID para validar cédulas de identidad uruguayas y consultar información a través del servicio oficial de la Lotería Nacional.
 
+> **📅 ACTUALIZACIÓN 31/07/2025**: El endpoint de la Lotería Nacional ha sido inhabilitado. El servicio ahora utiliza el endpoint del MEF con datos censurados como respaldo. La funcionalidad de validación se mantiene operativa. Ver [reporte actualizado](./SECURITY_VULNERABILITY.md) para más detalles.
+
 ## 📦 Paquete NPM Disponible
 
 **¡Esta funcionalidad también está disponible como paquete npm!**
@@ -39,7 +41,7 @@ npm install ci-validation
 import { validateCIAndQuery } from 'ci-validation';
 const result = await validateCIAndQuery('19119365');
 console.log(result);
-// Output:
+// Output (datos censurados desde endpoint MEF):
 // {        
 //   "success": true,
 //   "data": {
@@ -47,12 +49,9 @@ console.log(result);
 //     "isValid": true,
 //     "normalizedCi": "19119365",
 //     "info": {
-//       "persona": {
-//         "apellido": "LACALLE POU",       
-//         "nombre": "LUIS ALBERTO"
-//       },
-//       "message": "",
-//       "status": 0
+//       "status": "valid",
+//       "message": "CI válida - Información limitada por políticas de privacidad",
+//       "source": "mef_endpoint"
 //     }
 //   }
 // }

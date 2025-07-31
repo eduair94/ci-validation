@@ -1,6 +1,6 @@
 {
   "name": "ci-validation",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "🇺🇾 Complete TypeScript/JavaScript library for validating Uruguayan CI (Cédula de Identidad) with official algorithm and government service integration",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",

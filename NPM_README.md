@@ -6,6 +6,8 @@
 
 Una librería TypeScript/JavaScript completa para validar cédulas de identidad uruguayas siguiendo el algoritmo oficial y consultando información a través de servicios gubernamentales.
 
+> **📅 ACTUALIZACIÓN 31/07/2025**: El endpoint de la Lotería Nacional ha sido inhabilitado por errores que afectan sus formularios oficiales. El servicio ahora utiliza el endpoint del MEF con datos censurados como respaldo. La funcionalidad se mantiene operativa pero con información limitada.
+
 ## ⚡ Instalación
 
 ```bash
@@ -37,18 +39,15 @@ const result = await validateCIAndQuery('19119365');
 
 if (result.success) {
   console.log('Cédula válida:', result.data);
-  // Output:
+  // Output (datos censurados desde endpoint MEF):
   // {
   //   "ci": "19119365",
   //   "isValid": true,
   //   "normalizedCi": "19119365",
   //   "info": {
-  //     "persona": {
-  //       "apellido": "LACALLE POU",       
-  //       "nombre": "LUIS ALBERTO"
-  //     },
-  //     "message": "",
-  //     "status": 0
+  //     "status": "valid",
+  //     "message": "CI válida - Información limitada por políticas de privacidad",
+  //     "source": "mef_endpoint"
   //   }
   // }
 } else {
@@ -125,7 +124,7 @@ import { validateCIAndQuery } from 'ci-validation';
 
 const result = await validateCIAndQuery('19119365');
 console.log(result);
-// Output:
+// Output (datos censurados desde endpoint MEF):
 // {        
 //   "success": true,
 //   "data": {
@@ -133,12 +132,9 @@ console.log(result);
 //     "isValid": true,
 //     "normalizedCi": "19119365",
 //     "info": {
-//       "persona": {
-//         "apellido": "LACALLE POU",       
-//         "nombre": "LUIS ALBERTO"
-//       },
-//       "message": "",
-//       "status": 0
+//       "status": "valid",
+//       "message": "CI válida - Información limitada por políticas de privacidad",
+//       "source": "mef_endpoint"
 //     }
 //   }
 // }
@@ -293,9 +289,11 @@ CI válida: 19119365
 
 - ✅ **Sin almacenamiento**: No guarda cédulas ni información personal
 - ✅ **Validación local**: El algoritmo se ejecuta localmente
-- ✅ **HTTPS**: Las consultas externas usan conexión segura cuando es posible
+- ✅ **HTTPS**: Las consultas externas usan conexión segura (endpoint MEF)
 - ✅ **Rate limiting**: Implementa límites para evitar abuso
 - ✅ **Error handling**: Manejo robusto de errores de red
+- ⚠️ **Datos limitados**: Desde 31/07/2025 la información está censurada por políticas gubernamentales
+- ℹ️ **Endpoint respaldo**: Utiliza servicio MEF tras inhabilitación del endpoint de Lotería
 
 ## 🌟 Características
 

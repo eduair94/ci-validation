@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { CiQueryResponse, ICiService } from "../interfaces/ICiService";
 
 export class LoteriaUyCiService implements ICiService {
-  private readonly baseUrl = "http://tramites.loteria.gub.uy/bandejatramites/action";
+  private readonly baseUrl = "https://www.mef.gub.uy/bandejatramites/action";
   private readonly timeout = 10000; // 10 segundos
 
   constructor() {
