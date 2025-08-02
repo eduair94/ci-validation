@@ -6,7 +6,7 @@
 
 Una librería TypeScript/JavaScript completa para validar cédulas de identidad uruguayas siguiendo el algoritmo oficial y consultando información a través de servicios gubernamentales.
 
-> **📅 ACTUALIZACIÓN 31/07/2025**: El endpoint de la Lotería Nacional ha sido inhabilitado por errores que afectan sus formularios oficiales. El servicio ahora utiliza el endpoint del MEF con datos censurados como respaldo. La funcionalidad se mantiene operativa pero con información limitada.
+> **� ACTUALIZACIÓN CRÍTICA 02/08/2025**: Todos los endpoints gubernamentales han sido inhabilitados. El endpoint del MEF retorna error `{"message":"Lo sentimos, ocurrió un error al ejecutarse la operación.","status":1000}`. Solo la validación algorítmica local permanece funcional. Los formularios oficiales de Lotería y MEF no funcionan.
 
 ## ⚡ Instalación
 
@@ -39,16 +39,12 @@ const result = await validateCIAndQuery('19119365');
 
 if (result.success) {
   console.log('Cédula válida:', result.data);
-  // Output (datos censurados desde endpoint MEF):
+  // Output (solo validación local - endpoints inhabilitados):
   // {
   //   "ci": "19119365",
   //   "isValid": true,
   //   "normalizedCi": "19119365",
-  //   "info": {
-  //     "status": "valid",
-  //     "message": "CI válida - Información limitada por políticas de privacidad",
-  //     "source": "mef_endpoint"
-  //   }
+  //   "info": "Validación local únicamente - Servicios gubernamentales no disponibles desde 02/08/2025"
   // }
 } else {
   console.log('Error:', result.error);
@@ -124,18 +120,14 @@ import { validateCIAndQuery } from 'ci-validation';
 
 const result = await validateCIAndQuery('19119365');
 console.log(result);
-// Output (datos censurados desde endpoint MEF):
+// Output (solo validación local - endpoints inhabilitados):
 // {        
 //   "success": true,
 //   "data": {
 //     "ci": "19119365",
 //     "isValid": true,
 //     "normalizedCi": "19119365",
-//     "info": {
-//       "status": "valid",
-//       "message": "CI válida - Información limitada por políticas de privacidad",
-//       "source": "mef_endpoint"
-//     }
+//     "info": "Validación local únicamente - Servicios gubernamentales no disponibles desde 02/08/2025"
 //   }
 // }
 ```
@@ -288,12 +280,11 @@ CI válida: 19119365
 ## 🔒 Seguridad y Privacidad
 
 - ✅ **Sin almacenamiento**: No guarda cédulas ni información personal
-- ✅ **Validación local**: El algoritmo se ejecuta localmente
-- ✅ **HTTPS**: Las consultas externas usan conexión segura (endpoint MEF)
-- ✅ **Rate limiting**: Implementa límites para evitar abuso
-- ✅ **Error handling**: Manejo robusto de errores de red
-- ⚠️ **Datos limitados**: Desde 31/07/2025 la información está censurada por políticas gubernamentales
-- ℹ️ **Endpoint respaldo**: Utiliza servicio MEF tras inhabilitación del endpoint de Lotería
+- ✅ **Validación local**: El algoritmo se ejecuta localmente (única funcionalidad disponible)
+- ❌ **Consultas externas**: Todos los endpoints gubernamentales inhabilitados desde 02/08/2025
+- ✅ **Error handling**: Manejo robusto de errores de red y endpoints caídos
+- ⚠️ **Funcionalidad limitada**: Solo validación algorítmica disponible
+- 🔴 **Estado crítico**: Servicios oficiales de Lotería y MEF no operativos
 
 ## 🌟 Características
 
@@ -342,7 +333,16 @@ MIT © [Eduardo Airaudo](https://github.com/eduair94)
 
 ## ⚠️ Descargo de Responsabilidad
 
-Esta librería utiliza servicios gubernamentales públicos para consultas de información. Su uso debe ser responsable y cumplir con las normativas locales de privacidad y protección de datos.
+**IMPORTANTE**: A partir del 02/08/2025, todos los servicios gubernamentales de consulta de cédulas han sido inhabilitados:
+
+- **Lotería Nacional**: Inhabilitado desde 31/07/2025
+- **MEF**: Inhabilitado desde 02/08/2025 (Error: "Lo sentimos, ocurrió un error al ejecutarse la operación")
+
+Esta librería ahora solo puede realizar:
+- ✅ **Validación algorítmica local** (verificación de dígito verificador)
+- ❌ **Consultas de información personal** (no disponibles)
+
+El uso debe ser únicamente para validación de formato y algoritmo. No es posible obtener información personal de los ciudadanos a través de esta librería desde las fechas mencionadas.
 
 ---
 
