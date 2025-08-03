@@ -151,7 +151,6 @@ export class NewCiService implements ICiService {
     const $ = load(html);
     const htmlToParse = $("#E_6648").attr("data-xml");
     if (!htmlToParse) {
-      await fs.writeFile("failed_output.html", html, "utf-8");
       throw new Error("Html not found for #E_6648");
     }
     const fields = this.getFields(htmlToParse);
@@ -577,7 +576,6 @@ export class NewCiService implements ICiService {
     const { tabId, tokenId } = tabReq;
 
     //
-    await fs.writeFile("test.html", response.data, "utf-8");
     return { tabId, tokenId };
   }
 
@@ -670,19 +668,13 @@ export class NewCiService implements ICiService {
     const proInstIds = this.extractProcessInstanceIds(data);
     if (!proInstIds) throw new Error("Unable to track process");
     const { proInstId, proEleInstId } = proInstIds;
-    try {
-      const urlAgain = `https://www.tramitesenlinea.mef.gub.uy/Apia/apia.execution.TaskAction.run?action=getTask&proInstId=${proInstId}&proEleInstId=${proEleInstId}&fromWizzard=true&tabId=${tabId}&tokenId=${tokenId}&react=true`;
-      // Send captcha again
-      const res2 = await axios.post(urlAgain, formData, {
-        timeout: 5000,
-        httpsAgent: this.httpsAgent,
-        headers: this.getDefaultHeaders(),
-      });
-      await fs.writeFile("captcha_solved_again.html", res2.data, "utf-8");
-    } catch (e) {
-      console.error(e);
-      process.exit(1);
-    }
+    const urlAgain = `https://www.tramitesenlinea.mef.gub.uy/Apia/apia.execution.TaskAction.run?action=getTask&proInstId=${proInstId}&proEleInstId=${proEleInstId}&fromWizzard=true&tabId=${tabId}&tokenId=${tokenId}&react=true`;
+    // Send captcha again
+    await axios.post(urlAgain, formData, {
+      timeout: 5000,
+      httpsAgent: this.httpsAgent,
+      headers: this.getDefaultHeaders(),
+    });
   }
 
   /**
