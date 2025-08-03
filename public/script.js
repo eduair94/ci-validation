@@ -353,7 +353,7 @@ function updateFriendlyResult(data, isSuccess) {
   let bgColor = "";
 
   if (data.success && data.data?.isValid) {
-    bgColor = "bg-gradient-to-r from-green-500 to-green-600";
+    bgColor = "success";
     friendlyResult.classList.add("pulse-success");
     content = `
       <div class="flex items-start mb-6">
@@ -394,7 +394,7 @@ function updateFriendlyResult(data, isSuccess) {
       </div>
     `;
   } else {
-    bgColor = "bg-red-500";
+    bgColor = "error";
     friendlyResult.classList.add("pulse-error");
     content = `
       <div class="flex items-center mb-4">
@@ -412,9 +412,14 @@ function updateFriendlyResult(data, isSuccess) {
 
   friendlyContent.innerHTML = content;
 
-  // Remove previous background classes and add new one
-  friendlyResult.className = friendlyResult.className.replace(/bg-\w+-500/g, "");
-  friendlyResult.classList.add(bgColor);
+  // Remove previous background classes and add new ones
+  friendlyResult.className = friendlyResult.className.replace(/bg-gradient-to-r|from-green-500|to-green-600|bg-red-500/g, "");
+  
+  if (bgColor === "success") {
+    friendlyResult.classList.add("bg-gradient-to-r", "from-green-500", "to-green-600");
+  } else if (bgColor === "error") {
+    friendlyResult.classList.add("bg-red-500");
+  }
 
   // Remove animation classes after animation
   setTimeout(() => {

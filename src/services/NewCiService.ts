@@ -240,7 +240,7 @@ export class NewCiService implements ICiService {
   }
 
   async fireEvents(tokenId: string, tabId: string) {
-    // Aceptar términos y completar formulario del MEF de Consulta/Reclamación 
+    // Aceptar términos y completar formulario del MEF de Consulta/Reclamación
     // o Denuncia en Materia de Relaciones de Consumo
     const events = [
       // Formulario MEF - Datos del trámite
