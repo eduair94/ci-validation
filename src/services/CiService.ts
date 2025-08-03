@@ -9,7 +9,6 @@ export class LoteriaUyCiService implements ICiService {
   constructor() {
     // Configurar axios con timeout y headers por defecto
     axios.defaults.timeout = this.timeout;
-    NewCiService.loadSession();
   }
 
   async queryCiInfo(ci: string): Promise<CiQueryResponse> {

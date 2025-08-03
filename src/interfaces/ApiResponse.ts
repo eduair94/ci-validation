@@ -4,6 +4,11 @@ export interface ApiResponse<T = any> {
   error?: string;
   code?: string;
   timestamp: string;
+  executionTime?: {
+    total: number; // Total execution time in milliseconds
+    validation: number; // Time spent on CI validation
+    query?: number; // Time spent on external query (if applicable)
+  };
 }
 
 export interface CiValidationData {

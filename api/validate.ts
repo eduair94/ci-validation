@@ -12,6 +12,9 @@ const corsHeaders = {
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Start timing
+  const startTime = Date.now();
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return res.status(200).json({});
@@ -24,11 +27,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // Allow both GET and POST methods
   if (req.method !== "POST" && req.method !== "GET") {
+    const executionTime = Date.now() - startTime;
     const errorResponse: ApiResponse = {
       success: false,
       error: "Método no permitido. Use POST con body o GET con query parameter.",
       code: "METHOD_NOT_ALLOWED",
       timestamp: new Date().toISOString(),
+      executionTime: {
+        total: executionTime,
+        validation: 0,
+      },
     };
     return res.status(405).json(errorResponse);
   }
@@ -42,11 +50,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ci = body.ci;
 
       if (!ci) {
+        const executionTime = Date.now() - startTime;
         const errorResponse: ApiResponse = {
           success: false,
           error: 'El campo "ci" es requerido en el body',
           code: "MISSING_CI",
           timestamp: new Date().toISOString(),
+          executionTime: {
+            total: executionTime,
+            validation: 0,
+          },
         };
         return res.status(400).json(errorResponse);
       }
@@ -55,11 +68,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ci = req.query.ci as string;
 
       if (!ci) {
+        const executionTime = Date.now() - startTime;
         const errorResponse: ApiResponse = {
           success: false,
           error: 'El parámetro "ci" es requerido en la query string',
           code: "MISSING_CI",
           timestamp: new Date().toISOString(),
+          executionTime: {
+            total: executionTime,
+            validation: 0,
+          },
         };
         return res.status(400).json(errorResponse);
       }
@@ -69,13 +87,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const ciValidator = new UruguayanCiValidator();
     const ciService = new LoteriaUyCiService();
 
+    // Start validation timing
+    const validationStartTime = Date.now();
+
     // Validar formato básico
     if (!ciValidator.validateFormat(ci)) {
+      const executionTime = Date.now() - startTime;
+      const validationTime = Date.now() - validationStartTime;
       const errorResponse: ApiResponse = {
         success: false,
         error: "Formato de cédula inválido. Debe contener entre 7 y 8 dígitos numéricos",
         code: "INVALID_FORMAT",
         timestamp: new Date().toISOString(),
+        executionTime: {
+          total: executionTime,
+          validation: validationTime,
+        },
       };
       return res.status(400).json(errorResponse);
     }
@@ -84,18 +111,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const isValid = ciValidator.validate(ci);
 
     if (!isValid) {
+      const executionTime = Date.now() - startTime;
+      const validationTime = Date.now() - validationStartTime;
       const errorResponse: ApiResponse = {
         success: false,
         error: "Cédula inválida: dígito verificador incorrecto",
         code: "INVALID_CI",
         timestamp: new Date().toISOString(),
+        executionTime: {
+          total: executionTime,
+          validation: validationTime,
+        },
       };
       return res.status(400).json(errorResponse);
     }
 
+    // End validation timing, start query timing
+    const validationTime = Date.now() - validationStartTime;
+    const queryStartTime = Date.now();
+
     // Si es válida, consultar información
     const normalizedCi = ciValidator.normalize(ci);
     const queryResult = await ciService.queryCiInfo(normalizedCi);
+
+    // End query timing
+    const queryTime = Date.now() - queryStartTime;
+    const totalExecutionTime = Date.now() - startTime;
 
     const validationData: CiValidationData = {
       ci: ci,
@@ -108,17 +149,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       success: true,
       data: validationData,
       timestamp: new Date().toISOString(),
+      executionTime: {
+        total: totalExecutionTime,
+        validation: validationTime,
+        query: queryTime,
+      },
     };
 
     return res.status(200).json(response);
   } catch (error) {
     console.error("Error en validate:", error);
 
+    const totalExecutionTime = Date.now() - startTime;
     const errorResponse: ApiResponse = {
       success: false,
       error: "Error interno del servidor",
       code: "INTERNAL_ERROR",
       timestamp: new Date().toISOString(),
+      executionTime: {
+        total: totalExecutionTime,
+        validation: 0,
+      },
     };
 
     return res.status(500).json(errorResponse);

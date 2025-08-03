@@ -33,27 +33,44 @@ export class CiController {
    * Valida una cédula de identidad uruguaya
    */
   async validateCi(req: Request, res: Response): Promise<void> {
+    // Start timing
+    const startTime = Date.now();
+
     try {
       const { ci }: CiValidationRequest = req.body;
 
       if (!ci) {
+        const executionTime = Date.now() - startTime;
         const errorResponse: ApiResponse = {
           success: false,
           error: 'El campo "ci" es requerido',
           code: "MISSING_CI",
           timestamp: new Date().toISOString(),
+          executionTime: {
+            total: executionTime,
+            validation: 0,
+          },
         };
         res.status(400).json(errorResponse);
         return;
       }
 
+      // Start validation timing
+      const validationStartTime = Date.now();
+
       // Validar formato básico
       if (!this.ciValidator.validateFormat(ci)) {
+        const executionTime = Date.now() - startTime;
+        const validationTime = Date.now() - validationStartTime;
         const errorResponse: ApiResponse = {
           success: false,
           error: "Formato de cédula inválido. Debe contener entre 7 y 8 dígitos numéricos",
           code: "INVALID_FORMAT",
           timestamp: new Date().toISOString(),
+          executionTime: {
+            total: executionTime,
+            validation: validationTime,
+          },
         };
         res.status(400).json(errorResponse);
         return;
@@ -63,19 +80,33 @@ export class CiController {
       const isValid = this.ciValidator.validate(ci);
 
       if (!isValid) {
+        const executionTime = Date.now() - startTime;
+        const validationTime = Date.now() - validationStartTime;
         const errorResponse: ApiResponse = {
           success: false,
           error: "Cédula inválida: dígito verificador incorrecto",
           code: "INVALID_CI",
           timestamp: new Date().toISOString(),
+          executionTime: {
+            total: executionTime,
+            validation: validationTime,
+          },
         };
         res.status(400).json(errorResponse);
         return;
       }
 
+      // End validation timing, start query timing
+      const validationTime = Date.now() - validationStartTime;
+      const queryStartTime = Date.now();
+
       // Si es válida, consultar información
       const normalizedCi = this.ciValidator.normalize(ci);
       const queryResult = await this.ciService.queryCiInfo(normalizedCi);
+
+      // End query timing
+      const queryTime = Date.now() - queryStartTime;
+      const totalExecutionTime = Date.now() - startTime;
 
       const validationData: CiValidationData = {
         ci: ci,
@@ -88,15 +119,25 @@ export class CiController {
         success: true,
         data: validationData,
         timestamp: new Date().toISOString(),
+        executionTime: {
+          total: totalExecutionTime,
+          validation: validationTime,
+          query: queryTime,
+        },
       };
 
       res.status(200).json(response);
     } catch (error) {
+      const totalExecutionTime = Date.now() - startTime;
       const errorResponse: ApiResponse = {
         success: false,
         error: "Error interno del servidor",
         code: "INTERNAL_ERROR",
         timestamp: new Date().toISOString(),
+        executionTime: {
+          total: totalExecutionTime,
+          validation: 0,
+        },
       };
 
       console.error("Error en validateCi:", error);
@@ -108,27 +149,44 @@ export class CiController {
    * Valida una cédula de identidad uruguaya mediante query parameter
    */
   async validateCiQuery(req: Request, res: Response): Promise<void> {
+    // Start timing
+    const startTime = Date.now();
+
     try {
       const ci = req.query.ci as string;
 
       if (!ci) {
+        const executionTime = Date.now() - startTime;
         const errorResponse: ApiResponse = {
           success: false,
           error: 'El parámetro "ci" es requerido en la query string',
           code: "MISSING_CI",
           timestamp: new Date().toISOString(),
+          executionTime: {
+            total: executionTime,
+            validation: 0,
+          },
         };
         res.status(400).json(errorResponse);
         return;
       }
 
+      // Start validation timing
+      const validationStartTime = Date.now();
+
       // Validar formato básico
       if (!this.ciValidator.validateFormat(ci)) {
+        const executionTime = Date.now() - startTime;
+        const validationTime = Date.now() - validationStartTime;
         const errorResponse: ApiResponse = {
           success: false,
           error: "Formato de cédula inválido. Debe contener entre 7 y 8 dígitos numéricos",
           code: "INVALID_FORMAT",
           timestamp: new Date().toISOString(),
+          executionTime: {
+            total: executionTime,
+            validation: validationTime,
+          },
         };
         res.status(400).json(errorResponse);
         return;
@@ -138,19 +196,33 @@ export class CiController {
       const isValid = this.ciValidator.validate(ci);
 
       if (!isValid) {
+        const executionTime = Date.now() - startTime;
+        const validationTime = Date.now() - validationStartTime;
         const errorResponse: ApiResponse = {
           success: false,
           error: "Cédula inválida: dígito verificador incorrecto",
           code: "INVALID_CI",
           timestamp: new Date().toISOString(),
+          executionTime: {
+            total: executionTime,
+            validation: validationTime,
+          },
         };
         res.status(400).json(errorResponse);
         return;
       }
 
+      // End validation timing, start query timing
+      const validationTime = Date.now() - validationStartTime;
+      const queryStartTime = Date.now();
+
       // Si es válida, consultar información
       const normalizedCi = this.ciValidator.normalize(ci);
       const queryResult = await this.ciService.queryCiInfo(normalizedCi);
+
+      // End query timing
+      const queryTime = Date.now() - queryStartTime;
+      const totalExecutionTime = Date.now() - startTime;
 
       const validationData: CiValidationData = {
         ci: ci,
@@ -163,15 +235,25 @@ export class CiController {
         success: true,
         data: validationData,
         timestamp: new Date().toISOString(),
+        executionTime: {
+          total: totalExecutionTime,
+          validation: validationTime,
+          query: queryTime,
+        },
       };
 
       res.status(200).json(response);
     } catch (error) {
+      const totalExecutionTime = Date.now() - startTime;
       const errorResponse: ApiResponse = {
         success: false,
         error: "Error interno del servidor",
         code: "INTERNAL_ERROR",
         timestamp: new Date().toISOString(),
+        executionTime: {
+          total: totalExecutionTime,
+          validation: 0,
+        },
       };
 
       console.error("Error en validateCiQuery:", error);

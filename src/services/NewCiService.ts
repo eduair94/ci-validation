@@ -6,6 +6,7 @@ import https from "https";
 import path from "path";
 import { createWorker, OEM, PSM } from "tesseract.js";
 import { CiQueryResponse, ICiService } from "../interfaces/ICiService";
+import { ISessionStorage, SessionStorageFactory } from "../storage";
 dotenv.config();
 
 // Type definitions for iframe parsing
@@ -51,14 +52,11 @@ interface CookieInfo {
 export class NewCiService implements ICiService {
   private readonly targetUrl = "https://www.tramitesenlinea.mef.gub.uy/Apia/portal/tramite.jsp?id=2629";
   private readonly serviceUrl = "https://www.tramitesenlinea.mef.gub.uy/Apia/apia.execution.FormAction.run";
-  private readonly outputDir = process.env.VERCEL ? "/tmp/responses" : path.join(__dirname, "..", "responses");
+  private static readonly outputDir = process.env.VERCEL ? "/tmp/responses" : path.join(__dirname, "..", "responses");
   private cookies: string = "";
+  sessionId = "unique_session";
   private email = "dev@cybersecurity.com";
-  private static session = {
-    tabId: "",
-    tokenId: "",
-    cookies: "",
-  };
+  private static sessionStorage: ISessionStorage | null = null;
   httpsAgent = new https.Agent({
     rejectUnauthorized: false, // Only ignore certs in development
     keepAlive: true,
@@ -88,18 +86,95 @@ export class NewCiService implements ICiService {
   attId = "8461";
   frmId = "6767";
 
-  constructor() {
-    this.ensureOutputDirectory();
+  /**
+   * Initialize session storage based on environment
+   */
+  private static async initializeSessionStorage(): Promise<void> {
+    if (NewCiService.sessionStorage) return;
+    try {
+      NewCiService.sessionStorage = await SessionStorageFactory.createStorage({
+        expirationTime: 24 * 60 * 60 * 1000 * 10000, // Too much time.
+        autoCleanup: false,
+      });
+      console.log("✅ Session storage initialized");
+    } catch (error) {
+      console.error("❌ Failed to initialize session storage:", error);
+    }
+    NewCiService.ensureOutputDirectory();
   }
 
   /**
    * Ensures the output directory exists
    */
-  private async ensureOutputDirectory(): Promise<void> {
+  private static async ensureOutputDirectory(): Promise<void> {
     try {
-      await fs.mkdir(this.outputDir, { recursive: true });
+      await fs.mkdir(NewCiService.outputDir, { recursive: true });
     } catch (error) {
       console.error("Error creating output directory:", error);
+    }
+  }
+
+  /**
+   * Save session using the new storage system
+   */
+  private async saveSession(tabId: string, tokenId: string, cookies: string): Promise<void> {
+    if (!NewCiService.sessionStorage) return;
+    const sessionId = this.sessionId;
+    try {
+      await NewCiService.sessionStorage.saveSession(sessionId, {
+        tabId,
+        tokenId,
+        cookies,
+        document: sessionId.split("-")[2], // Extract document from session ID
+        createdAt: Date.now(),
+        lastUsed: Date.now(),
+        metadata: {
+          userAgent: this.introHeaders["user-agent"],
+          email: this.email,
+        },
+      });
+      console.log(`✅ Session saved with ID: ${sessionId}`);
+    } catch (error) {
+      console.error("❌ Error saving session:", error);
+    }
+  }
+
+  /**
+   * Load session using the new storage system
+   */
+  private async loadSession(): Promise<{ tabId: string; tokenId: string; cookies: string } | null> {
+    if (!NewCiService.sessionStorage) {
+      return null;
+    }
+    const sessionId = this.sessionId;
+    try {
+      const sessionData = await NewCiService.sessionStorage.loadSession(sessionId);
+      if (sessionData) {
+        console.log(`✅ Session loaded with ID: ${sessionId}`);
+        return {
+          tabId: sessionData.tabId,
+          tokenId: sessionData.tokenId,
+          cookies: sessionData.cookies,
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error("❌ Error loading session:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Delete session using the new storage system
+   */
+  private async deleteSession(): Promise<void> {
+    if (!NewCiService.sessionStorage) return;
+    const sessionId = this.sessionId;
+    try {
+      await NewCiService.sessionStorage.deleteSession(sessionId);
+      console.log(`🗑️ Session deleted with ID: ${sessionId}`);
+    } catch (error) {
+      console.error("❌ Error deleting session:", error);
     }
   }
 
@@ -644,9 +719,14 @@ export class NewCiService implements ICiService {
     try {
       // ignoreCache not implemented.
       console.log(`Checking document number: ${document}`);
-      let tokenId = NewCiService.session.tokenId;
-      let tabId = NewCiService.session.tabId;
-      this.cookies = NewCiService.session.cookies;
+
+      // Try to load existing session for this document
+      const existingSession = await this.loadSession();
+
+      let tokenId = existingSession?.tokenId as string;
+      let tabId = existingSession?.tabId as string;
+      this.cookies = existingSession?.cookies as string;
+
       if (!tabId) {
         const shouldIgnoreCache = options?.ignoreCache || false;
 
@@ -693,59 +773,19 @@ export class NewCiService implements ICiService {
       const res = await this.fireFinalEvent(tokenId, tabId);
       if (res && res.cedula) {
         console.log(`✅ Document ${document} found:`, res);
-        NewCiService.session = {
-          tabId: tabId,
-          tokenId: tokenId,
-          cookies: this.cookies,
-        };
-        try {
-          await fs.writeFile("session.json", JSON.stringify(NewCiService.session));
-        } catch (e) {
-          console.error("Error saving session:", e);
-        }
+
+        // Save session using new storage system
+        await this.saveSession(tabId, tokenId, this.cookies);
       } else {
         throw new Error("broken");
       }
       return res as NewCiResponse;
     } catch (error) {
-      NewCiService.session = {
-        tabId: "",
-        tokenId: "",
-        cookies: "",
-      };
-      try {
-        await fs.unlink("session.json");
-      } catch (e) {
-        console.error("Error deleting session:", e);
-      }
+      // Clear session on error
+      await this.deleteSession();
       console.error(`❌ Error checking document ${document}:`, error);
       // Save error response to JSON file
       throw error;
-    }
-  }
-
-  static async loadSession(): Promise<{ tabId: string; tokenId: string; cookies: string } | null> {
-    try {
-      const sessionPath = "session.json";
-      const sessionData = await fs.readFile(sessionPath, "utf-8");
-      const session = JSON.parse(sessionData);
-
-      // Validate session structure
-      if (session && session.tabId && session.tokenId && session.cookies) {
-        console.log(`✅ Session loaded successfully: tabId=${session.tabId}, tokenId=${session.tokenId.substring(0, 10)}...`);
-        NewCiService.session = session;
-        return session;
-      } else {
-        console.warn("⚠️ Invalid session structure in session.json");
-        return null;
-      }
-    } catch (error) {
-      if ((error as any).code === "ENOENT") {
-        console.log("ℹ️ No session file found (session.json)");
-      } else {
-        console.error("❌ Error loading session:", error);
-      }
-      return null;
     }
   }
 
@@ -755,6 +795,7 @@ export class NewCiService implements ICiService {
   }
 
   async queryCiInfo(ci: string): Promise<CiQueryResponse> {
+    await NewCiService.initializeSessionStorage();
     try {
       const res: NewCiResponse = await this.check(ci);
       return {
@@ -766,7 +807,7 @@ export class NewCiService implements ICiService {
             fechaNacimiento: res.fechaNacimiento,
             cedula: res.cedula,
           },
-          message: "",
+          message: res.cedula ? "Persona existe" : "Persona no existe",
           status: 200,
         },
       };
@@ -814,32 +855,6 @@ export class NewCiService implements ICiService {
     await this.queryCy(document, tokenId, tabId);
     const res = await this.fireFinalEvent(tokenId, tabId);
     return res;
-  }
-
-  /**
-   * Gets the latest response file for a phone number
-   * @param number - The phone number
-   * @returns Promise<any> - The latest response data or null if not found
-   */
-  async getLatestResponse(number: string): Promise<any> {
-    try {
-      const files = await fs.readdir(this.outputDir);
-      const numberFiles = files
-        .filter((file) => file.startsWith(number) && file.endsWith(".json"))
-        .sort()
-        .reverse();
-
-      if (numberFiles.length === 0) {
-        return null;
-      }
-
-      const latestFile = path.join(this.outputDir, numberFiles[0]);
-      const content = await fs.readFile(latestFile, "utf8");
-      return JSON.parse(content);
-    } catch (error) {
-      console.error("Error reading latest response:", error);
-      return null;
-    }
   }
 
   private extractCookiesStr(response: AxiosResponse) {
@@ -1051,7 +1066,7 @@ export class NewCiService implements ICiService {
       }
 
       // Save the CAPTCHA image temporarily (use /tmp in serverless environments)
-      const tempDir = process.env.VERCEL ? "/tmp" : this.outputDir;
+      const tempDir = process.env.VERCEL ? "/tmp" : NewCiService.outputDir;
       const captchaImagePath = path.join(tempDir, `captcha_${Date.now()}.png`);
       await fs.writeFile(captchaImagePath, imageResponse.data);
       console.log(`📄 CAPTCHA image saved to: ${captchaImagePath}`);
