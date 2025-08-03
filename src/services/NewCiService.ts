@@ -8,6 +8,8 @@ import { createWorker, OEM, PSM } from "tesseract.js";
 import { CiQueryResponse, ICiService } from "../interfaces/ICiService";
 import { SessionData, TaskData } from "../interfaces/ISessionStorage";
 import { ISessionStorage, SessionStorageFactory } from "../storage";
+import { DateUtils } from "../utils/dateUtils";
+import { PersonaUtils } from "../utils/personaUtils";
 dotenv.config();
 
 // Type definitions for iframe parsing
@@ -921,6 +923,26 @@ export class NewCiService implements ICiService {
     await NewCiService.initializeSessionStorage();
     try {
       const res: NewCiResponse = await this.check(ci);
+
+      // Procesar fecha de nacimiento si existe
+      let fechaNacimientoDate: Date | null = null;
+      let edad: number | null = null;
+
+      if (res.fechaNacimiento) {
+        try {
+          const fechaInfo = DateUtils.procesarFechaNacimiento(res.fechaNacimiento);
+          if (fechaInfo) {
+            fechaNacimientoDate = fechaInfo.fechaDate;
+            edad = fechaInfo.edad;
+          }
+        } catch (error) {
+          console.warn("Error procesando fecha de nacimiento:", error);
+        }
+      }
+
+      // Analizar información adicional de la persona
+      const infoAdicional = PersonaUtils.analizarPersona(res.nombres, res.apellidos, edad || undefined);
+
       return {
         success: true,
         data: {
@@ -928,7 +950,17 @@ export class NewCiService implements ICiService {
             nombre: res.nombres,
             apellido: res.apellidos,
             fechaNacimiento: res.fechaNacimiento,
+            fechaNacimientoDate: fechaNacimientoDate,
+            edad: edad,
             cedula: res.cedula,
+            // Información adicional
+            genero: infoAdicional.genero,
+            iniciales: infoAdicional.iniciales,
+            nombreCompleto: infoAdicional.nombreCompleto,
+            longitudNombre: infoAdicional.longitudNombre,
+            tieneSegundoNombre: infoAdicional.tieneSegundoNombre,
+            cantidadNombres: infoAdicional.cantidadNombres,
+            generacion: infoAdicional.generacion,
           },
           message: (res as any).error || "Consulta exitosa",
           status: 200,

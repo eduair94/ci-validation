@@ -4,6 +4,23 @@ export interface CiQueryResponse {
     persona: {
       nombre: string;
       apellido: string;
+      fechaNacimiento?: string;
+      fechaNacimientoDate?: Date | null;
+      edad?: number | null;
+      cedula?: string;
+      // Nuevos campos de información adicional
+      genero?: {
+        genero: 'masculino' | 'femenino' | 'desconocido';
+        confianza: 'alta' | 'media' | 'baja';
+        primerNombre: string;
+        segundoNombre?: string;
+      };
+      iniciales?: string;
+      nombreCompleto?: string;
+      longitudNombre?: number;
+      tieneSegundoNombre?: boolean;
+      cantidadNombres?: number;
+      generacion?: 'Gen Z' | 'Millennial' | 'Gen X' | 'Baby Boomer' | 'Silent Generation';
       [key: string]: any;
     };
     message: string;
