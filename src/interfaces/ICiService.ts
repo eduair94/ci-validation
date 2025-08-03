@@ -10,8 +10,8 @@ export interface CiQueryResponse {
       cedula?: string;
       // Nuevos campos de información adicional
       genero?: {
-        genero: 'masculino' | 'femenino' | 'desconocido';
-        confianza: 'alta' | 'media' | 'baja';
+        genero: "masculino" | "femenino" | "desconocido";
+        confianza: "alta" | "media" | "baja";
         primerNombre: string;
         segundoNombre?: string;
       };
@@ -20,7 +20,7 @@ export interface CiQueryResponse {
       longitudNombre?: number;
       tieneSegundoNombre?: boolean;
       cantidadNombres?: number;
-      generacion?: 'Gen Z' | 'Millennial' | 'Gen X' | 'Baby Boomer' | 'Silent Generation';
+      generacion?: "Gen Z" | "Millennial" | "Gen X" | "Baby Boomer" | "Silent Generation";
       [key: string]: any;
     };
     message: string;

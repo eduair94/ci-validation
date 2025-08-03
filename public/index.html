@@ -3,611 +3,293 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Validador de Cédulas Uruguayas - Demo</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>Validador de Cédulas Uruguayas | Verificación Online Gratuita</title>
+    <meta name="title" content="Validador de Cédulas Uruguayas | Verificación Online Gratuita" />
+    <meta name="description" content="Valida tu cédula de identidad uruguaya en tiempo real. Herramienta gratuita con análisis de género, edad y datos personales. API REST disponible para desarrolladores." />
+    <meta name="keywords" content="validador cédula uruguaya, verificar cédula uruguay, CI uruguay, validación cédula identidad, API cédula uruguay, verificar documento uruguay" />
+    <meta name="author" content="CI Validation" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Spanish" />
+    <meta name="revisit-after" content="7 days" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ci-validation.vercel.app/" />
+    <meta property="og:title" content="Validador de Cédulas Uruguayas | Verificación Online Gratuita" />
+    <meta property="og:description" content="Valida tu cédula de identidad uruguaya en tiempo real. Herramienta gratuita con análisis de género, edad y datos personales. API REST disponible para desarrolladores." />
+    <meta property="og:image" content="https://ci-validation.vercel.app/og-image.png" />
+    <meta property="og:site_name" content="Validador de Cédulas Uruguayas" />
+    <meta property="og:locale" content="es_UY" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://ci-validation.vercel.app/" />
+    <meta property="twitter:title" content="Validador de Cédulas Uruguayas | Verificación Online Gratuita" />
+    <meta property="twitter:description" content="Valida tu cédula de identidad uruguaya en tiempo real. Herramienta gratuita con análisis de género, edad y datos personales. API REST disponible para desarrolladores." />
+    <meta property="twitter:image" content="https://ci-validation.vercel.app/og-image.png" />
+    <meta property="twitter:creator" content="@ci_validation" />
+    
+    <!-- Additional Meta Tags -->
+    <meta name="theme-color" content="#667eea" />
+    <meta name="msapplication-TileColor" content="#667eea" />
+    <meta name="application-name" content="Validador de Cédulas Uruguayas" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Validador CI Uruguay" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://ci-validation.vercel.app/" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    
+    <!-- External CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-    <style>
-      body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-      }
-      .glass {
-        background: rgba(255, 255, 255, 0.25);
-        backdrop-filter: blur(10px);
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-      }
-      .code-block {
-        background: #1a202c;
-        border-radius: 8px;
-        font-family: "Courier New", monospace;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-      }
-      .loading {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid #3498db;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-      .fade-in {
-        animation: fadeIn 0.5s ease-in;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .pulse-success {
-        animation: pulseSuccess 0.6s ease-in-out;
-      }
-      .pulse-error {
-        animation: pulseError 0.6s ease-in-out;
-      }
-      @keyframes pulseSuccess {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.05);
-          background-color: #10b981;
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      @keyframes pulseError {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.05);
-          background-color: #ef4444;
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-    </style>
+    <link href="./styles.css" rel="stylesheet" />
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Validador de Cédulas Uruguayas",
+      "description": "Herramienta online gratuita para validar cédulas de identidad uruguayas en tiempo real con análisis de datos personales",
+      "url": "https://ci-validation.vercel.app/",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "CI Validation",
+        "url": "https://github.com/eduair94/ci-validation"
+      },
+      "keywords": "validador cédula uruguaya, verificar cédula uruguay, CI uruguay, validación cédula identidad",
+      "inLanguage": "es-UY",
+      "isAccessibleForFree": true,
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "softwareVersion": "1.0.0",
+      "datePublished": "2024-01-01",
+      "dateModified": "2025-08-03"
+    }
+    </script>
   </head>
   <body class="p-4">
     <div class="container mx-auto max-w-4xl">
       <!-- Header -->
-      <div class="text-center mb-8">
+      <header class="text-center mb-8">
         <h1 class="text-4xl font-bold text-white mb-2">
           <i class="fas fa-id-card mr-3"></i>
           Validador de Cédulas Uruguayas
         </h1>
         <p class="text-white text-lg opacity-90">Valida tu cédula de identidad uruguaya en tiempo real</p>
-      </div>
+        <p class="text-white text-sm opacity-75 mt-2">Herramienta gratuita con análisis de género, edad y verificación oficial</p>
+      </header>
+
+      <!-- Main Content -->
+      <main>
 
       <!-- Main Form -->
-      <div class="glass p-8 mb-6">
-        <form id="ciForm" class="space-y-6">
+      <section class="glass p-8 mb-6" aria-label="Formulario de validación">
+        <h2 class="sr-only">Formulario de Validación de Cédula</h2>
+        <form id="ciForm" class="space-y-6" role="form">
           <div>
             <label for="ci" class="block text-white text-sm font-medium mb-2">
               <i class="fas fa-user mr-2"></i>
               Número de Cédula de Identidad
             </label>
             <div class="relative">
-              <input type="text" id="ci" name="ci" placeholder="Ej: 19119365" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg" maxlength="8" pattern="[0-9]*" />
+              <input 
+                type="text" 
+                id="ci" 
+                name="ci" 
+                placeholder="Ej: 19119365" 
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 input-focus text-lg" 
+                maxlength="8" 
+                pattern="[0-9]*" 
+                aria-describedby="ci-help"
+                autocomplete="off"
+                inputmode="numeric"
+              />
               <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                <i class="fas fa-hashtag text-gray-400"></i>
+                <i class="fas fa-hashtag text-gray-400" aria-hidden="true"></i>
               </div>
             </div>
-            <p class="text-white text-xs mt-1 opacity-75">Ingresa tu cédula sin puntos ni guiones (7 u 8 dígitos)</p>
+            <p id="ci-help" class="text-white text-xs mt-1 opacity-75">Ingresa tu cédula sin puntos ni guiones (7 u 8 dígitos)</p>
           </div>
 
           <div class="flex space-x-4">
-            <button type="submit" id="validateBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
-              <i class="fas fa-check-circle mr-2"></i>
+            <button type="submit" id="validateBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105" aria-describedby="validate-help">
+              <i class="fas fa-check-circle mr-2" aria-hidden="true"></i>
               Validar Cédula
             </button>
             <button type="button" id="clearBtn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
-              <i class="fas fa-eraser mr-2"></i>
+              <i class="fas fa-eraser mr-2" aria-hidden="true"></i>
               Limpiar
             </button>
           </div>
+          <p id="validate-help" class="sr-only">Presiona Ctrl + Enter para validar rápidamente</p>
         </form>
-      </div>
+      </section>
 
       <!-- Results Section -->
-      <div id="resultsSection" class="hidden">
+      <section id="resultsSection" class="hidden" aria-label="Resultados de validación">
+        <h2 class="sr-only">Resultados de la Validación</h2>
         <!-- User Friendly Result -->
-        <div id="friendlyResult" class="glass p-6 mb-4">
+        <article id="friendlyResult" class="glass p-6 mb-4" role="region" aria-live="polite">
           <h3 class="text-white text-xl font-semibold mb-4">
-            <i class="fas fa-clipboard-check mr-2"></i>
+            <i class="fas fa-clipboard-check mr-2" aria-hidden="true"></i>
             Resultado de la Validación
           </h3>
           <div id="friendlyContent" class="text-white"></div>
-        </div>
+        </article>
 
         <!-- JSON Response -->
-        <div class="glass p-6">
-          <h3 class="text-white text-xl font-semibold mb-4">
-            <i class="fas fa-code mr-2"></i>
+        <details class="glass p-6" open>
+          <summary class="text-white text-xl font-semibold mb-4 cursor-pointer hover:text-blue-300 transition-colors">
+            <i class="fas fa-code mr-2" aria-hidden="true"></i>
             Respuesta JSON de la API
-          </h3>
-          <div class="code-block p-4 text-green-400 text-sm overflow-x-auto">
-            <pre id="jsonResponse"></pre>
+          </summary>
+          <div class="code-block p-4 text-green-400 text-sm overflow-x-auto" role="region" aria-label="Respuesta JSON">
+            <pre id="jsonResponse" aria-describedby="json-description"></pre>
           </div>
-          <button id="copyBtn" class="mt-3 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm transition duration-300">
-            <i class="fas fa-copy mr-2"></i>
+          <p id="json-description" class="sr-only">Respuesta completa de la API en formato JSON</p>
+          <button id="copyBtn" class="mt-3 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm transition duration-300" aria-describedby="copy-help">
+            <i class="fas fa-copy mr-2" aria-hidden="true"></i>
             Copiar JSON
           </button>
-        </div>
-      </div>
+          <p id="copy-help" class="sr-only">Copia la respuesta JSON al portapapeles</p>
+        </details>
+      </section>
 
       <!-- Examples Section -->
-      <div class="glass p-6 mt-8">
-        <h3 class="text-white text-xl font-semibold mb-4">
-          <i class="fas fa-lightbulb mr-2"></i>
+      <section class="glass p-6 mt-8" aria-label="Ejemplos de uso">
+        <h2 class="text-white text-xl font-semibold mb-4">
+          <i class="fas fa-lightbulb mr-2" aria-hidden="true"></i>
           Ejemplos de Uso
-        </h3>
-        <div class="grid md:grid-cols-2 gap-4">
-          <div class="bg-white bg-opacity-20 p-4 rounded-lg">
-            <h4 class="text-white font-semibold mb-2">Cédula Válida</h4>
-            <p class="text-white text-sm opacity-90 mb-2">Ejemplo de una cédula con formato correcto:</p>
-            <button onclick="fillExampleAndValidate('19119365')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">Probar: 19119365</button>
-          </div>
-          <div class="bg-white bg-opacity-20 p-4 rounded-lg">
-            <h4 class="text-white font-semibold mb-2">Cédula Aleatoria</h4>
-            <p class="text-white text-sm opacity-90 mb-2">Genera y prueba una cédula con formato válido:</p>
-            <button onclick="fillExampleAndValidate(generateValidRandomCI())" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Probar Cédula Aleatoria</button>
-          </div>
+        </h2>
+        <div class="grid md:grid-cols-3 gap-4" role="group" aria-label="Ejemplos de validación">
+          <article class="glass-card p-4">
+            <h3 class="text-white font-semibold mb-2">
+              <i class="fas fa-check-circle text-green-400 mr-2" aria-hidden="true"></i>
+              Cédula Válida
+            </h3>
+            <p class="text-white text-sm opacity-90 mb-3">Ejemplo de una cédula con formato correcto y datos reales:</p>
+            <button onclick="fillExampleAndValidate('19119365')" class="w-full bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded text-sm font-medium transition duration-300 transform hover:scale-105" aria-label="Probar con cédula de ejemplo 19119365">
+              <i class="fas fa-user-check mr-2" aria-hidden="true"></i>
+              Probar: 19119365
+            </button>
+          </article>
+          <article class="glass-card p-4">
+            <h3 class="text-white font-semibold mb-2">
+              <i class="fas fa-dice text-blue-400 mr-2" aria-hidden="true"></i>
+              Cédula Aleatoria
+            </h3>
+            <p class="text-white text-sm opacity-90 mb-3">Genera y prueba una cédula con formato válido aleatoria:</p>
+            <button onclick="fillExampleAndValidate(generateValidRandomCI())" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm font-medium transition duration-300 transform hover:scale-105" aria-label="Generar y probar cédula aleatoria">
+              <i class="fas fa-random mr-2" aria-hidden="true"></i>
+              Generar y Probar
+            </button>
+          </article>
+          <article class="glass-card p-4">
+            <h3 class="text-white font-semibold mb-2">
+              <i class="fab fa-npm text-red-400 mr-2" aria-hidden="true"></i>
+              Paquete NPM
+            </h3>
+            <p class="text-white text-sm opacity-90 mb-3">Instala y usa en tus proyectos Node.js:</p>
+            <a href="https://www.npmjs.com/package/ci-validation" target="_blank" rel="noopener noreferrer" class="w-full bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm font-medium transition duration-300 transform hover:scale-105 inline-flex items-center justify-center gap-2" aria-label="Ver paquete NPM (abre en nueva ventana)">
+              <i class="fab fa-npm" aria-hidden="true"></i>
+              Ver en NPM
+            </a>
+          </article>
         </div>
-      </div>
+      </section>
 
       <!-- API Documentation Section -->
-      <div class="glass p-6 mt-8">
-        <h3 class="text-white text-xl font-semibold mb-4">
-          <i class="fas fa-book mr-2"></i>
-          Documentación de la API
-        </h3>
-        <div class="grid md:grid-cols-2 gap-4">
-          <div class="bg-white bg-opacity-20 p-4 rounded-lg">
-            <h4 class="text-white font-semibold mb-2">
-              <i class="fas fa-code mr-2"></i>
+      <section class="glass p-6 mt-8" aria-label="Documentación y recursos">
+        <h2 class="text-white text-xl font-semibold mb-4">
+          <i class="fas fa-book mr-2" aria-hidden="true"></i>
+          Documentación y Recursos
+        </h2>
+        <div class="grid md:grid-cols-3 gap-4" role="group" aria-label="Enlaces de documentación">
+          <article class="glass-card p-4">
+            <h3 class="text-white font-semibold mb-2">
+              <i class="fas fa-code mr-2 text-indigo-400" aria-hidden="true"></i>
               Swagger UI
-            </h4>
+            </h3>
             <p class="text-white text-sm opacity-90 mb-3">Explora y prueba todos los endpoints de la API de forma interactiva</p>
-            <a href="/api-docs" target="_blank" class="inline-block bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded text-sm transition duration-300 transform hover:scale-105">
-              <i class="fas fa-external-link-alt mr-2"></i>
+            <a href="/api-docs" target="_blank" rel="noopener noreferrer" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-2 rounded text-sm font-medium transition duration-300 transform hover:scale-105 inline-flex items-center justify-center gap-2" aria-label="Ver documentación API en Swagger (abre en nueva ventana)">
+              <i class="fas fa-external-link-alt" aria-hidden="true"></i>
               Ver Documentación API
             </a>
-          </div>
-          <div class="bg-white bg-opacity-20 p-4 rounded-lg">
-            <h4 class="text-white font-semibold mb-2">
-              <i class="fas fa-terminal mr-2"></i>
-              Paquete NPM
-            </h4>
-            <p class="text-white text-sm opacity-90 mb-3">Úsalo como CLI o módulo en tus proyectos</p>
-            <div class="code-block p-2 text-green-400 text-xs mb-2 overflow-x-auto">
-              <code>npm install ci-validation</code>
+          </article>
+          <article class="glass-card p-4">
+            <h3 class="text-white font-semibold mb-2">
+              <i class="fab fa-github mr-2 text-gray-300" aria-hidden="true"></i>
+              Código Fuente
+            </h3>
+            <p class="text-white text-sm opacity-90 mb-3">Revisa el código, reporta issues o contribuye al proyecto</p>
+            <a href="https://github.com/eduair94/ci-validation" target="_blank" rel="noopener noreferrer" class="w-full bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm font-medium transition duration-300 transform hover:scale-105 inline-flex items-center justify-center gap-2" aria-label="Ver código fuente en GitHub (abre en nueva ventana)">
+              <i class="fab fa-github" aria-hidden="true"></i>
+              Ver en GitHub
+            </a>
+          </article>
+          <article class="glass-card p-4">
+            <h3 class="text-white font-semibold mb-2">
+              <i class="fas fa-terminal mr-2 text-green-400" aria-hidden="true"></i>
+              CLI Usage
+            </h3>
+            <p class="text-white text-sm opacity-90 mb-3">Usa desde línea de comandos o como módulo en Node.js</p>
+            <div class="terminal-block p-3 rounded-lg text-green-400 text-xs mb-2 overflow-x-auto font-mono" role="region" aria-label="Comando de instalación">
+              <div class="flex items-center mb-1">
+                <span class="terminal-prompt" aria-label="Prompt de terminal">$</span>
+                <code class="terminal-command">npm install -g ci-validation</code>
+              </div>
             </div>
-            <div class="code-block p-2 text-green-400 text-xs overflow-x-auto">
-              <code>ci_validate 19119365</code>
+            <div class="terminal-block p-3 rounded-lg text-green-400 text-xs overflow-x-auto font-mono" role="region" aria-label="Comando de uso">
+              <div class="flex items-center">
+                <span class="terminal-prompt" aria-label="Prompt de terminal">$</span>
+                <code class="terminal-command">ci-validate 19119365</code>
+              </div>
             </div>
-          </div>
+          </article>
         </div>
-      </div>
+      </section>
+      </main>
 
       <!-- Footer -->
-      <div class="text-center mt-8 text-white opacity-75">
-        <p class="text-sm">
-          <i class="fas fa-shield-alt mr-2"></i>
-          API construida con principios SOLID y desplegada en Vercel
-        </p>
-        <p class="text-xs mt-2">Los datos se consultan directamente desde el servicio oficial de la Lotería Nacional del Uruguay</p>
-      </div>
+      <footer class="text-center mt-8 text-white opacity-75">
+        <div itemscope itemtype="https://schema.org/WebSite">
+          <p class="text-sm">
+            <i class="fas fa-shield-alt mr-2" aria-hidden="true"></i>
+            API construida con principios SOLID y desplegada en Vercel
+          </p>
+          <p class="text-xs mt-2">Los datos se consultan directamente desde el servicio oficial de la Lotería Nacional del Uruguay</p>
+          <p class="text-xs mt-2 opacity-50">
+            © 2025 Validador de Cédulas Uruguayas. 
+            <a href="https://github.com/eduair94/ci-validation" target="_blank" rel="noopener noreferrer" class="hover:text-blue-300 transition-colors" aria-label="Proyecto de código abierto">
+              Proyecto Open Source
+            </a>
+          </p>
+        </div>
+      </footer>
     </div>
 
-    <script>
-      console.log("Script started loading...");
-
-      // Get API base URL based on environment
-      const API_BASE_URL = window.location.origin;
-      console.log("API_BASE_URL:", API_BASE_URL);
-
-      // DOM elements
-      const ciForm = document.getElementById("ciForm");
-      const ciInput = document.getElementById("ci");
-      const validateBtn = document.getElementById("validateBtn");
-      const clearBtn = document.getElementById("clearBtn");
-      const resultsSection = document.getElementById("resultsSection");
-      const friendlyResult = document.getElementById("friendlyResult");
-      const friendlyContent = document.getElementById("friendlyContent");
-      const jsonResponse = document.getElementById("jsonResponse");
-      const copyBtn = document.getElementById("copyBtn");
-
-      console.log("DOM elements loaded:", {
-        ciForm,
-        ciInput,
-        validateBtn,
-        clearBtn,
-      });
-
-      // Debug: Check if all elements are found
-      console.log("DOM elements check:", {
-        ciForm: !!ciForm,
-        ciInput: !!ciInput,
-        validateBtn: !!validateBtn,
-        clearBtn: !!clearBtn,
-        resultsSection: !!resultsSection,
-        friendlyResult: !!friendlyResult,
-        friendlyContent: !!friendlyContent,
-        jsonResponse: !!jsonResponse,
-        copyBtn: !!copyBtn,
-      });
-
-      // Load CI from URL parameter on page load
-      document.addEventListener("DOMContentLoaded", function () {
-        const urlParams = new URLSearchParams(window.location.search);
-        const ciParam = urlParams.get("ci");
-        if (ciParam) {
-          ciInput.value = ciParam;
-          // Auto-validate if CI is in URL
-          setTimeout(() => validateCI(), 500);
-        }
-      });
-
-      // Format CI input (only numbers)
-      ciInput.addEventListener("input", function (e) {
-        let value = e.target.value.replace(/\D/g, "");
-        if (value.length > 8) {
-          value = value.substring(0, 8);
-        }
-        e.target.value = value;
-      });
-
-      // Form submission
-      ciForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-        validateCI();
-      });
-
-      // Clear button
-      clearBtn.addEventListener("click", function () {
-        ciInput.value = "";
-        resultsSection.classList.add("hidden");
-        updateURL("");
-        ciInput.focus();
-      });
-
-      // Copy JSON button
-      copyBtn.addEventListener("click", function () {
-        navigator.clipboard.writeText(jsonResponse.textContent).then(function () {
-          const originalText = copyBtn.innerHTML;
-          copyBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Copiado!';
-          copyBtn.classList.add("bg-green-600");
-          setTimeout(() => {
-            copyBtn.innerHTML = originalText;
-            copyBtn.classList.remove("bg-green-600");
-          }, 2000);
-        });
-      });
-
-      // Helper function to format additional info
-      function formatAdditionalInfo(info) {
-        if (typeof info === "string") {
-          return info;
-        }
-
-        if (typeof info === "object" && info !== null) {
-          // If it's the response from the Lotería service
-          if (info.persona) {
-            const persona = info.persona;
-            let formatted = `<div class="space-y-1">`;
-
-            if (persona.nombre && persona.apellido) {
-              formatted += `<p><strong>Nombre:</strong> ${persona.nombre} ${persona.apellido}</p>`;
-            }
-
-            if (info.status !== undefined) {
-              const statusText = info.status === 0 ? "Consulta exitosa" : `Error: ${info.status}`;
-              formatted += `<p><strong>Estado:</strong> ${statusText}</p>`;
-            }
-
-            if (info.message) {
-              formatted += `<p><strong>Mensaje:</strong> ${info.message}</p>`;
-            }
-
-            formatted += `</div>`;
-            return formatted;
-          }
-
-          // Generic object display
-          return `<pre class="text-xs bg-black bg-opacity-30 p-2 rounded mt-1">${JSON.stringify(info, null, 2)}</pre>`;
-        }
-
-        return String(info);
-      }
-
-      // Update URL with CI parameter
-      function updateURL(ci) {
-        const url = new URL(window.location);
-        if (ci) {
-          url.searchParams.set("ci", ci);
-        } else {
-          url.searchParams.delete("ci");
-        }
-        window.history.replaceState(null, "", url);
-      }
-
-      // Fill example CI and validate immediately
-      function fillExampleAndValidate(ci) {
-        console.log("fillExampleAndValidate called with:", ci);
-        ciInput.value = ci;
-        updateURL(ci);
-        validateCI();
-      }
-
-      // Generate random valid CI
-      function generateRandomCI() {
-        console.log("generateRandomCI called");
-        const randomCi = generateValidRandomCI();
-        console.log("Generated random CI:", randomCi);
-        ciInput.value = randomCi;
-        updateURL(randomCi);
-        validateCI();
-      }
-
-      // Make functions globally accessible
-      window.fillExampleAndValidate = fillExampleAndValidate;
-      window.generateRandomCI = generateRandomCI;
-
-      // Debug: Test if functions are accessible
-      console.log("Functions available:", {
-        fillExampleAndValidate: typeof window.fillExampleAndValidate,
-        generateRandomCI: typeof window.generateRandomCI,
-      });
-
-      // Simple test function to verify onclick works
-      window.testFunction = function () {
-        alert("Test function works!");
-        console.log("Test function called successfully");
-      };
-
-      console.log("Script fully loaded. All functions should be available now.");
-
-      // Add proper event listeners to buttons
-      document.addEventListener("DOMContentLoaded", function () {
-        // Find buttons with onclick attributes and add proper event listeners
-        const exampleButtons = document.querySelectorAll("button[onclick]");
-        exampleButtons.forEach((button) => {
-          const onclickAttr = button.getAttribute("onclick");
-          button.removeAttribute("onclick"); // Remove inline onclick
-
-          button.addEventListener("click", function (e) {
-            e.preventDefault();
-            console.log("Button clicked, executing:", onclickAttr);
-
-            // Parse and execute the function call manually
-            if (onclickAttr.includes("fillExampleAndValidate")) {
-              if (onclickAttr.includes("19119365")) {
-                console.log("Calling fillExampleAndValidate with 19119365");
-                window.fillExampleAndValidate("19119365");
-              } else if (onclickAttr.includes("generateValidRandomCI")) {
-                console.log("Calling fillExampleAndValidate with random CI");
-                const randomCI = generateValidRandomCI();
-                console.log("Generated random CI:", randomCI);
-                window.fillExampleAndValidate(randomCI);
-              }
-            }
-          });
-        });
-      });
-
-      // Generate a random CI with valid format and check digit
-      function generateValidRandomCI() {
-        // Generate random 7 digits for the CI base
-        let ciBase = "";
-        for (let i = 0; i < 7; i++) {
-          ciBase += Math.floor(Math.random() * 10).toString();
-        }
-
-        // Calculate the check digit using the same algorithm as the validator
-        const multipliers = [2, 9, 8, 7, 6, 3, 4];
-        let sum = 0;
-
-        for (let i = 0; i < 7; i++) {
-          const digit = parseInt(ciBase[i], 10);
-          sum += digit * multipliers[i];
-        }
-
-        const remainder = sum % 10;
-        const checkDigit = remainder === 0 ? 0 : 10 - remainder;
-
-        return ciBase + checkDigit.toString();
-      }
-
-      // Fill example CI (legacy function, keeping for compatibility)
-      function fillExample(ci) {
-        ciInput.value = ci;
-        updateURL(ci);
-      }
-
-      // Main validation function
-      async function validateCI() {
-        const ci = ciInput.value.trim();
-
-        if (!ci) {
-          showError("Por favor ingresa un número de cédula");
-          return;
-        }
-
-        if (ci.length < 7 || ci.length > 8) {
-          showError("La cédula debe tener entre 7 y 8 dígitos");
-          return;
-        }
-
-        // Update URL
-        updateURL(ci);
-
-        // Show loading state
-        showLoading();
-
-        try {
-          const response = await fetch(`${API_BASE_URL}/api/ci/validate`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ci: ci }),
-          });
-
-          const data = await response.json();
-          showResults(data, response.ok);
-        } catch (error) {
-          console.error("Error:", error);
-          showError("Error de conexión con el servidor. Por favor intenta nuevamente.");
-        }
-      }
-
-      // Show loading state
-      function showLoading() {
-        validateBtn.innerHTML = '<div class="loading mr-2"></div>Validando...';
-        validateBtn.disabled = true;
-        resultsSection.classList.add("hidden");
-      }
-
-      // Show results
-      function showResults(data, isSuccess) {
-        // Reset button
-        validateBtn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Validar Cédula';
-        validateBtn.disabled = false;
-
-        // Show results section
-        resultsSection.classList.remove("hidden");
-        resultsSection.classList.add("fade-in");
-
-        // Update JSON response
-        jsonResponse.textContent = JSON.stringify(data, null, 2);
-
-        // Update friendly result
-        updateFriendlyResult(data, isSuccess);
-      }
-
-      // Update user-friendly result
-      function updateFriendlyResult(data, isSuccess) {
-        let content = "";
-        let bgColor = "";
-
-        if (data.success && data.data?.isValid) {
-          bgColor = "bg-green-500";
-          friendlyResult.classList.add("pulse-success");
-          content = `
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-check-circle text-2xl text-green-200 mr-3"></i>
-                        <div>
-                            <h4 class="text-lg font-semibold">¡Cédula Válida!</h4>
-                            <p class="text-sm opacity-90">La cédula ${data.data.ci} es válida según el algoritmo uruguayo</p>
-                        </div>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <strong>Cédula original:</strong> ${data.data.ci}
-                        </div>
-                        <div>
-                            <strong>Cédula normalizada:</strong> ${data.data.normalizedCi}
-                        </div>
-                    </div>
-                    ${
-                      data.data.info
-                        ? `
-                        <div class="mt-4 p-3 bg-white bg-opacity-20 rounded">
-                            <strong>Información adicional:</strong>
-                            <div class="text-xs mt-1">
-                                ${formatAdditionalInfo(data.data.info)}
-                            </div>
-                        </div>
-                    `
-                        : ""
-                    }
-                `;
-        } else {
-          bgColor = "bg-red-500";
-          friendlyResult.classList.add("pulse-error");
-          content = `
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-times-circle text-2xl text-red-200 mr-3"></i>
-                        <div>
-                            <h4 class="text-lg font-semibold">Cédula Inválida</h4>
-                            <p class="text-sm opacity-90">${data.error || "La cédula no cumple con el formato uruguayo"}</p>
-                        </div>
-                    </div>
-                    <div class="text-sm">
-                        <strong>Código de error:</strong> ${data.code || "VALIDATION_ERROR"}
-                    </div>
-                `;
-        }
-
-        friendlyContent.innerHTML = content;
-
-        // Remove previous background classes and add new one
-        friendlyResult.className = friendlyResult.className.replace(/bg-\w+-500/g, "");
-        friendlyResult.classList.add(bgColor);
-
-        // Remove animation classes after animation
-        setTimeout(() => {
-          friendlyResult.classList.remove("pulse-success", "pulse-error");
-        }, 600);
-      }
-
-      // Show error message
-      function showError(message) {
-        validateBtn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Validar Cédula';
-        validateBtn.disabled = false;
-
-        const errorData = {
-          success: false,
-          error: message,
-          code: "CLIENT_ERROR",
-          timestamp: new Date().toISOString(),
-        };
-
-        showResults(errorData, false);
-      }
-
-      // Add some keyboard shortcuts
-      document.addEventListener("keydown", function (e) {
-        if (e.ctrlKey && e.key === "Enter") {
-          validateCI();
-        }
-        if (e.key === "Escape") {
-          clearBtn.click();
-        }
-      });
-
-      // Add tooltips
-      const tooltips = {
-        ci: "Ingresa tu cédula sin puntos ni guiones. Ejemplo: 19119365",
-        validateBtn: "Presiona Ctrl + Enter para validar rápidamente",
-        clearBtn: "Presiona Escape para limpiar rápidamente",
-      };
-
-      Object.keys(tooltips).forEach((id) => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.title = tooltips[id];
-        }
-      });
-    </script>
+    <!-- External JavaScript -->
+    <script src="./script.js"></script>
   </body>
 </html>

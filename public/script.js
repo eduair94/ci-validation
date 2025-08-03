@@ -1,0 +1,540 @@
+/**
+ * CI Validation Demo - Main JavaScript
+ * Handles form validation, API calls, and UI interactions
+ */
+
+console.log("Script started loading...");
+
+// Get API base URL based on environment
+const API_BASE_URL = window.location.origin;
+console.log("API_BASE_URL:", API_BASE_URL);
+
+// DOM elements - will be initialized when DOM is ready
+let ciForm, ciInput, validateBtn, clearBtn, resultsSection, friendlyResult, friendlyContent, jsonResponse, copyBtn;
+
+// Initialize DOM elements
+function initializeDOMElements() {
+  ciForm = document.getElementById("ciForm");
+  ciInput = document.getElementById("ci");
+  validateBtn = document.getElementById("validateBtn");
+  clearBtn = document.getElementById("clearBtn");
+  resultsSection = document.getElementById("resultsSection");
+  friendlyResult = document.getElementById("friendlyResult");
+  friendlyContent = document.getElementById("friendlyContent");
+  jsonResponse = document.getElementById("jsonResponse");
+  copyBtn = document.getElementById("copyBtn");
+
+  console.log("DOM elements loaded:", {
+    ciForm: !!ciForm,
+    ciInput: !!ciInput,
+    validateBtn: !!validateBtn,
+    clearBtn: !!clearBtn,
+    resultsSection: !!resultsSection,
+    friendlyResult: !!friendlyResult,
+    friendlyContent: !!friendlyContent,
+    jsonResponse: !!jsonResponse,
+    copyBtn: !!copyBtn,
+  });
+}
+
+// Helper function to format additional info
+function formatAdditionalInfo(info) {
+  if (typeof info === "string") {
+    return info;
+  }
+
+  if (typeof info === "object" && info !== null) {
+    // If it's the response from the Lotería service with persona info
+    if (info.persona) {
+      const persona = info.persona;
+      let formatted = `<div class="persona-card">`;
+
+      // Header with name and basic info
+      if (persona.nombre && persona.apellido) {
+        formatted += `
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h4 class="text-xl font-bold text-white">${persona.nombreCompleto || `${persona.nombre} ${persona.apellido}`}</h4>
+              ${persona.iniciales ? `<p class="text-sm text-white opacity-75">Iniciales: ${persona.iniciales}</p>` : ""}
+            </div>
+            <div class="text-right">
+              ${persona.cedula ? `<div class="info-badge"><i class="fas fa-id-card mr-1"></i>${persona.cedula}</div>` : ""}
+            </div>
+          </div>
+        `;
+      }
+
+      // Personal Information Grid
+      formatted += `<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">`;
+
+      // Age and Birth Date
+      if (persona.edad !== undefined || persona.fechaNacimiento) {
+        formatted += `
+          <div class="stat-item">
+            <div class="text-2xl text-white mb-1">
+              <i class="fas fa-birthday-cake text-yellow-400"></i>
+            </div>
+            <div class="text-white text-sm font-semibold">
+              ${persona.edad !== undefined ? `${persona.edad} años` : "Edad no disponible"}
+            </div>
+            ${persona.fechaNacimiento ? `<div class="text-xs text-white opacity-75 mt-1">${persona.fechaNacimiento}</div>` : ""}
+          </div>
+        `;
+      }
+
+      // Gender
+      if (persona.genero) {
+        const genderIcon = persona.genero.genero === "masculino" ? "mars" : persona.genero.genero === "femenino" ? "venus" : "genderless";
+        const genderClass = persona.genero.genero === "masculino" ? "gender-male" : persona.genero.genero === "femenino" ? "gender-female" : "gender-unknown";
+        const confidenceColor = persona.genero.confianza === "alta" ? "text-green-400" : persona.genero.confianza === "media" ? "text-yellow-400" : "text-gray-400";
+
+        formatted += `
+          <div class="stat-item">
+            <div class="text-2xl text-white mb-1 flex items-center justify-center">
+              <span class="${genderClass} gender-indicator"></span>
+              <i class="fas fa-${genderIcon} ml-1"></i>
+            </div>
+            <div class="text-white text-sm font-semibold capitalize">
+              ${persona.genero.genero}
+            </div>
+            <div class="text-xs ${confidenceColor} mt-1">
+              Confianza: ${persona.genero.confianza}
+            </div>
+          </div>
+        `;
+      }
+
+      // Generation
+      if (persona.generacion) {
+        const genIcon = persona.generacion === "Gen Z" ? "mobile-alt" : persona.generacion === "Millennial" ? "laptop" : persona.generacion === "Gen X" ? "tv" : "radio";
+
+        formatted += `
+          <div class="stat-item">
+            <div class="text-2xl text-white mb-1">
+              <i class="fas fa-${genIcon} text-purple-400"></i>
+            </div>
+            <div class="generation-badge">
+              <i class="fas fa-users"></i>
+              ${persona.generacion}
+            </div>
+          </div>
+        `;
+      }
+
+      // Name Statistics
+      if (persona.cantidadNombres !== undefined) {
+        formatted += `
+          <div class="stat-item">
+            <div class="text-2xl text-white mb-1">
+              <i class="fas fa-signature text-blue-400"></i>
+            </div>
+            <div class="text-white text-sm font-semibold">
+              ${persona.cantidadNombres} nombre${persona.cantidadNombres !== 1 ? "s" : ""}
+            </div>
+            ${persona.longitudNombre ? `<div class="text-xs text-white opacity-75 mt-1">${persona.longitudNombre} caracteres</div>` : ""}
+          </div>
+        `;
+      }
+
+      formatted += `</div>`;
+
+      // Additional Name Details
+      if (persona.genero && (persona.genero.primerNombre || persona.genero.segundoNombre)) {
+        formatted += `
+          <div class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg">
+            <h5 class="text-white font-semibold mb-2"><i class="fas fa-user-tag mr-2"></i>Análisis de Nombres</h5>
+            <div class="flex flex-wrap gap-2">
+              ${persona.genero.primerNombre ? `<span class="info-badge"><i class="fas fa-star mr-1"></i>Primer nombre: ${persona.genero.primerNombre}</span>` : ""}
+              ${persona.genero.segundoNombre ? `<span class="info-badge"><i class="fas fa-plus mr-1"></i>Segundo nombre: ${persona.genero.segundoNombre}</span>` : ""}
+              ${persona.tieneSegundoNombre !== undefined ? `<span class="info-badge"><i class="fas fa-${persona.tieneSegundoNombre ? "check" : "times"} mr-1"></i>${persona.tieneSegundoNombre ? "Tiene" : "No tiene"} segundo nombre</span>` : ""}
+            </div>
+          </div>
+        `;
+      }
+
+      // Status and Message
+      if (info.status !== undefined || info.message) {
+        formatted += `
+          <div class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg">
+            <h5 class="text-white font-semibold mb-2"><i class="fas fa-info-circle mr-2"></i>Estado de la Consulta</h5>
+            ${info.status !== undefined ? `<p class="text-sm text-white"><strong>Estado:</strong> <span class="info-badge">${info.status === 0 ? "✅ Consulta exitosa" : `❌ Error: ${info.status}`}</span></p>` : ""}
+            ${info.message ? `<p class="text-sm text-white mt-1"><strong>Mensaje:</strong> ${info.message}</p>` : ""}
+          </div>
+        `;
+      }
+
+      formatted += `</div>`;
+      return formatted;
+    }
+
+    // Generic object display
+    return `<pre class="text-xs bg-black bg-opacity-30 p-2 rounded mt-1 overflow-x-auto">${JSON.stringify(info, null, 2)}</pre>`;
+  }
+
+  return String(info);
+}
+
+// Update URL with CI parameter
+function updateURL(ci) {
+  const url = new URL(window.location);
+  if (ci) {
+    url.searchParams.set("ci", ci);
+  } else {
+    url.searchParams.delete("ci");
+  }
+  window.history.replaceState(null, "", url);
+}
+
+// Fill example CI and validate immediately
+function fillExampleAndValidate(ci) {
+  console.log("fillExampleAndValidate called with:", ci);
+  if (ciInput) {
+    ciInput.value = ci;
+    updateURL(ci);
+    validateCI();
+  }
+}
+
+// Generate random valid CI
+function generateRandomCI() {
+  console.log("generateRandomCI called");
+  const randomCi = generateValidRandomCI();
+  console.log("Generated random CI:", randomCi);
+  if (ciInput) {
+    ciInput.value = randomCi;
+    updateURL(randomCi);
+    validateCI();
+  }
+}
+
+// Generate a random CI with valid format and check digit
+function generateValidRandomCI() {
+  // Generate random 7 digits for the CI base
+  let ciBase = "";
+  for (let i = 0; i < 7; i++) {
+    ciBase += Math.floor(Math.random() * 10).toString();
+  }
+
+  // Calculate the check digit using the same algorithm as the validator
+  const multipliers = [2, 9, 8, 7, 6, 3, 4];
+  let sum = 0;
+
+  for (let i = 0; i < 7; i++) {
+    const digit = parseInt(ciBase[i], 10);
+    sum += digit * multipliers[i];
+  }
+
+  const remainder = sum % 10;
+  const checkDigit = remainder === 0 ? 0 : 10 - remainder;
+
+  return ciBase + checkDigit.toString();
+}
+
+// Fill example CI (legacy function, keeping for compatibility)
+function fillExample(ci) {
+  if (ciInput) {
+    ciInput.value = ci;
+    updateURL(ci);
+  }
+}
+
+// Main validation function
+async function validateCI() {
+  if (!ciInput) return;
+  
+  const ci = ciInput.value.trim();
+
+  if (!ci) {
+    showError("Por favor ingresa un número de cédula");
+    return;
+  }
+
+  if (ci.length < 7 || ci.length > 8) {
+    showError("La cédula debe tener entre 7 y 8 dígitos");
+    return;
+  }
+
+  // Update URL
+  updateURL(ci);
+
+  // Show loading state
+  showLoading();
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/ci/validate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ci: ci }),
+    });
+
+    const data = await response.json();
+    showResults(data, response.ok);
+  } catch (error) {
+    console.error("Error:", error);
+    showError("Error de conexión con el servidor. Por favor intenta nuevamente.");
+  }
+}
+
+// Show loading state
+function showLoading() {
+  if (validateBtn) {
+    validateBtn.innerHTML = '<div class="loading mr-2"></div>Validando...';
+    validateBtn.disabled = true;
+  }
+  if (resultsSection) {
+    resultsSection.classList.add("hidden");
+  }
+}
+
+// Show results
+function showResults(data, isSuccess) {
+  // Reset button
+  if (validateBtn) {
+    validateBtn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Validar Cédula';
+    validateBtn.disabled = false;
+  }
+
+  // Show results section
+  if (resultsSection) {
+    resultsSection.classList.remove("hidden");
+    resultsSection.classList.add("fade-in");
+  }
+
+  // Update JSON response
+  if (jsonResponse) {
+    jsonResponse.textContent = JSON.stringify(data, null, 2);
+  }
+
+  // Update friendly result
+  updateFriendlyResult(data, isSuccess);
+}
+
+// Update user-friendly result
+function updateFriendlyResult(data, isSuccess) {
+  if (!friendlyResult || !friendlyContent) return;
+  
+  let content = "";
+  let bgColor = "";
+
+  if (data.success && data.data?.isValid) {
+    bgColor = "bg-gradient-to-r from-green-500 to-green-600";
+    friendlyResult.classList.add("pulse-success");
+    content = `
+      <div class="flex items-start mb-6">
+        <i class="fas fa-check-circle text-3xl text-green-200 mr-4 mt-1"></i>
+        <div class="flex-grow">
+          <h4 class="text-2xl font-bold mb-2">¡Cédula Válida! ✅</h4>
+          <p class="text-lg opacity-90 mb-4">La cédula <strong>${data.data.ci}</strong> es válida según el algoritmo uruguayo y tiene formato correcto.</p>
+          
+          <!-- Person Information -->
+          ${data.data.info ? formatAdditionalInfo(data.data.info) : ""}
+          
+          <!-- Validation Details -->
+          <div class="mt-4 p-4 bg-white bg-opacity-10 rounded-lg">
+            <h5 class="text-white font-semibold mb-3 flex items-center">
+              <i class="fas fa-shield-check mr-2"></i>
+              Detalles de Validación
+            </h5>
+            <div class="grid md:grid-cols-2 gap-3 text-sm">
+              <div class="flex items-center">
+                <i class="fas fa-id-card text-blue-300 mr-2"></i>
+                <span><strong>Cédula original:</strong> ${data.data.ci}</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-edit text-purple-300 mr-2"></i>
+                <span><strong>Normalizada:</strong> ${data.data.normalizedCi}</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-check-double text-green-300 mr-2"></i>
+                <span><strong>Algoritmo:</strong> Uruguayo ✓</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-clock text-yellow-300 mr-2"></i>
+                <span><strong>Validado:</strong> ${new Date().toLocaleString("es-UY")}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    bgColor = "bg-red-500";
+    friendlyResult.classList.add("pulse-error");
+    content = `
+      <div class="flex items-center mb-4">
+        <i class="fas fa-times-circle text-2xl text-red-200 mr-3"></i>
+        <div>
+          <h4 class="text-lg font-semibold">Cédula Inválida</h4>
+          <p class="text-sm opacity-90">${data.error || "La cédula no cumple con el formato uruguayo"}</p>
+        </div>
+      </div>
+      <div class="text-sm">
+        <strong>Código de error:</strong> ${data.code || "VALIDATION_ERROR"}
+      </div>
+    `;
+  }
+
+  friendlyContent.innerHTML = content;
+
+  // Remove previous background classes and add new one
+  friendlyResult.className = friendlyResult.className.replace(/bg-\w+-500/g, "");
+  friendlyResult.classList.add(bgColor);
+
+  // Remove animation classes after animation
+  setTimeout(() => {
+    friendlyResult.classList.remove("pulse-success", "pulse-error");
+  }, 600);
+}
+
+// Show error message
+function showError(message) {
+  if (validateBtn) {
+    validateBtn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Validar Cédula';
+    validateBtn.disabled = false;
+  }
+
+  const errorData = {
+    success: false,
+    error: message,
+    code: "CLIENT_ERROR",
+    timestamp: new Date().toISOString(),
+  };
+
+  showResults(errorData, false);
+}
+
+// Initialize event listeners
+function initializeEventListeners() {
+  // Load CI from URL parameter on page load
+  const urlParams = new URLSearchParams(window.location.search);
+  const ciParam = urlParams.get("ci");
+  if (ciParam && ciInput) {
+    ciInput.value = ciParam;
+    // Auto-validate if CI is in URL
+    setTimeout(() => validateCI(), 500);
+  }
+
+  // Format CI input (only numbers)
+  if (ciInput) {
+    ciInput.addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      if (value.length > 8) {
+        value = value.substring(0, 8);
+      }
+      e.target.value = value;
+    });
+  }
+
+  // Form submission
+  if (ciForm) {
+    ciForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      validateCI();
+    });
+  }
+
+  // Clear button
+  if (clearBtn) {
+    clearBtn.addEventListener("click", function () {
+      if (ciInput) {
+        ciInput.value = "";
+        ciInput.focus();
+      }
+      if (resultsSection) {
+        resultsSection.classList.add("hidden");
+      }
+      updateURL("");
+    });
+  }
+
+  // Copy JSON button
+  if (copyBtn) {
+    copyBtn.addEventListener("click", function () {
+      if (jsonResponse && navigator.clipboard) {
+        navigator.clipboard.writeText(jsonResponse.textContent).then(function () {
+          const originalText = copyBtn.innerHTML;
+          copyBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Copiado!';
+          copyBtn.classList.add("bg-green-600");
+          setTimeout(() => {
+            copyBtn.innerHTML = originalText;
+            copyBtn.classList.remove("bg-green-600");
+          }, 2000);
+        });
+      }
+    });
+  }
+
+  // Handle example buttons with onclick attributes
+  const exampleButtons = document.querySelectorAll("button[onclick]");
+  exampleButtons.forEach((button) => {
+    const onclickAttr = button.getAttribute("onclick");
+    button.removeAttribute("onclick"); // Remove inline onclick
+
+    button.addEventListener("click", function (e) {
+      e.preventDefault();
+      console.log("Button clicked, executing:", onclickAttr);
+
+      // Parse and execute the function call manually
+      if (onclickAttr.includes("fillExampleAndValidate")) {
+        if (onclickAttr.includes("19119365")) {
+          console.log("Calling fillExampleAndValidate with 19119365");
+          fillExampleAndValidate("19119365");
+        } else if (onclickAttr.includes("generateValidRandomCI")) {
+          console.log("Calling fillExampleAndValidate with random CI");
+          const randomCI = generateValidRandomCI();
+          console.log("Generated random CI:", randomCI);
+          fillExampleAndValidate(randomCI);
+        }
+      }
+    });
+  });
+
+  // Add keyboard shortcuts
+  document.addEventListener("keydown", function (e) {
+    if (e.ctrlKey && e.key === "Enter") {
+      validateCI();
+    }
+    if (e.key === "Escape" && clearBtn) {
+      clearBtn.click();
+    }
+  });
+
+  // Add tooltips
+  const tooltips = {
+    ci: "Ingresa tu cédula sin puntos ni guiones. Ejemplo: 19119365",
+    validateBtn: "Presiona Ctrl + Enter para validar rápidamente",
+    clearBtn: "Presiona Escape para limpiar rápidamente",
+  };
+
+  Object.keys(tooltips).forEach((id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.title = tooltips[id];
+    }
+  });
+}
+
+// Main initialization function
+function initialize() {
+  console.log("Initializing CI Validation Demo...");
+  initializeDOMElements();
+  initializeEventListeners();
+  
+  // Make functions globally accessible for legacy support
+  window.fillExampleAndValidate = fillExampleAndValidate;
+  window.generateRandomCI = generateRandomCI;
+  window.fillExample = fillExample;
+  window.validateCI = validateCI;
+  
+  console.log("CI Validation Demo initialized successfully!");
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initialize);
+} else {
+  // DOM is already ready
+  initialize();
+}
