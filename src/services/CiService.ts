@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { CiQueryResponse, ICiService } from "../interfaces/ICiService";
+import { NewCiService } from "./NewCiService";
 
 export class LoteriaUyCiService implements ICiService {
   private readonly baseUrl = "https://www.mef.gub.uy/bandejatramites/action";
@@ -8,12 +9,24 @@ export class LoteriaUyCiService implements ICiService {
   constructor() {
     // Configurar axios con timeout y headers por defecto
     axios.defaults.timeout = this.timeout;
+    NewCiService.loadSession();
+  }
+
+  async queryCiInfo(ci: string): Promise<CiQueryResponse> {
+    const newService = new NewCiService();
+    return newService.queryCiInfo(ci);
+  }
+
+  async isServiceAvailable(): Promise<boolean> {
+    const newService = new NewCiService();
+    return newService.isServiceAvailable();
   }
 
   /**
    * Consulta información de una cédula en el servicio oficial de la Lotería Nacional
+   * Deprecated
    */
-  async queryCiInfo(ci: string): Promise<CiQueryResponse> {
+  async queryCiInfoOld(ci: string): Promise<CiQueryResponse> {
     try {
       const params = new URLSearchParams({
         cmdaction: "obtenercedula",
@@ -47,7 +60,7 @@ export class LoteriaUyCiService implements ICiService {
   /**
    * Verifica si el servicio externo está disponible
    */
-  async isServiceAvailable(): Promise<boolean> {
+  async isServiceAvailableOld(): Promise<boolean> {
     try {
       // Realizar una consulta de prueba con timeout reducido
       const testParams = new URLSearchParams({

@@ -15,6 +15,7 @@
     }
   },
   "scripts": {
+    "test_new_ci_service": "ts-node src/test_new_ci_service.ts",
     "dev": "nodemon src/index.ts",
     "build": "tsc && npm run build:cli && npm run build:npm",
     "build:cli": "echo '#!/usr/bin/env node' > dist/cli/cli.js && cat dist/cli/cli-main.js >> dist/cli/cli.js && chmod +x dist/cli/cli.js",
@@ -68,6 +69,7 @@
   "homepage": "https://github.com/eduair94/ci-validation#readme",
   "dependencies": {
     "axios": "^1.6.2",
+    "cheerio": "^1.1.2",
     "commander": "^11.1.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
@@ -75,7 +77,8 @@
     "express-rate-limit": "^7.1.5",
     "helmet": "^7.1.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "tesseract.js": "^6.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

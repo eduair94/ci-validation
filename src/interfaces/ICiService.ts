@@ -4,6 +4,7 @@ export interface CiQueryResponse {
     persona: {
       nombre: string;
       apellido: string;
+      [key: string]: any;
     };
     message: string;
     status: number;
