@@ -7,6 +7,7 @@ async function main() {
 }
 
 async function check(ci: string) {
+  await NewCiService.initializeSessionStorage();
   const ciService = new NewCiService();
   const res = await ciService.check(ci, { ignoreCache: true });
   console.log("Res", res);

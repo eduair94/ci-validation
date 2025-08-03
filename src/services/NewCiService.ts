@@ -24,6 +24,7 @@ interface NewCiResponse {
   nombres: string;
   apellidos: string;
   fechaNacimiento: string;
+  hasSession?: boolean;
 }
 
 export interface UrsecResponse {
@@ -89,7 +90,7 @@ export class NewCiService implements ICiService {
   /**
    * Initialize session storage based on environment
    */
-  private static async initializeSessionStorage(): Promise<void> {
+  public static async initializeSessionStorage(): Promise<void> {
     if (NewCiService.sessionStorage) return;
     try {
       NewCiService.sessionStorage = await SessionStorageFactory.createStorage({
@@ -229,7 +230,7 @@ export class NewCiService implements ICiService {
       throw new Error("Html not found for #E_6648");
     }
     const fields = this.getFields(htmlToParse);
-    return fields;
+    return { ...fields, hasSession: false };
   }
 
   async fireEvents(tokenId: string, tabId: string) {
@@ -726,6 +727,7 @@ export class NewCiService implements ICiService {
       let tokenId = existingSession?.tokenId as string;
       let tabId = existingSession?.tabId as string;
       this.cookies = existingSession?.cookies as string;
+      const hasSession = !!tabId;
 
       if (!tabId) {
         const shouldIgnoreCache = options?.ignoreCache || false;
@@ -771,6 +773,7 @@ export class NewCiService implements ICiService {
       }
       await this.queryCy(document, tokenId, tabId);
       let res = await this.fireFinalEvent(tokenId, tabId);
+      res.hasSession = hasSession;
       if (res && res.cedula) {
         console.log(`✅ Document ${document} found:`, res);
 
@@ -783,6 +786,7 @@ export class NewCiService implements ICiService {
           nombres: "",
           apellidos: "",
           fechaNacimiento: "",
+          hasSession,
         };
       }
       return res as NewCiResponse;
@@ -813,7 +817,7 @@ export class NewCiService implements ICiService {
             fechaNacimiento: res.fechaNacimiento,
             cedula: res.cedula,
           },
-          message: res.cedula ? "Persona existe" : "Persona no existe",
+          message: (res as any).error || "Consulta exitosa",
           status: 200,
         },
       };
