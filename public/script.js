@@ -73,7 +73,7 @@ function formatAdditionalInfo(info) {
       // Header with name and basic info
       if (persona.nombre && persona.apellido) {
         formatted += `
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
             <div>
               <h4 class="text-xl font-bold text-white">${persona.nombreCompleto || `${persona.nombre} ${persona.apellido}`}</h4>
               ${persona.iniciales ? `<p class="text-sm text-white opacity-75">Iniciales: ${persona.iniciales}</p>` : ""}
@@ -89,16 +89,16 @@ function formatAdditionalInfo(info) {
       formatted += `<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">`;
 
       // Age and Birth Date
-      if (persona.edad !== undefined || persona.fechaNacimiento) {
+      if (persona.edad !== undefined && persona.edad !== null || persona.fechaNacimiento !== undefined && persona.fechaNacimiento !== null) {
         formatted += `
           <div class="stat-item">
             <div class="text-2xl text-white mb-1">
               <i class="fas fa-birthday-cake text-yellow-400"></i>
             </div>
             <div class="text-white text-sm font-semibold">
-              ${persona.edad !== undefined ? `${persona.edad} años` : "Edad no disponible"}
+              ${persona.edad !== undefined && persona.edad !== null ? `${persona.edad} años` : "Edad no disponible"}
             </div>
-            ${persona.fechaNacimiento ? `<div class="text-xs text-white opacity-75 mt-1">${persona.fechaNacimiento}</div>` : ""}
+            ${persona.fechaNacimiento !== undefined && persona.fechaNacimiento !== null ? `<div class="text-xs text-white opacity-75 mt-1">${persona.fechaNacimiento}</div>` : ""}
           </div>
         `;
       }
@@ -178,7 +178,7 @@ function formatAdditionalInfo(info) {
         formatted += `
           <div class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg">
             <h5 class="text-white font-semibold mb-2"><i class="fas fa-info-circle mr-2"></i>Estado de la Consulta</h5>
-            ${info.status !== undefined ? `<p class="text-sm text-white"><strong>Estado:</strong> <span class="info-badge">${info.status === 0 ? "✅ Consulta exitosa" : `❌ Error: ${info.status}`}</span></p>` : ""}
+            ${info.status !== undefined ? `<p class="text-sm text-white"><strong>Estado:</strong> <span class="info-badge">${info.status === 200 ? "✅ Consulta exitosa" : `❌ Error: ${info.status}`}</span></p>` : ""}
             ${info.message ? `<p class="text-sm text-white mt-1"><strong>Mensaje:</strong> ${info.message}</p>` : ""}
           </div>
         `;
@@ -357,7 +357,7 @@ function updateFriendlyResult(data, isSuccess) {
     friendlyResult.classList.add("pulse-success");
     content = `
       <div class="flex items-start mb-6">
-        <i class="fas fa-check-circle text-3xl text-green-200 mr-4 mt-1"></i>
+        <i class="fas fa-check-circle text-3xl text-green-200 mr-4 mt-1 hidden md:block"></i>
         <div class="flex-grow">
           <h4 class="text-2xl font-bold mb-2">¡Cédula Válida! ✅</h4>
           <p class="text-lg opacity-90 mb-4">La cédula <strong>${data.data.ci}</strong> es válida según el algoritmo uruguayo y tiene formato correcto.</p>

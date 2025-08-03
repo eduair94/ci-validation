@@ -4,6 +4,24 @@
 body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
+  font-size: 16px; /* Base font size for better scaling */
+}
+
+.info-badge {
+  min-width: 100px;
+}
+
+/* Ensure proper text scaling */
+* {
+  box-sizing: border-box;
+}
+
+/* Container improvements */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 /* Text contrast improvements */
@@ -63,7 +81,7 @@ body {
 }
 
 .glass::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -88,7 +106,7 @@ body {
 }
 
 .glass-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -137,7 +155,7 @@ body {
 }
 
 .persona-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -160,7 +178,7 @@ body {
 }
 
 .stat-item::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -404,17 +422,75 @@ body {
 }
 
 /* Input focus styles */
+.input-focus {
+  color: #1a202c !important;
+  background-color: #ffffff !important;
+  font-weight: 600;
+}
+
 .input-focus:focus {
   outline: none;
-  ring: 2px;
-  ring-color: #3b82f6;
-  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+  border-color: #3b82f6;
+  color: #1a202c !important;
+  background-color: #ffffff !important;
+}
+
+.input-focus::placeholder {
+  color: #6b7280 !important;
+  font-weight: 400;
+}
+
+/* Responsive utilities for icons */
+@media (min-width: 769px) {
+  .fas.md\:block,
+  .fa.md\:block,
+  i.md\:block {
+    display: inline-block !important;
+  }
 }
 
 /* Responsive design improvements */
 @media (max-width: 768px) {
+  /* Hide specific icons on mobile */
+  .fas.hidden,
+  .fa.hidden,
+  i.hidden {
+    display: none !important;
+  }
+
+  /* Ensure Tailwind hidden class works with Font Awesome */
+  .fas.md\:block,
+  .fa.md\:block,
+  i.md\:block {
+    display: none !important;
+  }
+
+  /* Body and container */
+  body {
+    padding: 0.5rem;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  /* Headers */
+  header h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  header p {
+    font-size: 1rem;
+  }
+
+  /* Glass containers */
+  .glass,
   .glass-card {
     padding: 1rem;
+    margin: 0.5rem 0;
   }
 
   .persona-card {
@@ -424,10 +500,170 @@ body {
 
   .stat-item {
     padding: 0.5rem;
+    font-size: 0.875rem;
   }
 
+  /* Form elements */
+  #ciForm {
+    gap: 1rem;
+  }
+
+  #ci {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  .flex.space-x-4 {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .flex.space-x-4 > * {
+    margin: 0;
+  }
+
+  /* Grid layouts */
+  .grid.md\\:grid-cols-3 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .grid.md\\:grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .grid.lg\\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* Terminal blocks */
   .terminal-block {
     font-size: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  /* Code blocks */
+  .code-block {
+    font-size: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  /* Buttons */
+  button,
+  .btn-primary,
+  .btn-success,
+  .btn-danger {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  /* Breadcrumbs */
+  nav[aria-label="Breadcrumb"] {
+    font-size: 0.75rem;
+  }
+
+  /* Section headings */
+  section h2 {
+    font-size: 1.25rem;
+  }
+
+  .glass-card h3 {
+    font-size: 1rem;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 2rem;
+    padding: 1rem 0;
+  }
+
+  footer p {
+    font-size: 0.75rem;
+  }
+}
+
+/* Extra small devices (phones, less than 576px) */
+@media (max-width: 575px) {
+  body {
+    padding: 0.25rem;
+  }
+
+  header h1 {
+    font-size: 1.75rem;
+  }
+
+  header p:first-of-type {
+    font-size: 0.875rem;
+  }
+
+  header p:last-of-type {
+    font-size: 0.75rem;
+  }
+
+  .glass,
+  .glass-card {
+    padding: 0.75rem;
+  }
+
+  .persona-card {
+    padding: 0.75rem;
+  }
+
+  #ci {
+    font-size: 1rem;
+    padding: 0.625rem;
+  }
+
+  .grid.lg\\:grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-item {
+    padding: 0.5rem;
+    font-size: 0.8125rem;
+  }
+
+  /* Make terminal blocks scroll horizontally on very small screens */
+  .terminal-block {
+    font-size: 0.6875rem;
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+}
+
+/* Large tablets and small desktops */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    max-width: 90%;
+  }
+
+  .grid.md\\:grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .grid.md\\:grid-cols-3 > :nth-child(3n) {
+    grid-column: span 2;
+    max-width: 50%;
+    margin: 0 auto;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+
+  .glass,
+  .glass-card {
+    padding: 2rem;
+  }
+
+  .persona-card {
+    padding: 2rem;
   }
 }
 
@@ -527,4 +763,87 @@ button {
 /* Link improvements */
 a {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* Touch device improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets for mobile */
+  button,
+  .btn-primary,
+  .btn-success,
+  .btn-danger,
+  a[role="button"] {
+    min-height: 44px;
+    padding: 0.875rem 1.25rem;
+  }
+
+  /* Remove hover effects on touch devices */
+  .glass-card:hover,
+  .stat-item:hover,
+  button:hover,
+  .btn-primary:hover,
+  .btn-success:hover,
+  .btn-danger:hover {
+    transform: none;
+    box-shadow: initial;
+  }
+
+  /* Better focus indicators for keyboard navigation on touch devices */
+  .input-focus:focus {
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.6);
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .glass,
+  .glass-card,
+  .persona-card {
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: none;
+  }
+
+  .glass::before,
+  .glass-card::before,
+  .persona-card::before,
+  .stat-item::before {
+    display: none;
+  }
+
+  header,
+  footer,
+  nav,
+  .terminal-block,
+  button,
+  #validateBtn,
+  #clearBtn,
+  #copyBtn {
+    display: none;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  header {
+    margin-bottom: 1rem;
+  }
+
+  header h1 {
+    font-size: 1.75rem;
+  }
+
+  .glass {
+    padding: 1rem;
+  }
+
+  .grid.md\\:grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
 }
