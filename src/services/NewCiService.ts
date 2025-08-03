@@ -6,6 +6,7 @@ import https from "https";
 import path from "path";
 import { createWorker, OEM, PSM } from "tesseract.js";
 import { CiQueryResponse, ICiService } from "../interfaces/ICiService";
+import { SessionData, TaskData } from "../interfaces/ISessionStorage";
 import { ISessionStorage, SessionStorageFactory } from "../storage";
 dotenv.config();
 
@@ -55,7 +56,7 @@ export class NewCiService implements ICiService {
   private readonly serviceUrl = "https://www.tramitesenlinea.mef.gub.uy/Apia/apia.execution.FormAction.run";
   private static readonly outputDir = process.env.VERCEL ? "/tmp/responses" : path.join(__dirname, "..", "responses");
   private cookies: string = "";
-  sessionId = "unique_session";
+  sessionId = "unique-session-1";
   private email = "dev@cybersecurity.com";
   private static sessionStorage: ISessionStorage | null = null;
   httpsAgent = new https.Agent({
@@ -118,11 +119,12 @@ export class NewCiService implements ICiService {
   /**
    * Save session using the new storage system
    */
-  private async saveSession(tabId: string, tokenId: string, cookies: string): Promise<void> {
+  private async saveSession(tabId: string, tokenId: string, cookies: string, taskData: TaskData): Promise<void> {
     if (!NewCiService.sessionStorage) return;
     const sessionId = this.sessionId;
     try {
       await NewCiService.sessionStorage.saveSession(sessionId, {
+        ...taskData,
         tabId,
         tokenId,
         cookies,
@@ -143,7 +145,7 @@ export class NewCiService implements ICiService {
   /**
    * Load session using the new storage system
    */
-  private async loadSession(): Promise<{ tabId: string; tokenId: string; cookies: string } | null> {
+  private async loadSession(): Promise<SessionData | null> {
     if (!NewCiService.sessionStorage) {
       return null;
     }
@@ -153,6 +155,8 @@ export class NewCiService implements ICiService {
       if (sessionData) {
         console.log(`✅ Session loaded with ID: ${sessionId}`);
         return {
+          proInstId: sessionData.proInstId,
+          proEleInstId: sessionData.proEleInstId,
           tabId: sessionData.tabId,
           tokenId: sessionData.tokenId,
           cookies: sessionData.cookies,
@@ -227,10 +231,10 @@ export class NewCiService implements ICiService {
     const $ = load(html);
     const htmlToParse = $("#E_6648").attr("data-xml");
     if (!htmlToParse) {
-      throw new Error("Html not found for #E_6648");
+      throw new Error("#E_6648_not_found");
     }
     const fields = this.getFields(htmlToParse);
-    return { ...fields, hasSession: false };
+    return { ...fields, hasSession: false, hasRefreshed: false };
   }
 
   async fireEvents(tokenId: string, tabId: string) {
@@ -652,7 +656,7 @@ export class NewCiService implements ICiService {
     return { tabId, tokenId };
   }
 
-  async submitEntry(tokenId: string, tabId: string, attId: string, frmId: string, value: string) {
+  async submitEntry(tokenId: string, tabId: string, attId: string, frmId: string, value: string): Promise<boolean> {
     const timestamp = Date.now();
     const url = `https://www.tramitesenlinea.mef.gub.uy/Apia/apia.execution.FormAction.run?action=processFieldSubmit&isAjax=true&react=true&tabId=${tabId}&tokenId=${tokenId}&timestamp=${timestamp}&attId=${attId}&frmId=${frmId}&index=0&frmParent=E&timestamp=${timestamp}`;
     const body = `value=${encodeURIComponent(value)}`;
@@ -670,6 +674,7 @@ export class NewCiService implements ICiService {
       console.error("Roto", frmId, attId, value);
       if (attId === "12295") throw new Error("Agreement broken, stop");
     }
+    return res.data && res.data.includes('success="true"');
   }
 
   async fillEmail(tokenId: string, tabId: string) {
@@ -678,10 +683,11 @@ export class NewCiService implements ICiService {
     await this.submitEntry(tokenId, tabId, attId, frmId, this.email);
   }
 
-  async queryCy(document: string, tokenId: string, tabId: string) {
+  async queryCy(document: string, tokenId: string, tabId: string): Promise<boolean> {
     const attId = "8461";
     const frmId = "6648";
-    await this.submitEntry(tokenId, tabId, attId, frmId, document);
+    const res = await this.submitEntry(tokenId, tabId, attId, frmId, document);
+    return res;
   }
 
   getCookieString(cookies: CookieInfo[]) {
@@ -707,6 +713,87 @@ export class NewCiService implements ICiService {
       httpsAgent: this.httpsAgent,
       headers: this.getDefaultHeaders(),
     });
+    return { proInstId, proEleInstId };
+  }
+
+  /**
+   * Extrae la URL del workArea desde el código JavaScript embebido en HTML
+   * @param htmlContent - El contenido HTML que contiene el script con workArea
+   * @returns La URL extraída o null si no se encuentra
+   */
+  extractWorkAreaSrc(htmlContent: string): string | null {
+    try {
+      if (!htmlContent || typeof htmlContent !== "string") {
+        console.warn("⚠️ Invalid HTML content provided to extractWorkAreaSrc");
+        return null;
+      }
+
+      // Patrón para buscar document.getElementById("workArea").src="[URL]"
+      const workAreaPattern = /document\.getElementById\s*\(\s*["']workArea["']\s*\)\s*\.src\s*=\s*["']([^"']+)["']/i;
+
+      const match = htmlContent.match(workAreaPattern);
+
+      if (match && match[1]) {
+        const extractedUrl = match[1].trim();
+        console.log(`✅ WorkArea URL extraída: ${extractedUrl}`);
+        return extractedUrl;
+      }
+
+      console.log("⚠️ No se encontró workArea.src en el contenido HTML");
+      return null;
+    } catch (error) {
+      console.error("❌ Error extrayendo workArea.src:", error);
+      return null;
+    }
+  }
+
+  async refreshCookies(proInstId: string, proEleInstId: string, tabId: string, tokenId: string): Promise<{ cookies: string; tabId: string; tokenId: string }> {
+    try {
+      const nroTramite = parseInt(proInstId) - 8157;
+      const url = `https://www.tramitesenlinea.mef.gub.uy/Apia/page/externalAccess/workTask.jsp?logFromFile=true&env=1&lang=1&numInst=TRM_PRTL_${nroTramite}&onFinish=5&onFinishURL=https://www.gub.uy/ministerio-economia-finanzas/&eatt_str_TRM_RETOMA_TRAMITE_STR=SI&eat_str_TRM_ACCESO_EXTERNO_STR=true`;
+      const headers = this.getDefaultHeaders();
+      headers.Cookie = "";
+      const response = await axios.get(url, {
+        timeout: 10000,
+        httpsAgent: this.httpsAgent,
+        headers,
+      });
+      const cookies = this.extractCookiesStr(response);
+      if (response.data.includes(proInstId)) {
+        console.log("Task matches");
+        headers.Cookie = cookies;
+        const newUrl = this.extractWorkAreaSrc(response.data);
+        if (!newUrl) {
+          console.error("❌ No se pudo extraer la URL del workArea");
+          throw new Error("work_area_url_not_found");
+        }
+        const toGo = `https://www.tramitesenlinea.mef.gub.uy/${newUrl}`;
+        const newTabId = newUrl.split("tabId=")[1].split("&")[0];
+        const newTokenId = newUrl.split("tokenId=")[1].split("&")[0];
+        if (!newTabId || !newTokenId) {
+          console.error("❌ No se pudo extraer tabId o tokenId de la URL del workArea");
+          throw new Error("tab_or_token_id_not_found");
+        }
+        const resF = await axios.get(toGo, {
+          timeout: 10000,
+          httpsAgent: this.httpsAgent,
+          headers: headers,
+        });
+        return {
+          cookies: cookies,
+          tabId: newTabId,
+          tokenId: newTokenId,
+        };
+      }
+      throw new Error("redirect_task_not_matching");
+    } catch (e) {
+      console.error(e);
+      return {
+        cookies: "",
+        tabId: "",
+        tokenId: "",
+      };
+    }
   }
 
   /**
@@ -716,7 +803,8 @@ export class NewCiService implements ICiService {
    * @param options.ignoreCache - If true, bypasses cache and performs a fresh check
    * @returns Promise<any> - The response data
    */
-  async check(document: string, options?: { ignoreCache?: boolean }): Promise<NewCiResponse> {
+  async check(document: string, options?: { ignoreCache?: boolean; forceRefresh?: boolean }, att = 0): Promise<NewCiResponse> {
+    let hasRefreshed = false;
     try {
       // ignoreCache not implemented.
       console.log(`Checking document number: ${document}`);
@@ -727,9 +815,26 @@ export class NewCiService implements ICiService {
       let tokenId = existingSession?.tokenId as string;
       let tabId = existingSession?.tabId as string;
       this.cookies = existingSession?.cookies as string;
-      const hasSession = !!tabId;
+      let proInstId = existingSession?.proInstId as string;
+      let proEleInstId = existingSession?.proEleInstId as string;
+      const hasSession = !!proInstId;
+      if (hasSession) {
+        const sessionWorking = await this.queryCy(document, tokenId, tabId);
+        if (!sessionWorking || options?.forceRefresh) {
+          console.log(`🔄 Reusing existing session: tabId=${tabId}, tokenId=${tokenId}`);
+          const resCookies = await this.refreshCookies(proInstId, proEleInstId, tabId, tokenId);
+          console.log("ResCookies", resCookies);
+          if (resCookies.cookies) {
+            hasRefreshed = true;
+            this.cookies = resCookies.cookies;
+            tabId = resCookies.tabId;
+            tokenId = resCookies.tokenId;
+            console.log(`🔄 Cookies refreshed: tabId=${tabId}, tokenId=${tokenId}`);
+          }
+        }
+      }
 
-      if (!tabId) {
+      if (!hasSession) {
         const shouldIgnoreCache = options?.ignoreCache || false;
 
         if (shouldIgnoreCache) {
@@ -768,17 +873,20 @@ export class NewCiService implements ICiService {
           throw new Error("captcha_not_solved");
         }
 
-        await this.generateTask(tabId, tokenId, formData);
+        const prIds = await this.generateTask(tabId, tokenId, formData);
+        proInstId = prIds.proInstId;
+        proEleInstId = prIds.proEleInstId;
         await this.firePersonaFisicaEvent(tokenId, tabId);
       }
       await this.queryCy(document, tokenId, tabId);
       let res = await this.fireFinalEvent(tokenId, tabId);
       res.hasSession = hasSession;
+      res.hasRefreshed = hasRefreshed;
       if (res && res.cedula) {
         console.log(`✅ Document ${document} found:`, res);
 
         // Save session using new storage system
-        await this.saveSession(tabId, tokenId, this.cookies);
+        await this.saveSession(tabId, tokenId, this.cookies, { proInstId, proEleInstId });
       } else {
         // No existe persona con esa identificación
         res = {
@@ -787,14 +895,19 @@ export class NewCiService implements ICiService {
           apellidos: "",
           fechaNacimiento: "",
           hasSession,
+          hasRefreshed,
         };
       }
       return res as NewCiResponse;
-    } catch (error) {
+    } catch (error: any) {
       // Clear session on error
       await this.deleteSession();
       console.error(`❌ Error checking document ${document}:`, error);
       // Save error response to JSON file
+      if (error?.message === "#E_6648_not_found" && att < 3) {
+        console.log("Retrying due to missing #E_6648 element...");
+        return this.check(document, { ignoreCache: false, forceRefresh: false }, att + 1);
+      }
       throw error;
     }
   }
@@ -887,7 +1000,7 @@ export class NewCiService implements ICiService {
         const [nameValue] = cookieParts;
         const [name, value] = nameValue.split("=");
 
-        if (name && value) {
+        if (name && value && name === "JSESSIONID") {
           cookies.push({
             name: name.trim(),
             value: value.trim(),

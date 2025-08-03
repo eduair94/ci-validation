@@ -1,7 +1,12 @@
 /**
  * Session data structure for CI validation service
  */
-export interface SessionData {
+
+export interface TaskData {
+  proInstId: string;
+  proEleInstId: string;
+}
+export interface SessionData extends TaskData {
   tabId: string;
   tokenId: string;
   cookies: string;
