@@ -328,7 +328,7 @@ MIT © [Eduardo Airaudo](https://github.com/eduair94)
 
 - **GitHub**: https://github.com/eduair94/ci-validation
 - **npm**: https://www.npmjs.com/package/ci-validation
-- **Demo**: https://ci-validation-h3e8.vercel.app/
+- **Demo**: https://ci-validation.vercel.app/
 - **Documentación**: https://github.com/eduair94/ci-validation#readme
 
 ## ⚠️ Descargo de Responsabilidad

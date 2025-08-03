@@ -249,10 +249,10 @@ public/
 
 ### URLs en Producción
 
-- **API Root**: `https://ci-validation-h3e8.vercel.app/`
-- **Health Check**: `https://ci-validation-h3e8.vercel.app/health`
-- **Validación**: `https://ci-validation-h3e8.vercel.app/api/ci/validate`
-- **Demo Page**: `https://ci-validation-h3e8.vercel.app/demo`
+- **API Root**: `https://ci-validation.vercel.app/`
+- **Health Check**: `https://ci-validation.vercel.app/health`
+- **Validación**: `https://ci-validation.vercel.app/api/ci/validate`
+- **Demo Page**: `https://ci-validation.vercel.app/demo`
 
 ### Variables de Entorno
 
