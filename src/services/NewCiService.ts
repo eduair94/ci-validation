@@ -372,9 +372,11 @@ export class NewCiService implements ICiService {
         value: "",
       },
     ];
+    let prEvents = [];
     for (const { frmId, attId, value } of events) {
-      if (frmId) await this.submitEntry(tokenId, tabId, attId, frmId, value);
+      if (frmId) prEvents.push(this.submitEntry(tokenId, tabId, attId, frmId, value));
     }
+    await Promise.all(prEvents);
   }
 
   async fireAgreement(tokenId: string, tabId: string) {
@@ -383,12 +385,7 @@ export class NewCiService implements ICiService {
   }
 
   async firePersonaFisicaEvent(tokenId: string, tabId: string, cookie?: string) {
-    try {
-      await this.fireAgreement(tokenId, tabId);
-    } catch (e) {
-      // Fire agreement failed.
-    }
-
+    await this.fireAgreement(tokenId, tabId);
     const json = {
       frmId: "6647",
       attId: "8459",
@@ -593,7 +590,6 @@ export class NewCiService implements ICiService {
       validateStatus: (status) => status < 500, // Accept all status codes below 500
       headers,
     });
-    console.log("Data", res.data);
     if (!res.data.includes('success="true"') || res.data.includes("Error del sistema")) {
       console.error("Roto", frmId, attId, value);
       if (attId === "12295") throw new Error("Agreement broken, stop");
@@ -604,46 +600,6 @@ export class NewCiService implements ICiService {
     const attId = "11638";
     const frmId = "1361";
     await this.submitEntry(tokenId, tabId, attId, frmId, this.email);
-    // const events = [
-    //   {
-    //     frmId: "6368",
-    //     attId: "1239",
-    //     value: "Consulta/Reclamación o Denuncia en Materia de Relaciones de Consumo",
-    //   },
-    //   {
-    //     frmId: "6368",
-    //     attId: "10993",
-    //     value: "https://www.gub.uy/ministerio-economia-finanzas/",
-    //   },
-    //   {
-    //     frmId: "6368",
-    //     attId: "1265",
-    //     value: "54",
-    //   },
-    //   {
-    //     frmId: "6368",
-    //     attId: "1270",
-    //     value: "1",
-    //   },
-    //   {
-    //     frmId: "6368",
-    //     attId: "1594",
-    //     value: "2629",
-    //   },
-    //   {
-    //     frmId: "6368",
-    //     attId: "5522",
-    //     value: "1",
-    //   },
-    //   {
-    //     frmId: "6368",
-    //     attId: "10992",
-    //     value: "1742495732743.png",
-    //   },
-    // ];
-    // for (const { frmId, attId, value } of events) {
-    //   if (frmId) await this.submitEntry(tokenId, tabId, attId, frmId, value);
-    // }
   }
 
   async queryCy(document: string, tokenId: string, tabId: string) {
@@ -1417,10 +1373,6 @@ export class NewCiService implements ICiService {
       const data = response.data;
       if (data && (data.includes("incorrecto") || data.includes("Error del sistema"))) {
         // Captcha incorrecto.
-        if (data.includes("Error del sistema")) {
-          console.log("Data", data);
-          process.exit(1);
-        }
         console.log("Form Data", formData);
         throw new Error("captcha_failed");
       }
