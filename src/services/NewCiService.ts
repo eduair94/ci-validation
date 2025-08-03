@@ -770,14 +770,20 @@ export class NewCiService implements ICiService {
         await this.firePersonaFisicaEvent(tokenId, tabId);
       }
       await this.queryCy(document, tokenId, tabId);
-      const res = await this.fireFinalEvent(tokenId, tabId);
+      let res = await this.fireFinalEvent(tokenId, tabId);
       if (res && res.cedula) {
         console.log(`✅ Document ${document} found:`, res);
 
         // Save session using new storage system
         await this.saveSession(tabId, tokenId, this.cookies);
       } else {
-        throw new Error("broken");
+        // No existe persona con esa identificación
+        res = {
+          cedula: "",
+          nombres: "",
+          apellidos: "",
+          fechaNacimiento: "",
+        };
       }
       return res as NewCiResponse;
     } catch (error) {
