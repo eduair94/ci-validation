@@ -335,7 +335,7 @@ MIT © [Eduardo Airaudo](https://github.com/eduair94)
 
 **IMPORTANTE**: A partir del 02/08/2025, todos los servicios gubernamentales de consulta de cédulas han sido inhabilitados:
 
-- **Lotería Nacional**: Inhabilitado desde 31/07/2025
+- **MEF**: Activo - Formulario oficial del Ministerio de Economía y Finanzas
 - **MEF**: Inhabilitado desde 02/08/2025 (Error: "Lo sentimos, ocurrió un error al ejecutarse la operación")
 
 Esta librería ahora solo puede realizar:

@@ -1,7 +1,7 @@
 # API de Validación de Cédulas Uruguayas
 
 ## Descripción General
-API RESTful para validar cédulas de identidad uruguayas y consultar información oficial a través del servicio de la Lotería Nacional del Uruguay.
+API RESTful para validar cédulas de identidad uruguayas y consultar información oficial a través del formulario del MEF (Ministerio de Economía y Finanzas) del Uruguay.
 
 ## Arquitectura Técnica
 
@@ -53,13 +53,17 @@ Dependencias por inversión de control:
 - **Sanitización**: Limpia caracteres no numéricos
 
 ### Consulta de Información
-- **Endpoint**: `http://tramites.loteria.gub.uy/bandejatramites/action`
-- **Método**: POST con `application/x-www-form-urlencoded`
-- **Parámetros**: 
-  - `cmdaction`: "obtenercedula"
-  - `numero`: Número de cédula
-- **Timeout**: 10 segundos
-- **Retry**: No implementado (servicio oficial)
+- **Servicio**: Formulario MEF "Consulta/Reclamación o Denuncia en Materia de Relaciones de Consumo"
+- **URL Base**: `https://www.tramitesenlinea.mef.gub.uy`
+- **Método**: Múltiples requests POST con CAPTCHA y gestión de sesión
+- **Proceso**:
+  1. Inicialización de sesión
+  2. Aceptación de términos
+  3. Resolución de CAPTCHA (OCR automático)
+  4. Completado de formulario
+  5. Consulta de datos personales
+- **Timeout**: 10 segundos por request
+- **Manejo de sesión**: Cache automático con reintentos
 
 ### Seguridad
 - **CORS**: Configurado para dominios específicos

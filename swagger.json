@@ -326,7 +326,7 @@
           },
           "checkWithApi": {
             "type": "boolean",
-            "description": "Whether to verify with the official Lotería Nacional API",
+            "description": "Whether to verify with the official MEF form",
             "default": false,
             "example": true
           }

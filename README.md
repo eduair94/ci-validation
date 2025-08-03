@@ -25,7 +25,7 @@
 
 > ⚠️ **CONTEXTO**: Este proyecto fue desarrollado tras descubrir una vulnerabilidad de seguridad en servicios gubernamentales. Lee el [**Reporte de Vulnerabilidad**](./SECURITY_VULNERABILITY.md) para más información.
 
-Una API RESTful construida con TypeScript y Express siguiendo los principios SOLID para validar cédulas de identidad uruguayas y consultar información a través del servicio oficial de la Lotería Nacional.
+Una API RESTful construida con TypeScript y Express siguiendo los principios SOLID para validar cédulas de identidad uruguayas y consultar información a través del formulario oficial del MEF (Ministerio de Economía y Finanzas).
 
 > **� ACTUALIZACIÓN CRÍTICA 02/08/2025**: Todos los endpoints gubernamentales han sido inhabilitados. El endpoint del MEF ahora retorna error `{"message":"Lo sentimos, ocurrió un error al ejecutarse la operación.","status":1000}`. Solo la validación algorítmica local permanece funcional. Ver [reporte completo](./SECURITY_VULNERABILITY.md) para detalles.
 
@@ -63,7 +63,7 @@ console.log(result);
 - **📦 Paquete NPM**: Disponible como librería independiente para proyectos TypeScript/JavaScript
 - **🔧 CLI incluido**: Herramienta de línea de comandos para validación rápida
 - **Validación de CI**: Valida el formato y dígito verificador de cédulas uruguayas
-- **Consulta de datos**: Obtiene información oficial a través de la API de la Lotería Nacional
+- **Consulta de datos**: Obtiene información oficial a través del formulario del MEF
 - **Arquitectura SOLID**: Implementa los 5 principios SOLID para código mantenible
 - **TypeScript**: Tipado estático para mayor robustez
 - **Express.js**: Framework web rápido y minimalista
@@ -172,7 +172,7 @@ Valida una cédula de identidad uruguaya
   "data": {
     "ci": "19119365",
     "isValid": true,
-    "info": "Información obtenida de la Lotería Nacional..."
+    "info": "Información obtenida del formulario oficial del MEF..."
   }
 }
 ```

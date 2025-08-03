@@ -5,6 +5,27 @@
 
 console.log("Script started loading...");
 
+// SEO and Analytics tracking
+function trackEvent(action, category = 'CI_Validation', label = '') {
+  // Basic event tracking - can be extended with Google Analytics
+  console.log(`Analytics Event: ${category} - ${action} - ${label}`);
+  
+  // If Google Analytics is loaded
+  if (typeof gtag !== 'undefined') {
+    gtag('event', action, {
+      event_category: category,
+      event_label: label,
+      value: 1
+    });
+  }
+  
+  // Track page interactions for SEO
+  if (action === 'validation_success') {
+    // Update page metadata dynamically for better SEO
+    document.title = `CI ${label} validada - Validador de Cédulas Uruguayas`;
+  }
+}
+
 // Get API base URL based on environment
 const API_BASE_URL = window.location.origin;
 console.log("API_BASE_URL:", API_BASE_URL);
@@ -246,13 +267,18 @@ async function validateCI() {
 
   if (!ci) {
     showError("Por favor ingresa un número de cédula");
+    trackEvent('validation_error', 'CI_Validation', 'empty_input');
     return;
   }
 
   if (ci.length < 7 || ci.length > 8) {
     showError("La cédula debe tener entre 7 y 8 dígitos");
+    trackEvent('validation_error', 'CI_Validation', 'invalid_length');
     return;
   }
+
+  // Track validation attempt
+  trackEvent('validation_attempt', 'CI_Validation', ci);
 
   // Update URL
   updateURL(ci);
@@ -270,9 +296,17 @@ async function validateCI() {
     });
 
     const data = await response.json();
+    
+    if (response.ok) {
+      trackEvent('validation_success', 'CI_Validation', ci);
+    } else {
+      trackEvent('validation_failed', 'CI_Validation', ci);
+    }
+    
     showResults(data, response.ok);
   } catch (error) {
     console.error("Error:", error);
+    trackEvent('api_error', 'CI_Validation', error.message);
     showError("Error de conexión con el servidor. Por favor intenta nuevamente.");
   }
 }

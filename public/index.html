@@ -7,7 +7,7 @@
     <!-- Primary Meta Tags -->
     <title>Validador de Cédulas Uruguayas | Verificación Online Gratuita</title>
     <meta name="title" content="Validador de Cédulas Uruguayas | Verificación Online Gratuita" />
-    <meta name="description" content="Valida tu cédula de identidad uruguaya en tiempo real. Herramienta gratuita con análisis de género, edad y datos personales. API REST disponible para desarrolladores." />
+        <meta name="description" content="Valida tu cédula de identidad uruguaya en tiempo real usando el formulario oficial del MEF. Herramienta gratuita con análisis de género, edad y datos personales completos. API REST disponible para desarrolladores." />
     <meta name="keywords" content="validador cédula uruguaya, verificar cédula uruguay, CI uruguay, validación cédula identidad, API cédula uruguay, verificar documento uruguay" />
     <meta name="author" content="CI Validation" />
     <meta name="robots" content="index, follow" />
@@ -18,7 +18,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://ci-validation.vercel.app/" />
     <meta property="og:title" content="Validador de Cédulas Uruguayas | Verificación Online Gratuita" />
-    <meta property="og:description" content="Valida tu cédula de identidad uruguaya en tiempo real. Herramienta gratuita con análisis de género, edad y datos personales. API REST disponible para desarrolladores." />
+    <meta property="og:description" content="Valida tu cédula de identidad uruguaya en tiempo real. Herramienta gratuita con análisis de género, edad y datos personales usando el formulario oficial del MEF. API REST disponible para desarrolladores." />
     <meta property="og:image" content="https://ci-validation.vercel.app/og-image.png" />
     <meta property="og:site_name" content="Validador de Cédulas Uruguayas" />
     <meta property="og:locale" content="es_UY" />
@@ -27,7 +27,7 @@
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://ci-validation.vercel.app/" />
     <meta property="twitter:title" content="Validador de Cédulas Uruguayas | Verificación Online Gratuita" />
-    <meta property="twitter:description" content="Valida tu cédula de identidad uruguaya en tiempo real. Herramienta gratuita con análisis de género, edad y datos personales. API REST disponible para desarrolladores." />
+    <meta property="twitter:description" content="Valida tu cédula de identidad uruguaya en tiempo real. Herramienta gratuita con análisis de género, edad y datos personales usando el formulario oficial del MEF. API REST disponible para desarrolladores." />
     <meta property="twitter:image" content="https://ci-validation.vercel.app/og-image.png" />
     <meta property="twitter:creator" content="@ci_validation" />
     
@@ -38,6 +38,23 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Validador CI Uruguay" />
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="google-site-verification" content="">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="referrer" content="origin-when-cross-origin">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- Performance and Security -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Geographic targeting -->
+    <meta name="geo.region" content="UY">
+    <meta name="geo.country" content="Uruguay">
+    <meta name="ICBM" content="-34.9011,-56.1645">
+    <meta name="geo.position" content="-34.9011;-56.1645">
+    <meta name="geo.placename" content="Montevideo, Uruguay">
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://ci-validation.vercel.app/" />
@@ -60,32 +77,83 @@
     
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Validador de Cédulas Uruguayas",
-      "description": "Herramienta online gratuita para validar cédulas de identidad uruguayas en tiempo real con análisis de datos personales",
-      "url": "https://ci-validation.vercel.app/",
-      "applicationCategory": "UtilityApplication",
-      "operatingSystem": "Web Browser",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Validador de Cédulas Uruguayas",
+        "description": "Herramienta online gratuita para validar cédulas de identidad uruguayas en tiempo real con análisis de datos personales usando el formulario oficial del MEF",
+        "url": "https://ci-validation.vercel.app/",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "CI Validation",
+          "url": "https://github.com/eduair94/ci-validation"
+        },
+        "keywords": "validador cédula uruguaya, verificar cédula uruguay, CI uruguay, validación cédula identidad",
+        "inLanguage": "es-UY",
+        "isAccessibleForFree": true,
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "softwareVersion": "1.0.0",
+        "datePublished": "2024-01-01",
+        "dateModified": "2025-08-03"
       },
-      "creator": {
-        "@type": "Organization",
-        "name": "CI Validation",
-        "url": "https://github.com/eduair94/ci-validation"
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "¿Cómo funciona la validación de cédulas uruguayas?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Nuestro sistema utiliza el algoritmo oficial de verificación de cédulas uruguayas mediante el dígito verificador. Además, consulta el formulario oficial del MEF (Ministerio de Economía y Finanzas) para obtener información adicional como género y edad."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Es seguro usar este validador?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Sí, es completamente seguro. No almacenamos ningún dato personal. Las consultas se realizan directamente al servicio oficial y no guardamos historial de búsquedas ni información de usuarios."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Puedo usar la API en mi proyecto?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Absolutamente. Ofrecemos una API REST gratuita y también un paquete NPM para integrar fácilmente en proyectos Node.js. Consulta la documentación en Swagger para más detalles."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Qué tan rápida es la validación?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "La validación del formato es instantánea. La consulta al formulario oficial del MEF suele tomar entre 1-3 segundos, dependiendo de la conexión y la carga del servidor del Ministerio de Economía y Finanzas."
+            }
+          }
+        ]
       },
-      "keywords": "validador cédula uruguaya, verificar cédula uruguay, CI uruguay, validación cédula identidad",
-      "inLanguage": "es-UY",
-      "isAccessibleForFree": true,
-      "browserRequirements": "Requires JavaScript. Requires HTML5.",
-      "softwareVersion": "1.0.0",
-      "datePublished": "2024-01-01",
-      "dateModified": "2025-08-03"
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "ci-validation NPM Package",
+        "description": "Paquete NPM para validación de cédulas uruguayas",
+        "url": "https://www.npmjs.com/package/ci-validation",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Node.js",
+        "programmingLanguage": "TypeScript",
+        "downloadUrl": "https://www.npmjs.com/package/ci-validation"
+      }
+    ]
     </script>
   </head>
   <body class="p-4">
@@ -102,6 +170,26 @@
 
       <!-- Main Content -->
       <main>
+      
+      <!-- Breadcrumbs -->
+      <nav aria-label="Breadcrumb" class="mb-4">
+        <ol class="flex items-center space-x-2 text-white text-sm opacity-75" itemscope itemtype="https://schema.org/BreadcrumbList">
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="/" itemprop="item" class="hover:text-blue-200 transition-colors">
+              <i class="fas fa-home mr-1" aria-hidden="true"></i>
+              <span itemprop="name">Inicio</span>
+            </a>
+            <meta itemprop="position" content="1" />
+          </li>
+          <li class="text-gray-300">
+            <i class="fas fa-chevron-right text-xs" aria-hidden="true"></i>
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name" class="text-blue-100 font-medium">Validador de Cédulas</span>
+            <meta itemprop="position" content="2" />
+          </li>
+        </ol>
+      </nav>
 
       <!-- Main Form -->
       <section class="glass p-8 mb-6" aria-label="Formulario de validación">
@@ -269,6 +357,64 @@
           </article>
         </div>
       </section>
+
+      <!-- FAQ Section -->
+      <section class="glass p-6 mt-8" aria-label="Preguntas frecuentes">
+        <h2 class="text-white text-xl font-semibold mb-4">
+          <i class="fas fa-question-circle mr-2" aria-hidden="true"></i>
+          Preguntas Frecuentes
+        </h2>
+        <div class="space-y-4" itemscope itemtype="https://schema.org/FAQPage">
+          <article class="glass-card p-4" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <h3 class="text-white font-semibold mb-2" itemprop="name">
+              <i class="fas fa-id-card mr-2 text-blue-400" aria-hidden="true"></i>
+              ¿Cómo funciona la validación de cédulas uruguayas?
+            </h3>
+            <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <p class="text-white text-sm opacity-90" itemprop="text">
+                Nuestro sistema utiliza el algoritmo oficial de verificación de cédulas uruguayas mediante el dígito verificador. 
+                Además, consulta el formulario oficial del MEF (Ministerio de Economía y Finanzas) para obtener información adicional como género y edad.
+              </p>
+            </div>
+          </article>
+          <article class="glass-card p-4" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <h3 class="text-white font-semibold mb-2" itemprop="name">
+              <i class="fas fa-shield-alt mr-2 text-green-400" aria-hidden="true"></i>
+              ¿Es seguro usar este validador?
+            </h3>
+            <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <p class="text-white text-sm opacity-90" itemprop="text">
+                Sí, es completamente seguro. No almacenamos ningún dato personal. Las consultas se realizan directamente 
+                al servicio oficial y no guardamos historial de búsquedas ni información de usuarios.
+              </p>
+            </div>
+          </article>
+          <article class="glass-card p-4" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <h3 class="text-white font-semibold mb-2" itemprop="name">
+              <i class="fas fa-code mr-2 text-purple-400" aria-hidden="true"></i>
+              ¿Puedo usar la API en mi proyecto?
+            </h3>
+            <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <p class="text-white text-sm opacity-90" itemprop="text">
+                Absolutamente. Ofrecemos una API REST gratuita y también un paquete NPM para integrar fácilmente 
+                en proyectos Node.js. Consulta la documentación en Swagger para más detalles.
+              </p>
+            </div>
+          </article>
+          <article class="glass-card p-4" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <h3 class="text-white font-semibold mb-2" itemprop="name">
+              <i class="fas fa-clock mr-2 text-yellow-400" aria-hidden="true"></i>
+              ¿Qué tan rápida es la validación?
+            </h3>
+            <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <p class="text-white text-sm opacity-90" itemprop="text">
+                La validación del formato es instantánea. La consulta al formulario oficial del MEF suele tomar entre 1-3 segundos, 
+                dependiendo de la conexión y la carga del servidor del Ministerio de Economía y Finanzas.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
       </main>
 
       <!-- Footer -->
@@ -278,7 +424,7 @@
             <i class="fas fa-shield-alt mr-2" aria-hidden="true"></i>
             API construida con principios SOLID y desplegada en Vercel
           </p>
-          <p class="text-xs mt-2">Los datos se consultan directamente desde el servicio oficial de la Lotería Nacional del Uruguay</p>
+          <p class="text-xs mt-2">Los datos se consultan directamente desde el formulario oficial del MEF (Ministerio de Economía y Finanzas)</p>
           <p class="text-xs mt-2 opacity-50">
             © 2025 Validador de Cédulas Uruguayas. 
             <a href="https://github.com/eduair94/ci-validation" target="_blank" rel="noopener noreferrer" class="hover:text-blue-300 transition-colors" aria-label="Proyecto de código abierto">

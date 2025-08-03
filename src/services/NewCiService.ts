@@ -240,9 +240,10 @@ export class NewCiService implements ICiService {
   }
 
   async fireEvents(tokenId: string, tabId: string) {
-    // Aceptar términos. 1 -> Aceptar términos
+    // Aceptar términos y completar formulario del MEF de Consulta/Reclamación 
+    // o Denuncia en Materia de Relaciones de Consumo
     const events = [
-      // Formulario SII!!!
+      // Formulario MEF - Datos del trámite
       {
         frmId: "6687",
         attId: "12295",
@@ -800,6 +801,8 @@ export class NewCiService implements ICiService {
 
   /**
    * Performs a GET request to the MEF portal and saves the response
+   * This method uses the MEF "Consulta/Reclamación o Denuncia en Materia de Relaciones de Consumo" form
+   * to access citizen information through the official government portal.
    * @param document - The document number to check
    * @param options - Optional parameters for the check
    * @param options.ignoreCache - If true, bypasses cache and performs a fresh check

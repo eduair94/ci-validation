@@ -22,7 +22,7 @@ export class LoteriaUyCiService implements ICiService {
   }
 
   /**
-   * Consulta información de una cédula en el servicio oficial de la Lotería Nacional
+   * Consulta información de una cédula en el formulario oficial del MEF
    * Deprecated
    */
   async queryCiInfoOld(ci: string): Promise<CiQueryResponse> {
