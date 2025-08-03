@@ -732,8 +732,8 @@ export class NewCiService implements ICiService {
 
         await this.generateTask(tabId, tokenId, formData);
         await this.firePersonaFisicaEvent(tokenId, tabId);
-        await this.queryCy(document, tokenId, tabId);
       }
+      await this.queryCy(document, tokenId, tabId);
       const res = await this.fireFinalEvent(tokenId, tabId);
       if (res && res.cedula) {
         console.log(`✅ Document ${document} found:`, res);
