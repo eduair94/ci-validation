@@ -83,13 +83,23 @@
       ]
     },
     {
-      "source": "/(.*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2))",
+      "source": "/static/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
         }
       ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ],
+      "continue": true
     }
   ],
   "redirects": [
