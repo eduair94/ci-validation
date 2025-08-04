@@ -1,4 +1,14 @@
-# API de Validación de Cédulas Uruguayas
+# API de Validación de Cédula> **📅 ACTUALIZACIÓN CRÍTICA 04/08/2025**: 
+> 
+> **🚨 CRISIS OPERACIONAL GUBERNAMENTAL**: El endpoint vulnerable fue deshabilitado, pero esto **ROMPIÓ COMPLETAMENTE** el sistema de trámites:
+> - ❌ **Formularios de identificación NO FUNCIONAN**: Cualquier cédula ingresada es rechazada como "inválida"
+> - ❌ **Trámites para personas físicas IMPOSIBLES**: Los ciudadanos no pueden completar trámites que requieren identificación con cédula
+> - ⚠️ **Otros formularios AÚN VULNERABLES**: El endpoint sigue activo en otros formularios gubernamentales con autocompletado de datos personales
+> - 🔄 **Solución incompleta**: Se deshabilitó solo UN formulario, pero la vulnerabilidad persiste en múltiples puntos del sistema
+> 
+> **📊 Estado actual**: Los servicios gubernamentales están **PARCIALMENTE ROTOS** - ni seguros ni funcionales.
+> 
+> Ver [reporte completo actualizado](./SECURITY_VULNERABILITY.md) para detalles técnicos. Uruguayas
 
 ## 🚨 ALERTA DE SEGURIDAD PÚBLICA 🚨
 
