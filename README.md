@@ -344,3 +344,5 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 
 ### ⚠️ Seguridad
 - **[⚠️ Reporte de Vulnerabilidad de Seguridad](./SECURITY_VULNERABILITY.md)** - Información sobre la vulnerabilidad encontrada en servicios gubernamentales
+- **[� Informe Técnico de Vulnerabilidad IDOR](./TECHNICAL_VULNERABILITY_REPORT.md)** - Análisis técnico detallado de la vulnerabilidad
+- **[�🛡️ Política de Seguridad y VDP](./SECURITY.md)** - Programa de Divulgación Responsable de Vulnerabilidades
