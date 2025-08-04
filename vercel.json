@@ -1,41 +1,41 @@
 {
   "version": 2,
-  "routes": [
+  "rewrites": [
     {
-      "src": "/demo",
-      "dest": "/api/demo-page.ts"
+      "source": "/demo",
+      "destination": "/api/demo-page"
     },
     {
-      "src": "/api/demo",
-      "dest": "/api/demo.ts"
+      "source": "/api/demo",
+      "destination": "/api/demo"
     },
     {
-      "src": "/api-docs",
-      "dest": "/api/api-docs.ts"
+      "source": "/api-docs",
+      "destination": "/api/api-docs"
     },
     {
-      "src": "/api/swagger.json",
-      "dest": "/api/swagger.json.ts"
+      "source": "/api/swagger.json",
+      "destination": "/api/swagger.json"
     },
     {
-      "src": "/api/ci/validate",
-      "dest": "/api/validate.ts"
+      "source": "/api/ci/validate",
+      "destination": "/api/validate"
     },
     {
-      "src": "/api/validate",
-      "dest": "/api/validate.ts"
+      "source": "/api/validate",
+      "destination": "/api/validate"
     },
     {
-      "src": "/api/ci/demo",
-      "dest": "/api/demo.ts"
+      "source": "/api/ci/demo",
+      "destination": "/api/demo"
     },
     {
-      "src": "/health",
-      "dest": "/api/health.ts"
+      "source": "/health",
+      "destination": "/api/health"
     },
     {
-      "src": "/",
-      "dest": "/public/index.html"
+      "source": "/",
+      "destination": "/index.html"
     }
   ],
   "headers": [
