@@ -1,6 +1,16 @@
-# API de Validación de Cédula> **📅 ACTUALIZACIÓN CRÍTICA 04/08/2025**: 
+# API de Validación de Cédulas Uruguayas
+
+> **📅 ACTUALIZACIÓN TÉCNICA 04/08/2025**: 
 > 
-> **🚨 CRISIS OPERACIONAL GUBERNAMENTAL**: El endpoint vulnerable fue deshabilitado, pero esto **ROMPIÓ COMPLETAMENTE** el sistema de trámites:
+> **� MEJORAS IMPLEMENTADAS**:
+> - ✅ **Extracción de datos mejorada**: Soporte para el nuevo formato de formularios AIN_FRM_GRAL_DATOS_PERSONALES
+> - ✅ **Información adicional**: Tipo de documento, país emisor, y componentes individuales de nombres y apellidos
+> - ✅ **Manejo de errores optimizado**: Mensajes más descriptivos y manejo específico por tipo de error
+> - ✅ **Validación mejorada**: Verificación de formato de cédula antes del procesamiento
+> - ✅ **Compatibilidad dual**: Funciona con formatos antiguos y nuevos de formularios gubernamentales
+> - ✅ **Logging mejorado**: Mayor detalle en los logs para debugging y monitoreo
+> 
+> **�🚨 CRISIS OPERACIONAL GUBERNAMENTAL**: El endpoint vulnerable fue deshabilitado, pero esto **ROMPIÓ COMPLETAMENTE** el sistema de trámites:
 > - ❌ **Formularios de identificación NO FUNCIONAN**: Cualquier cédula ingresada es rechazada como "inválida"
 > - ❌ **Trámites para personas físicas IMPOSIBLES**: Los ciudadanos no pueden completar trámites que requieren identificación con cédula
 > - ⚠️ **Otros formularios AÚN VULNERABLES**: El endpoint sigue activo en otros formularios gubernamentales con autocompletado de datos personales
@@ -8,7 +18,7 @@
 > 
 > **📊 Estado actual**: Los servicios gubernamentales están **PARCIALMENTE ROTOS** - ni seguros ni funcionales.
 > 
-> Ver [reporte completo actualizado](./SECURITY_VULNERABILITY.md) para detalles técnicos. Uruguayas
+> Ver [reporte completo actualizado](./SECURITY_VULNERABILITY.md) para detalles técnicos.
 
 ## 🚨 ALERTA DE SEGURIDAD PÚBLICA 🚨
 
@@ -33,11 +43,42 @@
 
 ---
 
-> ⚠️ **CONTEXTO**: Este proyecto fue desarrollado tras descubrir una vulnerabilidad de seguridad en servicios gubernamentales. Lee el [**Reporte de Vulnerabilidad**](./SECURITY_VULNERABILITY.md) para más información.
-
 Una API RESTful construida con TypeScript y Express siguiendo los principios SOLID para validar cédulas de identidad uruguayas y consultar información a través del formulario oficial del MEF (Ministerio de Economía y Finanzas).
 
-> **� ACTUALIZACIÓN CRÍTICA 02/08/2025**: Todos los endpoints gubernamentales han sido inhabilitados. El endpoint del MEF ahora retorna error `{"message":"Lo sentimos, ocurrió un error al ejecutarse la operación.","status":1000}`. Solo la validación algorítmica local permanece funcional. Ver [reporte completo](./SECURITY_VULNERABILITY.md) para detalles.
+## 🆕 Nuevas Características (Agosto 2025)
+
+### 📋 **Extracción de Datos Mejorada**
+- **Tipo de documento**: Identifica si es Cédula de Identidad, Pasaporte u Otro
+- **País emisor**: Detecta el país que emitió el documento (Uruguay, Argentina, etc.)
+- **Componentes individuales**: Extrae primer nombre, segundo nombre, primer apellido, segundo apellido por separado
+- **Compatibilidad dual**: Funciona con formatos antiguos y nuevos de formularios
+
+### 🔧 **Mejoras Técnicas**
+- **Validación previa**: Verifica formato de cédula antes del procesamiento
+- **Manejo de errores optimizado**: Mensajes específicos por tipo de error
+- **Logging avanzado**: Mayor detalle para debugging y monitoreo
+- **Performance mejorado**: Tiempos de procesamiento optimizados
+- **Configuración validada**: Verificación automática de configuración del servicio
+
+### 📊 **Datos Adicionales Extraídos**
+```json
+{
+  "success": true,
+  "data": {
+    "persona": {
+      "nombre": "EDELMA",
+      "apellido": "de SOUZA", 
+      "cedula": "14115499",
+      "tipoDocumento": "Cédula de Identidad",
+      "paisEmisor": "URUGUAY",
+      "primerNombre": "EDELMA",
+      "primerApellido": "de SOUZA",
+      "processingTime": 1250,
+      "hasSession": true
+    }
+  }
+}
+```
 
 ## 📦 Paquete NPM Disponible
 
