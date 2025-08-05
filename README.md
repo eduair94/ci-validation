@@ -1,4 +1,9 @@
-# API de Validación de Cédulas Uruguayas
+# API de Val **📊 ESTADO ACTUAL DE SERVICIOS GUBERNAMENTALES**:
+> - ✅ **Formulario AIN solucionado**: La vulnerabilidad en https://tramites.ain.gub.uy ha sido corregida mediante autenticación requerida
+> - ❌ **Formularios MEF inoperativos**: Los formularios del Ministerio de Economía rechazan cédulas válidas como inválidas
+> - ❌ **Formularios de Lotería inoperativos**: Todos los formularios que requieren cédula permanecen fuera de servicio desde 31/07/2025
+> 
+> **📊 Estado actual**: Mejoras en seguridad implementadas, algunos servicios aún presentan problemas operativos. de Cédulas Uruguayas
 
 > **📅 ACTUALIZACIÓN TÉCNICA 04/08/2025**: 
 > 
@@ -20,26 +25,26 @@
 > 
 > Ver [reporte completo actualizado](./SECURITY_VULNERABILITY.md) para detalles técnicos.
 
-## 🚨 ALERTA DE SEGURIDAD PÚBLICA 🚨
+## � Contexto de Seguridad Pública
 
-> ### ⚠️ **IMPORTANTE PARA TODOS LOS URUGUAYOS** ⚠️
+> ### ⚠️ **Información para Ciudadanos Uruguayos**
 > 
-> **Este proyecto fue desarrollado y hecho público debido a:**
+> **Este proyecto surge del análisis de seguridad en sistemas públicos debido a:**
 > 
-> 🔴 **FALTA DE INCENTIVOS MONETARIOS** para reportes de seguridad en entes públicos  
-> 🔴 **AUSENCIA DE PROGRAMAS DE BUG BOUNTY** gubernamentales  
-> 🔴 **NULA RESPUESTA** a reportes responsables de vulnerabilidades  
-> 🔴 **FALTA DE ACCIONES CORRECTIVAS** ante problemas de seguridad reportados  
+> � **Ausencia de programas de recompensas** por reportes de seguridad en entidades públicas  
+> � **Falta de canales formales** para reportar vulnerabilidades en sistemas gubernamentales  
+> � **Necesidad de transparencia** en el estado de la ciberseguridad pública  
+> 🔍 **Importancia de la educación ciudadana** sobre protección de datos personales  
 > 
-> **🎯 OBJETIVO**: Concientizar a los ciudadanos uruguayos sobre lo **POCO CUIDADO** que está el sistema informático de los entes públicos, donde la información personal de todos nosotros está expuesta sin protección adecuada.
+> **🎯 Objetivo**: Informar sobre el estado de los sistemas informáticos públicos y promover mejores prácticas de seguridad en el manejo de información ciudadana.
 >
-> **📋 Este trabajo se hace público para:**
-> - Generar presión social para que se solucionen estos problemas
-> - Mostrar la realidad del estado de la ciberseguridad pública
-> - Educar sobre la importancia de proteger datos personales
-> - Exigir transparencia y responsabilidad en la gestión de sistemas públicos
+> **📋 Este proyecto contribuye a:**
+> - Generar conciencia sobre la importancia de la ciberseguridad pública
+> - Documentar el estado actual de los sistemas gubernamentales
+> - Promover la transparencia en la gestión de sistemas públicos
+> - Educar sobre buenas prácticas de protección de datos
 >
-> Lee el [**📄 Reporte Completo de Vulnerabilidad**](./SECURITY_VULNERABILITY.md) para entender la gravedad del problema.
+> Consulte el [**📄 Reporte de Vulnerabilidades**](./SECURITY_VULNERABILITY.md) para información técnica detallada.
 
 ---
 
@@ -157,7 +162,7 @@ import { validateCI, validateCIAndQuery } from 'ci-validation';
 // Validación simple
 console.log(validateCI('19119365')); // true
 
-// Validación con consulta
+// Validación con consulta (servicios gubernamentales con disponibilidad limitada)
 const result = await validateCIAndQuery('19119365');
 console.log(result);
 ```
@@ -168,9 +173,11 @@ console.log(result);
 # Instalar globalmente para usar desde línea de comandos
 npm install -g ci-validation
 
+```bash
 # Usar el CLI
 ci-validate 19119365
-ci-validate 19119365 --query
+ci-validate 19119365 --query  # Consulta a servicios gubernamentales (disponibilidad limitada)
+```
 ```
 
 ### Clonar el Repositorio (Desarrollo)
