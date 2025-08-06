@@ -2,6 +2,7 @@
 > - ✅ **Formulario AIN solucionado**: La vulnerabilidad en https://tramites.ain.gub.uy ha sido corregida mediante autenticación requerida
 > - ❌ **Formularios MEF inoperativos**: Los formularios del Ministerio de Economía rechazan cédulas válidas como inválidas
 > - ❌ **Formularios de Lotería inoperativos**: Todos los formularios que requieren cédula permanecen fuera de servicio desde 31/07/2025
+> - ❌ **Formulario CGN afectado**: Devolución de timbre judicial con autocompletado no funcional por dependencia de API deshabilitada
 > 
 > **📊 Estado actual**: Mejoras en seguridad implementadas, algunos servicios aún presentan problemas operativos. de Cédulas Uruguayas
 
