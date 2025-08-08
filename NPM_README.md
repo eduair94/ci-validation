@@ -6,7 +6,7 @@
 
 Una librería TypeScript/JavaScript completa para validar cédulas de identidad uruguayas siguiendo el algoritmo oficial y consultando información a través de servicios gubernamentales.
 
-> **� ACTUALIZACIÓN CRÍTICA 02/08/2025**: Todos los endpoints gubernamentales han sido inhabilitados. El endpoint del MEF retorna error `{"message":"Lo sentimos, ocurrió un error al ejecutarse la operación.","status":1000}`. Solo la validación algorítmica local permanece funcional. Los formularios oficiales de Lotería y MEF no funcionan.
+> **🚨 ACTUALIZACIÓN CRÍTICA 07/08/2025**: La vulnerabilidad en sistemas gubernamentales ha resurgido. El formulario MEF (https://www.tramitesenlinea.mef.gub.uy) vuelve a exponer fecha de nacimiento y nombres sin autenticación adecuada. El sistema de autenticación implementado no verifica correctamente la identidad. Solo use la validación algorítmica local para evitar comprometer información personal.
 
 ## ⚡ Instalación
 

@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { CiQueryResponse, ICiService } from "../interfaces/ICiService";
-import { NewCiService } from "./NewCiServiceDeprecated2";
+import { NewCiService } from "./NewCiService";
 
 export class LoteriaUyCiService implements ICiService {
   private readonly baseUrl = "https://www.mef.gub.uy/bandejatramites/action";

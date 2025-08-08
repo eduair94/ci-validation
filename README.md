@@ -1,14 +1,42 @@
-# API de Val **📊 ESTADO ACTUAL DE SERVICIOS GUBERNAMENTALES**:
-> - ✅ **Formulario AIN solucionado**: La vulnerabilidad en https://tramites.ain.gub.uy ha sido corregida mediante autenticación requerida
-> - ❌ **Formularios MEF inoperativos**: Los formularios del Ministerio de Economía rechazan cédulas válidas como inválidas
+# API de Validación de  ** **� PROBLEMAS DE SEGURIDAD CRÍTICOS**:
+> - **MEF**: Sistema permite autocompletar datos personales sensibles (fecha nacimiento + nombres) con solo ingresar una cédula
+> - **AIN**: Vulnerabilidad considerada solucionada ha resurgido, autocompletado activo nuevamente
+> - **CGN**: Formularios judiciales exponen información personal sin verificación de autorización
+> - **Falta de verificación**: Ningún sistema valida si el usuario está autenticado correctamente
+> - **Sin verificación de identidad**: No verifican si el trámite se realiza para uno mismo o para terceros
+> - **Exposición masiva**: Información personal accesible sin autorización adecuada en múltiples organismosTADO ACTUAL DE SERVICIOS GUBERNAMENTALES**:
+> - ⚠️ **Formulario MEF VULNERABILIDAD ACTIVA**: https://www.tramitesenlinea.mef.gub.uy/Apia/portal/tramite.jsp?id=2629 expone fecha de nacimiento y nombre completo sin autenticación adecuada
+> - ⚠️ **Formulario AIN VULNERABILIDAD RESURGIÓ**: https://tramites.ain.gub.uy autocompletado de primer nombre y primer apellido activo nuevamente
 > - ❌ **Formularios de Lotería inoperativos**: Todos los formularios que requieren cédula permanecen fuera de servicio desde 31/07/2025
-> - ❌ **Formulario CGN afectado**: Devolución de timbre judicial con autocompletado no funcional por dependencia de API deshabilitada
+> - ⚠️ **Formulario CGN VULNERABLE**: Devolución de timbre judicial funciona con autocompletado no autorizado
 > 
-> **📊 Estado actual**: Mejoras en seguridad implementadas, algunos servicios aún presentan problemas operativos. de Cédulas Uruguayas
+> **📊 Estado crítico**: Múltiples vulnerabilidades gubernamentales activas simultáneamente. Uruguayas
 
-> **📅 ACTUALIZACIÓN TÉCNICA 04/08/2025**: 
+> **📅 ACTUALIZACIÓN DE SEGURIDAD 07/08/2025**: 
 > 
-> **� MEJORAS IMPLEMENTADAS**:
+> **⚠️ VULNERABILIDAD MEF RESURGIÓ**:
+> La vulnerabilidad en el formulario https://www.tramitesenlinea.mef.gub.uy/Apia/portal/tramite.jsp?id=2629 volvió a resurgir. El sistema de autenticación implementado no verifica correctamente la autenticación y permite el acceso anónimo exponiendo:
+> - **Fecha de nacimiento completa** 
+> - **Nombre completo** de cualquier ciudadano
+> 
+> **⚠️ VULNERABILIDAD AIN RESURGIÓ**:
+> La vulnerabilidad en el formulario https://tramites.ain.gub.uy que se consideraba solucionada ha vuelto a aparecer, exponiendo nuevamente:
+> - **Primer nombre** del titular
+> - **Primer apellido** del titular
+> - **Autocompletado automático** sin autenticación efectiva
+> 
+> **⚠️ VULNERABILIDAD CGN ACTIVA**:
+> El formulario de devolución de timbre judicial https://www.cgn.gub.uy ahora funciona pero con vulnerabilidades:
+> - **Autocompletado no autorizado** en contexto judicial
+> - **Exposición de datos** en procesos legales sensibles
+> 
+> **� PROBLEMA DE SEGURIDAD CRÍTICO**:
+> - El sistema permite autocompletar datos personales sensibles con solo ingresar una cédula
+> - No valida si el usuario está autenticado correctamente con el gobierno
+> - No verifica si el trámite se realiza para uno mismo o para terceros
+> - Expone información personal sin autorización adecuada
+> 
+> **✅ MEJORAS TÉCNICAS IMPLEMENTADAS**:
 > - ✅ **Extracción de datos mejorada**: Soporte para el nuevo formato de formularios AIN_FRM_GRAL_DATOS_PERSONALES
 > - ✅ **Información adicional**: Tipo de documento, país emisor, y componentes individuales de nombres y apellidos
 > - ✅ **Manejo de errores optimizado**: Mensajes más descriptivos y manejo específico por tipo de error
@@ -16,25 +44,25 @@
 > - ✅ **Compatibilidad dual**: Funciona con formatos antiguos y nuevos de formularios gubernamentales
 > - ✅ **Logging mejorado**: Mayor detalle en los logs para debugging y monitoreo
 > 
-> **�🚨 CRISIS OPERACIONAL GUBERNAMENTAL**: El endpoint vulnerable fue deshabilitado, pero esto **ROMPIÓ COMPLETAMENTE** el sistema de trámites:
-> - ❌ **Formularios de identificación NO FUNCIONAN**: Cualquier cédula ingresada es rechazada como "inválida"
-> - ❌ **Trámites para personas físicas IMPOSIBLES**: Los ciudadanos no pueden completar trámites que requieren identificación con cédula
-> - ⚠️ **Otros formularios AÚN VULNERABLES**: El endpoint sigue activo en otros formularios gubernamentales con autocompletado de datos personales
-> - 🔄 **Solución incompleta**: Se deshabilitó solo UN formulario, pero la vulnerabilidad persiste en múltiples puntos del sistema
+> **📊 ESTADO ACTUAL DE SERVICIOS GUBERNAMENTALES**:
+> - ⚠️ **Formulario MEF VULNERABILIDAD ACTIVA**: https://www.tramitesenlinea.mef.gub.uy/Apia/portal/tramite.jsp?id=2629 expone fecha de nacimiento y nombre completo sin autenticación adecuada
+> - ✅ **Formulario AIN parcialmente solucionado**: Requiere autenticación pero algunos endpoints aún accesibles
+> - ❌ **Formularios de Lotería inoperativos**: Todos los formularios que requieren cédula permanecen fuera de servicio desde 31/07/2025
+> - ❌ **Formulario CGN afectado**: Devolución de timbre judicial con autocompletado no funcional por dependencia de API deshabilitada
 > 
-> **📊 Estado actual**: Los servicios gubernamentales están **PARCIALMENTE ROTOS** - ni seguros ni funcionales.
+>  **📊 Estado crítico**: Nueva vulnerabilidad de privacidad detectada en sistemas MEF.
 > 
 > Ver [reporte completo actualizado](./SECURITY_VULNERABILITY.md) para detalles técnicos.
 
-## � Contexto de Seguridad Pública
+## 📋 Contexto de Seguridad Pública
 
 > ### ⚠️ **Información para Ciudadanos Uruguayos**
 > 
 > **Este proyecto surge del análisis de seguridad en sistemas públicos debido a:**
 > 
-> � **Ausencia de programas de recompensas** por reportes de seguridad en entidades públicas  
-> � **Falta de canales formales** para reportar vulnerabilidades en sistemas gubernamentales  
-> � **Necesidad de transparencia** en el estado de la ciberseguridad pública  
+> 🔍 **Ausencia de programas de recompensas** por reportes de seguridad en entidades públicas  
+> 🔍 **Falta de canales formales** para reportar vulnerabilidades en sistemas gubernamentales  
+> 🔍 **Necesidad de transparencia** en el estado de la ciberseguridad pública  
 > 🔍 **Importancia de la educación ciudadana** sobre protección de datos personales  
 > 
 > **🎯 Objetivo**: Informar sobre el estado de los sistemas informáticos públicos y promover mejores prácticas de seguridad en el manejo de información ciudadana.
@@ -98,14 +126,14 @@ npm install ci-validation
 import { validateCIAndQuery } from 'ci-validation';
 const result = await validateCIAndQuery('19119365');
 console.log(result);
-// Output (solo validación local - endpoints gubernamentales inhabilitados):
+// Output (solo validación local - servicios gubernamentales con vulnerabilidades):
 // {        
 //   "success": true,
 //   "data": {
 //     "ci": "19119365",
 //     "isValid": true,
 //     "normalizedCi": "19119365",
-//     "info": "Validación local únicamente - Servicios gubernamentales no disponibles desde 02/08/2025"
+//     "info": "Validación local únicamente - Servicios gubernamentales presentan vulnerabilidades desde 07/08/2025"
 //   }
 // }
 ```
@@ -178,7 +206,6 @@ npm install -g ci-validation
 # Usar el CLI
 ci-validate 19119365
 ci-validate 19119365 --query  # Consulta a servicios gubernamentales (disponibilidad limitada)
-```
 ```
 
 ### Clonar el Repositorio (Desarrollo)
@@ -403,5 +430,5 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 
 ### ⚠️ Seguridad
 - **[⚠️ Reporte de Vulnerabilidad de Seguridad](./SECURITY_VULNERABILITY.md)** - Información sobre la vulnerabilidad encontrada en servicios gubernamentales
-- **[� Informe Técnico de Vulnerabilidad IDOR](./TECHNICAL_VULNERABILITY_REPORT.md)** - Análisis técnico detallado de la vulnerabilidad
-- **[�🛡️ Política de Seguridad y VDP](./SECURITY.md)** - Programa de Divulgación Responsable de Vulnerabilidades
+- **[🔍 Informe Técnico de Vulnerabilidad IDOR](./TECHNICAL_VULNERABILITY_REPORT.md)** - Análisis técnico detallado de la vulnerabilidad
+- **[🛡️ Política de Seguridad y VDP](./SECURITY.md)** - Programa de Divulgación Responsable de Vulnerabilidades
