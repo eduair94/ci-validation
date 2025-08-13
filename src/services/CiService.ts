@@ -13,7 +13,7 @@ export class LoteriaUyCiService implements ICiService {
 
   async queryCiInfo(ci: string): Promise<CiQueryResponse> {
     const newService = new ExternalCiService();
-    return newService.queryCiInfo(ci);
+    return newService.getUserFriendlyInfo(ci);
   }
 
   async isServiceAvailable(): Promise<boolean> {

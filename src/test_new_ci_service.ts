@@ -7,7 +7,7 @@ async function main() {
 
 async function check(ci: string) {
   const ciService = new ExternalCiService();
-  const res = await ciService.check(ci, { ignoreCache: true });
+  const res = await ciService.getUserFriendlyInfo(ci);
   console.log("Res", JSON.stringify(res, null, 2));
 }
 
