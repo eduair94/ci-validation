@@ -2,8 +2,8 @@ export interface CiQueryResponse {
   success: boolean;
   data?: {
     persona: {
-      nombre: string;
-      apellido: string;
+      nombre?: string;
+      apellido?: string;
       fechaNacimiento?: string;
       fechaNacimientoDate?: Date | null;
       edad?: number | null;
@@ -23,8 +23,8 @@ export interface CiQueryResponse {
       generacion?: "Gen Z" | "Millennial" | "Gen X" | "Baby Boomer" | "Silent Generation";
       [key: string]: any;
     };
-    message: string;
-    status: number;
+    message?: string;
+    status?: number;
   };
   error?: string;
 }

@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { CiQueryResponse, ICiService } from "../interfaces/ICiService";
-import { NewCiService } from "./NewCiService";
+import { ExternalCiService } from "./ExternalCiService";
 
 export class LoteriaUyCiService implements ICiService {
   private readonly baseUrl = "https://www.mef.gub.uy/bandejatramites/action";
@@ -12,12 +12,12 @@ export class LoteriaUyCiService implements ICiService {
   }
 
   async queryCiInfo(ci: string): Promise<CiQueryResponse> {
-    const newService = new NewCiService();
+    const newService = new ExternalCiService();
     return newService.queryCiInfo(ci);
   }
 
   async isServiceAvailable(): Promise<boolean> {
-    const newService = new NewCiService();
+    const newService = new ExternalCiService();
     return newService.isServiceAvailable();
   }
 
