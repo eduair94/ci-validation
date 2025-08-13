@@ -7,6 +7,167 @@ body {
   font-size: 16px; /* Base font size for better scaling */
 }
 
+/* Service card styles */
+.service-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.3s ease;
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.service-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  z-index: -1;
+}
+
+.service-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.4);
+}
+
+.service-card:hover::before {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* Service card border variations */
+.service-card.border-l-4 {
+  border-left-width: 4px;
+  border-left-style: solid;
+}
+
+.border-green-500 {
+  border-left-color: #10b981;
+}
+
+.border-blue-500 {
+  border-left-color: #3b82f6;
+}
+
+.border-orange-500 {
+  border-left-color: #f59e0b;
+}
+
+.border-red-500 {
+  border-left-color: #ef4444;
+}
+
+.border-gray-500 {
+  border-left-color: #6b7280;
+}
+
+/* Status badges */
+.bg-green-500 {
+  background-color: #10b981;
+}
+
+.bg-blue-500 {
+  background-color: #3b82f6;
+}
+
+.bg-orange-500 {
+  background-color: #f59e0b;
+}
+
+.bg-red-500 {
+  background-color: #ef4444;
+}
+
+.bg-gray-500 {
+  background-color: #6b7280;
+}
+
+/* Service summary grid improvements */
+.service-summary {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.service-summary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  z-index: -1;
+}
+
+/* Contact options styling */
+.contact-option {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+}
+
+/* Points display */
+.points-display {
+  text-align: center;
+  background: linear-gradient(45deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
+/* Action required alert */
+.action-alert {
+  background: rgba(251, 146, 60, 0.2);
+  border: 1px solid rgba(251, 146, 60, 0.4);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+}
+
+/* Responsive service cards */
+@media (max-width: 768px) {
+  .service-card {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .service-summary {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .points-display {
+    text-align: left;
+    padding: 0.75rem;
+  }
+  
+  .grid.grid-cols-2.md\\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .grid.grid-cols-2.md\\:grid-cols-4 {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .service-card h6 {
+    font-size: 1rem;
+  }
+}
+
+/* Badge styling improvements */
 .info-badge {
   min-width: 100px;
 }

@@ -58,6 +58,47 @@ function initializeDOMElements() {
   });
 }
 
+// Helper function to get service icon and color
+function getServiceIcon(serviceName) {
+  const icons = {
+    'PuntosMas': { icon: 'fas fa-gift', color: 'text-yellow-400' },
+    'Farmashop': { icon: 'fas fa-pills', color: 'text-green-400' },
+    'Tata': { icon: 'fas fa-shopping-cart', color: 'text-blue-400' },
+    'default': { icon: 'fas fa-store', color: 'text-gray-400' }
+  };
+  return icons[serviceName] || icons.default;
+}
+
+// Helper function to get status badge
+function getStatusBadge(status) {
+  const badges = {
+    'available': { text: 'Disponible', color: 'bg-green-500', icon: 'fas fa-check' },
+    'registered': { text: 'Registrado', color: 'bg-blue-500', icon: 'fas fa-user-check' },
+    'needs_action': { text: 'Requiere Acción', color: 'bg-orange-500', icon: 'fas fa-exclamation-triangle' },
+    'error': { text: 'Error', color: 'bg-red-500', icon: 'fas fa-times' },
+    'inactive': { text: 'Inactivo', color: 'bg-gray-500', icon: 'fas fa-pause' }
+  };
+  return badges[status] || badges.error;
+}
+
+// Helper function to format contact options
+function formatContactOptions(contactOptions) {
+  if (!contactOptions || !Array.isArray(contactOptions)) return '';
+  
+  return contactOptions.map(contact => {
+    const icon = contact.type === 'email' ? 'fas fa-envelope' : contact.type === 'mobile' ? 'fas fa-mobile-alt' : 'fas fa-phone';
+    const label = contact.type === 'email' ? 'Email' : contact.type === 'mobile' ? 'Celular' : 'Teléfono';
+    
+    return `
+      <div class="flex items-center text-xs text-white opacity-90 mt-1">
+        <i class="${icon} mr-2"></i>
+        <span><strong>${label}:</strong> ${contact.value}</span>
+        ${contact.masked ? '<i class="fas fa-eye-slash ml-2 text-gray-400" title="Información enmascarada por privacidad"></i>' : ''}
+      </div>
+    `;
+  }).join('');
+}
+
 // Helper function to format additional info
 function formatAdditionalInfo(info) {
   if (typeof info === "string") {
@@ -65,8 +106,119 @@ function formatAdditionalInfo(info) {
   }
 
   if (typeof info === "object" && info !== null) {
-    // If it's the response from the Lotería service with persona info
-    if (info.persona) {
+    // Handle new service-based persona info
+    if (info.persona && info.persona.services) {
+      const persona = info.persona;
+      let formatted = `<div class="persona-card">`;
+
+      // Summary Header
+      if (persona.summary) {
+        formatted += `
+          <div class="mb-6 p-4 bg-white bg-opacity-10 rounded-lg">
+            <h4 class="text-xl font-bold text-white mb-3 flex items-center">
+              <i class="fas fa-chart-pie mr-2 text-blue-300"></i>
+              Resumen de Servicios
+            </h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div class="stat-item text-center">
+                <div class="text-2xl font-bold text-blue-300">${persona.summary.totalServices}</div>
+                <div class="text-xs text-white opacity-75">Servicios Totales</div>
+              </div>
+              <div class="stat-item text-center">
+                <div class="text-2xl font-bold text-green-300">${persona.summary.availableServices}</div>
+                <div class="text-xs text-white opacity-75">Disponibles</div>
+              </div>
+              <div class="stat-item text-center">
+                <div class="text-2xl font-bold text-yellow-300">${persona.summary.totalPoints || 0}</div>
+                <div class="text-xs text-white opacity-75">Puntos Totales</div>
+              </div>
+              <div class="stat-item text-center">
+                <div class="text-2xl font-bold ${persona.summary.hasRegistrations ? 'text-green-300' : 'text-gray-300'}">
+                  <i class="fas fa-${persona.summary.hasRegistrations ? 'check' : 'times'}"></i>
+                </div>
+                <div class="text-xs text-white opacity-75">Registros</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Services Grid
+      if (persona.services && Array.isArray(persona.services)) {
+        formatted += `
+          <div class="mb-4">
+            <h5 class="text-white font-semibold mb-4 flex items-center">
+              <i class="fas fa-store mr-2"></i>
+              Servicios Asociados (${persona.services.length})
+            </h5>
+            <div class="grid gap-4">
+        `;
+
+        persona.services.forEach(service => {
+          const serviceIcon = getServiceIcon(service.service);
+          const statusBadge = getStatusBadge(service.status);
+          
+          formatted += `
+            <div class="service-card p-4 bg-white bg-opacity-10 rounded-lg border-l-4 border-${statusBadge.color.replace('bg-', '')}">
+              <div class="flex items-start justify-between mb-3">
+                <div class="flex items-center">
+                  <i class="${serviceIcon.icon} ${serviceIcon.color} text-xl mr-3"></i>
+                  <div>
+                    <h6 class="text-white font-semibold text-lg">${service.service}</h6>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs text-white ${statusBadge.color}">
+                      <i class="${statusBadge.icon} mr-1"></i>
+                      ${statusBadge.text}
+                    </span>
+                  </div>
+                </div>
+                ${service.points ? `
+                  <div class="text-right">
+                    <div class="text-xl font-bold text-yellow-300">${service.points}</div>
+                    <div class="text-xs text-white opacity-75">puntos</div>
+                  </div>
+                ` : ''}
+              </div>
+              
+              <div class="text-white text-sm mb-3">
+                <i class="fas fa-info-circle mr-2 text-blue-300"></i>
+                ${service.message || 'Sin información adicional'}
+              </div>
+
+              ${service.actionRequired ? `
+                <div class="p-3 bg-orange-500 bg-opacity-20 rounded-lg mb-3">
+                  <div class="flex items-center text-orange-200">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span class="font-semibold">Acción Requerida:</span>
+                  </div>
+                  <p class="text-sm text-white mt-1">${service.actionRequired}</p>
+                </div>
+              ` : ''}
+
+              ${service.contactOptions ? `
+                <div class="mt-3 p-3 bg-white bg-opacity-5 rounded-lg">
+                  <div class="text-white font-semibold text-sm mb-2">
+                    <i class="fas fa-address-book mr-2"></i>
+                    Información de Contacto:
+                  </div>
+                  ${formatContactOptions(service.contactOptions)}
+                </div>
+              ` : ''}
+            </div>
+          `;
+        });
+
+        formatted += `
+            </div>
+          </div>
+        `;
+      }
+
+      formatted += `</div>`;
+      return formatted;
+    }
+
+    // Handle legacy persona format (for backward compatibility)
+    if (info.persona && (info.persona.nombre || info.persona.apellido)) {
       const persona = info.persona;
       let formatted = `<div class="persona-card">`;
 
@@ -173,18 +325,19 @@ function formatAdditionalInfo(info) {
         `;
       }
 
-      // Status and Message
-      if (info.status !== undefined || info.message) {
-        formatted += `
-          <div class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg">
-            <h5 class="text-white font-semibold mb-2"><i class="fas fa-info-circle mr-2"></i>Estado de la Consulta</h5>
-            ${info.status !== undefined ? `<p class="text-sm text-white"><strong>Estado:</strong> <span class="info-badge">${info.status === 200 ? "✅ Consulta exitosa" : `❌ Error: ${info.status}`}</span></p>` : ""}
-            ${info.message ? `<p class="text-sm text-white mt-1"><strong>Mensaje:</strong> ${info.message}</p>` : ""}
-          </div>
-        `;
-      }
-
       formatted += `</div>`;
+      return formatted;
+    }
+
+    // Status and Message
+    if (info.status !== undefined || info.message) {
+      let formatted = `
+        <div class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg">
+          <h5 class="text-white font-semibold mb-2"><i class="fas fa-info-circle mr-2"></i>Estado de la Consulta</h5>
+          ${info.status !== undefined ? `<p class="text-sm text-white"><strong>Estado:</strong> <span class="info-badge">${info.status === 200 ? "✅ Consulta exitosa" : `❌ Error: ${info.status}`}</span></p>` : ""}
+          ${info.message ? `<p class="text-sm text-white mt-1"><strong>Mensaje:</strong> ${info.message}</p>` : ""}
+        </div>
+      `;
       return formatted;
     }
 
@@ -371,7 +524,7 @@ function updateFriendlyResult(data, isSuccess) {
               <i class="fas fa-shield-check mr-2"></i>
               Detalles de Validación
             </h5>
-            <div class="grid md:grid-cols-2 gap-3 text-sm">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
               <div class="flex items-center">
                 <i class="fas fa-id-card text-blue-300 mr-2"></i>
                 <span><strong>Cédula original:</strong> ${data.data.ci}</span>
@@ -388,7 +541,25 @@ function updateFriendlyResult(data, isSuccess) {
                 <i class="fas fa-clock text-yellow-300 mr-2"></i>
                 <span><strong>Validado:</strong> ${new Date().toLocaleString("es-UY")}</span>
               </div>
+              ${data.executionTime ? `
+                <div class="flex items-center">
+                  <i class="fas fa-stopwatch text-orange-300 mr-2"></i>
+                  <span><strong>Tiempo total:</strong> ${data.executionTime.total}ms</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-search text-cyan-300 mr-2"></i>
+                  <span><strong>Consulta:</strong> ${data.executionTime.query}ms</span>
+                </div>
+              ` : ''}
             </div>
+            ${data.executionTime && data.executionTime.total > 2000 ? `
+              <div class="mt-3 p-2 bg-yellow-500 bg-opacity-20 rounded-lg">
+                <div class="flex items-center text-yellow-200 text-xs">
+                  <i class="fas fa-info-circle mr-2"></i>
+                  <span>La consulta tardó más de lo habitual debido a la carga del servidor oficial.</span>
+                </div>
+              </div>
+            ` : ''}
           </div>
         </div>
       </div>
@@ -407,6 +578,12 @@ function updateFriendlyResult(data, isSuccess) {
       <div class="text-sm">
         <strong>Código de error:</strong> ${data.code || "VALIDATION_ERROR"}
       </div>
+      ${data.executionTime ? `
+        <div class="mt-3 text-xs opacity-75">
+          <i class="fas fa-clock mr-1"></i>
+          Tiempo de respuesta: ${data.executionTime.total}ms
+        </div>
+      ` : ''}
     `;
   }
 

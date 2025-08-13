@@ -44,14 +44,16 @@ export class ExternalCiService implements ICiService {
   }
 
   async queryCiInfo(ci: string): Promise<CiQueryResponse> {
+    const requests = [new PuntosMas(ci).getPoints(), new Farmashop(ci).getPoints(), new Tata(ci).getPoints()];
+    const responses = await Promise.allSettled(requests);
     return {
       success: true,
       data: {
         persona: {
           cedula: ci,
-          puntosMas: await new PuntosMas(ci).getPoints(),
-          farmashop: await new Farmashop(ci).getPoints(),
-          tata: await new Tata(ci).getPoints(),
+          puntosMas: responses[0].status === "fulfilled" ? responses[0].value : null,
+          farmashop: responses[1].status === "fulfilled" ? responses[1].value : null,
+          tata: responses[2].status === "fulfilled" ? responses[2].value : null,
         },
       },
     };
