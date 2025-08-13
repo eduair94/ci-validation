@@ -1,5 +1,6 @@
 import { CiQueryResponse, ICiService } from "../lib";
 import Farmashop from "./Farmashop";
+import { ForumService } from "./Forum";
 import PuntosMas from "./PuntosMas";
 import { SanRoqueService } from "./SanRoque";
 import { SisiService } from "./Sisi";
@@ -48,12 +49,14 @@ export class ExternalCiService implements ICiService {
   async queryCiInfo(ci: string): Promise<CiQueryResponse> {
     const sisiService = new SisiService();
     const sanRoqueService = new SanRoqueService();
+    const forumService = new ForumService();
     const requests = [
       new PuntosMas(ci).getPoints(), 
       new Farmashop(ci).getPoints(), 
       new Tata(ci).getPoints(), 
       sisiService.checkUser({ ci }),
-      sanRoqueService.checkMember({ ci })
+      sanRoqueService.checkMember({ ci }),
+      forumService.checkMember({ ci })
     ];
     const responses = await Promise.allSettled(requests);
     return {
@@ -66,6 +69,7 @@ export class ExternalCiService implements ICiService {
           tata: responses[2].status === "fulfilled" ? responses[2].value : null,
           sisi: responses[3].status === "fulfilled" ? responses[3].value : null,
           sanRoque: responses[4].status === "fulfilled" ? responses[4].value : null,
+          forum: responses[5].status === "fulfilled" ? responses[5].value : null,
         },
       },
     };
@@ -277,6 +281,39 @@ export class ExternalCiService implements ICiService {
             message: persona.sanRoque.error || "Error al consultar el servicio San Roque",
           });
           errors.push(`San Roque: ${persona.sanRoque.error || "Error de conexión"}`);
+        }
+      }
+
+      // Process Forum
+      if (persona.forum) {
+        if (persona.forum.success && persona.forum.hasUser && persona.forum.member) {
+          availableServices++;
+          const member = persona.forum.member;
+          const points = persona.forum.points?.available || 0;
+          
+          if (points > 0) {
+            totalPoints += points;
+          }
+
+          services.push({
+            service: "Forum",
+            status: points > 0 ? "available" : member.status === "no_points" ? "registered" : "available",
+            points: points,
+            message: `${points > 0 ? `${points} puntos disponibles` : "Miembro registrado sin puntos"}`,
+          });
+        } else if (persona.forum.success && !persona.forum.hasUser) {
+          services.push({
+            service: "Forum",
+            status: "not_registered",
+            message: "No estás registrado en el programa Forum",
+          });
+        } else {
+          services.push({
+            service: "Forum",
+            status: "error",
+            message: persona.forum.error || "Error al consultar el servicio Forum",
+          });
+          errors.push(`Forum: ${persona.forum.error || "Error de conexión"}`);
         }
       }
 

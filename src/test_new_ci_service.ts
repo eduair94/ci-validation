@@ -1,6 +1,6 @@
 import { ExternalCiService } from "./services/ExternalCiService";
 async function main() {
-  const ci = "49402245";
+  const ci = "19119365";
   await check(ci);
   //await check(ci);
 }
