@@ -800,6 +800,11 @@ export class NewCiService implements ICiService {
     }
   }
 
+  fixWhiteSpaces(str: string) {
+    if (!str) return "";
+    return str.replace(/\s+/g, " ").trim();
+  }
+
   async check(document: string, options?: any, att?: number): Promise<NewCiResponse> {
     const anvService = new ANV();
     const res = await anvService.buscarPersona(document).then((response) => response);
@@ -807,9 +812,9 @@ export class NewCiService implements ICiService {
     if (res.success && res.data) {
       return {
         cedula: document,
-        nombres: res.data.primer_nombre + " " + res.data.segundo_nombre,
-        apellidos: res.data.primer_apellido + " " + res.data.segundo_apellido,
-        fechaNacimiento: res.data.fecha_nacimiento,
+        nombres: this.fixWhiteSpaces(res.data.primer_nombre?.trim() + " " + res.data.segundo_nombre?.trim()),
+        apellidos: this.fixWhiteSpaces(res.data.primer_apellido?.trim() + " " + res.data.segundo_apellido?.trim()),
+        fechaNacimiento: res.data.fecha_nacimiento?.trim(),
       };
     }
 

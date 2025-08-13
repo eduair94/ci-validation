@@ -106,10 +106,213 @@ function formatAdditionalInfo(info) {
   }
 
   if (typeof info === "object" && info !== null) {
+    // Handle simple data format (nombre, apellido, fechaNacimiento, etc.)
+    if (info.nombre || info.apellido || info.fechaNacimiento || info.tipoDocumento) {
+      let formatted = `<div class="persona-card">`;
+      
+      // Header with name and basic info
+      if (info.nombre || info.apellido) {
+        formatted += `
+          <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
+            <div>
+              <h4 class="text-xl font-bold text-white">${info.nombre && info.apellido ? `${info.nombre} ${info.apellido}` : info.nombre || info.apellido}</h4>
+              ${info.tipoDocumento ? `<p class="text-sm text-white opacity-75">${info.tipoDocumento}</p>` : ""}
+              ${info.paisEmisor ? `<p class="text-sm text-white opacity-75">${info.paisEmisor}</p>` : ""}
+            </div>
+            <div class="text-right">
+              ${info.cedula ? `<div class="info-badge"><i class="fas fa-id-card mr-1"></i>${info.cedula}</div>` : ""}
+            </div>
+          </div>
+        `;
+      }
+
+      // Basic Information Grid
+      formatted += `<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">`;
+
+      // Birth Date
+      if (info.fechaNacimiento) {
+        formatted += `
+          <div class="stat-item">
+            <div class="text-2xl text-white mb-1">
+              <i class="fas fa-birthday-cake text-yellow-400"></i>
+            </div>
+            <div class="text-white text-sm font-semibold">
+              Fecha de Nacimiento
+            </div>
+            <div class="text-xs text-white opacity-75 mt-1">${info.fechaNacimiento}</div>
+          </div>
+        `;
+      }
+
+      // Document Type
+      if (info.tipoDocumento) {
+        formatted += `
+          <div class="stat-item">
+            <div class="text-2xl text-white mb-1">
+              <i class="fas fa-id-card text-blue-400"></i>
+            </div>
+            <div class="text-white text-sm font-semibold">
+              ${info.tipoDocumento}
+            </div>
+            ${info.paisEmisor ? `<div class="text-xs text-white opacity-75 mt-1">${info.paisEmisor}</div>` : ""}
+          </div>
+        `;
+      }
+
+      // Processing Time
+      if (info.processingTime) {
+        formatted += `
+          <div class="stat-item">
+            <div class="text-2xl text-white mb-1">
+              <i class="fas fa-stopwatch text-orange-400"></i>
+            </div>
+            <div class="text-white text-sm font-semibold">
+              ${info.processingTime}ms
+            </div>
+            <div class="text-xs text-white opacity-75 mt-1">Tiempo de consulta</div>
+          </div>
+        `;
+      }
+
+      formatted += `</div>`;
+
+      // Name components if available
+      if (info.primerNombre || info.primerApellido) {
+        formatted += `
+          <div class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg">
+            <h5 class="text-white font-semibold mb-2"><i class="fas fa-user-tag mr-2"></i>Componentes del Nombre</h5>
+            <div class="flex flex-wrap gap-2">
+              ${info.primerNombre ? `<span class="info-badge"><i class="fas fa-star mr-1"></i>Primer nombre: ${info.primerNombre}</span>` : ""}
+              ${info.segundoNombre ? `<span class="info-badge"><i class="fas fa-plus mr-1"></i>Segundo nombre: ${info.segundoNombre}</span>` : ""}
+              ${info.primerApellido ? `<span class="info-badge"><i class="fas fa-star mr-1"></i>Primer apellido: ${info.primerApellido}</span>` : ""}
+              ${info.segundoApellido ? `<span class="info-badge"><i class="fas fa-plus mr-1"></i>Segundo apellido: ${info.segundoApellido}</span>` : ""}
+            </div>
+          </div>
+        `;
+      }
+
+      // Session information
+      if (info.hasSession !== undefined) {
+        formatted += `
+          <div class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg">
+            <h5 class="text-white font-semibold mb-2"><i class="fas fa-server mr-2"></i>Estado de la Sesión</h5>
+            <div class="flex items-center">
+              <i class="fas fa-${info.hasSession ? 'check' : 'times'} mr-2 ${info.hasSession ? 'text-green-400' : 'text-red-400'}"></i>
+              <span class="text-white text-sm">${info.hasSession ? 'Sesión activa' : 'Sin sesión'}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      formatted += `</div>`;
+      return formatted;
+    }
+
     // Handle new service-based persona info
     if (info.persona && info.persona.services) {
       const persona = info.persona;
       let formatted = `<div class="persona-card">`;
+
+      // Personal Information Header FIRST
+      if (persona.nombre || persona.apellido) {
+        formatted += `
+          <div class="flex items-center justify-between mb-6 gap-3 flex-wrap">
+            <div>
+              <h4 class="text-3xl font-bold text-white">${persona.nombreCompleto || `${persona.nombre || ''} ${persona.apellido || ''}`.trim()}</h4>
+              ${persona.iniciales ? `<p class="text-lg text-white opacity-75">Iniciales: ${persona.iniciales}</p>` : ""}
+            </div>
+            <div class="text-right">
+              ${persona.cedula ? `<div class="info-badge text-lg"><i class="fas fa-id-card mr-2"></i>${persona.cedula}</div>` : ""}
+            </div>
+          </div>
+        `;
+
+        // Personal Information Grid
+        formatted += `<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">`;
+
+        // Age and Birth Date
+        if (persona.edad !== undefined && persona.edad !== null || persona.fechaNacimiento !== undefined && persona.fechaNacimiento !== null) {
+          formatted += `
+            <div class="stat-item">
+              <div class="text-3xl text-white mb-2">
+                <i class="fas fa-birthday-cake text-yellow-400"></i>
+              </div>
+              <div class="text-white text-base font-semibold">
+                ${persona.edad !== undefined && persona.edad !== null ? `${persona.edad} años` : "Fecha de Nacimiento"}
+              </div>
+              ${persona.fechaNacimiento !== undefined && persona.fechaNacimiento !== null ? `<div class="text-sm text-white opacity-75 mt-1">${persona.fechaNacimiento}</div>` : ""}
+            </div>
+          `;
+        }
+
+        // Gender
+        if (persona.genero) {
+          const genderIcon = persona.genero.genero === "masculino" ? "mars" : persona.genero.genero === "femenino" ? "venus" : "genderless";
+          const genderClass = persona.genero.genero === "masculino" ? "gender-male" : persona.genero.genero === "femenino" ? "gender-female" : "gender-unknown";
+          const confidenceColor = persona.genero.confianza === "alta" ? "text-green-400" : persona.genero.confianza === "media" ? "text-yellow-400" : "text-gray-400";
+
+          formatted += `
+            <div class="stat-item">
+              <div class="text-3xl text-white mb-2 flex items-center justify-center">
+                <i class="fas fa-${genderIcon} ${genderClass}"></i>
+              </div>
+              <div class="text-white text-base font-semibold capitalize">
+                ${persona.genero.genero}
+              </div>
+              <div class="text-sm ${confidenceColor} mt-1">
+                Confianza: ${persona.genero.confianza}
+              </div>
+            </div>
+          `;
+        }
+
+        // Generation
+        if (persona.generacion) {
+          const genIcon = persona.generacion === "Gen Z" ? "mobile-alt" : persona.generacion === "Millennial" ? "laptop" : persona.generacion === "Gen X" ? "tv" : "radio";
+
+          formatted += `
+            <div class="stat-item">
+              <div class="text-3xl text-white mb-2">
+                <i class="fas fa-${genIcon} text-purple-400"></i>
+              </div>
+              <div class="generation-badge">
+                <i class="fas fa-users mr-1"></i>
+                ${persona.generacion}
+              </div>
+            </div>
+          `;
+        }
+
+        // Name Statistics
+        if (persona.cantidadNombres !== undefined) {
+          formatted += `
+            <div class="stat-item">
+              <div class="text-3xl text-white mb-2">
+                <i class="fas fa-signature text-blue-400"></i>
+              </div>
+              <div class="text-white text-base font-semibold">
+                ${persona.cantidadNombres} nombre${persona.cantidadNombres !== 1 ? "s" : ""}
+              </div>
+              ${persona.longitudNombre ? `<div class="text-sm text-white opacity-75 mt-1">${persona.longitudNombre} caracteres</div>` : ""}
+            </div>
+          `;
+        }
+
+        formatted += `</div>`;
+
+        // Name details
+        if (persona.genero && persona.genero.primerNombre) {
+          formatted += `
+            <div class="mb-6 p-4 bg-white bg-opacity-10 rounded-lg">
+              <h5 class="text-white font-semibold mb-3"><i class="fas fa-user-tag mr-2"></i>Detalles del Nombre</h5>
+              <div class="flex flex-wrap gap-2">
+                ${persona.genero.primerNombre ? `<span class="info-badge"><i class="fas fa-star mr-1"></i>Primer nombre: ${persona.genero.primerNombre}</span>` : ""}
+                ${persona.tieneSegundoNombre !== undefined ? `<span class="info-badge"><i class="fas fa-${persona.tieneSegundoNombre ? "check" : "times"} mr-1"></i>${persona.tieneSegundoNombre ? "Tiene" : "No tiene"} segundo nombre</span>` : ""}
+              </div>
+            </div>
+          `;
+        }
+      }
 
       // Summary Header
       if (persona.summary) {
@@ -218,17 +421,19 @@ function formatAdditionalInfo(info) {
     }
 
     // Handle legacy persona format (for backward compatibility)
-    if (info.persona && (info.persona.nombre || info.persona.apellido)) {
+    if (info.persona && (info.persona.nombre || info.persona.apellido || info.persona.cedula || info.persona.fechaNacimiento)) {
       const persona = info.persona;
       let formatted = `<div class="persona-card">`;
 
       // Header with name and basic info
-      if (persona.nombre && persona.apellido) {
+      if (persona.nombre || persona.apellido) {
         formatted += `
           <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
             <div>
-              <h4 class="text-xl font-bold text-white">${persona.nombreCompleto || `${persona.nombre} ${persona.apellido}`}</h4>
+              <h4 class="text-xl font-bold text-white">${persona.nombreCompleto || `${persona.nombre || ''} ${persona.apellido || ''}`.trim()}</h4>
               ${persona.iniciales ? `<p class="text-sm text-white opacity-75">Iniciales: ${persona.iniciales}</p>` : ""}
+              ${persona.tipoDocumento ? `<p class="text-sm text-white opacity-75">${persona.tipoDocumento}</p>` : ""}
+              ${persona.paisEmisor ? `<p class="text-sm text-white opacity-75">${persona.paisEmisor}</p>` : ""}
             </div>
             <div class="text-right">
               ${persona.cedula ? `<div class="info-badge"><i class="fas fa-id-card mr-1"></i>${persona.cedula}</div>` : ""}
@@ -248,9 +453,39 @@ function formatAdditionalInfo(info) {
               <i class="fas fa-birthday-cake text-yellow-400"></i>
             </div>
             <div class="text-white text-sm font-semibold">
-              ${persona.edad !== undefined && persona.edad !== null ? `${persona.edad} años` : "Edad no disponible"}
+              ${persona.edad !== undefined && persona.edad !== null ? `${persona.edad} años` : "Fecha de Nacimiento"}
             </div>
             ${persona.fechaNacimiento !== undefined && persona.fechaNacimiento !== null ? `<div class="text-xs text-white opacity-75 mt-1">${persona.fechaNacimiento}</div>` : ""}
+          </div>
+        `;
+      }
+
+      // Document Type
+      if (persona.tipoDocumento) {
+        formatted += `
+          <div class="stat-item">
+            <div class="text-2xl text-white mb-1">
+              <i class="fas fa-id-card text-purple-400"></i>
+            </div>
+            <div class="text-white text-sm font-semibold">
+              ${persona.tipoDocumento}
+            </div>
+            ${persona.paisEmisor ? `<div class="text-xs text-white opacity-75 mt-1">${persona.paisEmisor}</div>` : ""}
+          </div>
+        `;
+      }
+
+      // Processing Time
+      if (persona.processingTime) {
+        formatted += `
+          <div class="stat-item">
+            <div class="text-2xl text-white mb-1">
+              <i class="fas fa-stopwatch text-orange-400"></i>
+            </div>
+            <div class="text-white text-sm font-semibold">
+              ${persona.processingTime}ms
+            </div>
+            <div class="text-xs text-white opacity-75 mt-1">Tiempo de consulta</div>
           </div>
         `;
       }
@@ -311,6 +546,21 @@ function formatAdditionalInfo(info) {
 
       formatted += `</div>`;
 
+      // Name components if available
+      if (persona.primerNombre || persona.primerApellido) {
+        formatted += `
+          <div class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg">
+            <h5 class="text-white font-semibold mb-2"><i class="fas fa-user-tag mr-2"></i>Componentes del Nombre</h5>
+            <div class="flex flex-wrap gap-2">
+              ${persona.primerNombre ? `<span class="info-badge"><i class="fas fa-star mr-1"></i>Primer nombre: ${persona.primerNombre}</span>` : ""}
+              ${persona.segundoNombre ? `<span class="info-badge"><i class="fas fa-plus mr-1"></i>Segundo nombre: ${persona.segundoNombre}</span>` : ""}
+              ${persona.primerApellido ? `<span class="info-badge"><i class="fas fa-star mr-1"></i>Primer apellido: ${persona.primerApellido}</span>` : ""}
+              ${persona.segundoApellido ? `<span class="info-badge"><i class="fas fa-plus mr-1"></i>Segundo apellido: ${persona.segundoApellido}</span>` : ""}
+            </div>
+          </div>
+        `;
+      }
+
       // Additional Name Details
       if (persona.genero && (persona.genero.primerNombre || persona.genero.segundoNombre)) {
         formatted += `
@@ -320,6 +570,19 @@ function formatAdditionalInfo(info) {
               ${persona.genero.primerNombre ? `<span class="info-badge"><i class="fas fa-star mr-1"></i>Primer nombre: ${persona.genero.primerNombre}</span>` : ""}
               ${persona.genero.segundoNombre ? `<span class="info-badge"><i class="fas fa-plus mr-1"></i>Segundo nombre: ${persona.genero.segundoNombre}</span>` : ""}
               ${persona.tieneSegundoNombre !== undefined ? `<span class="info-badge"><i class="fas fa-${persona.tieneSegundoNombre ? "check" : "times"} mr-1"></i>${persona.tieneSegundoNombre ? "Tiene" : "No tiene"} segundo nombre</span>` : ""}
+            </div>
+          </div>
+        `;
+      }
+
+      // Session information
+      if (persona.hasSession !== undefined) {
+        formatted += `
+          <div class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg">
+            <h5 class="text-white font-semibold mb-2"><i class="fas fa-server mr-2"></i>Estado de la Sesión</h5>
+            <div class="flex items-center">
+              <i class="fas fa-${persona.hasSession ? 'check' : 'times'} mr-2 ${persona.hasSession ? 'text-green-400' : 'text-red-400'}"></i>
+              <span class="text-white text-sm">${persona.hasSession ? 'Sesión activa' : 'Sin sesión'}</span>
             </div>
           </div>
         `;
