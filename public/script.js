@@ -421,7 +421,7 @@ function formatAdditionalInfo(info) {
     }
 
     // Handle legacy persona format (for backward compatibility)
-    if (info.persona && (info.persona.nombre || info.persona.apellido || info.persona.cedula || info.persona.fechaNacimiento)) {
+    if (info.persona && (info.persona.nombre || info.persona.apellido || info.persona.fechaNacimiento)) {
       const persona = info.persona;
       let formatted = `<div class="persona-card">`;
 
