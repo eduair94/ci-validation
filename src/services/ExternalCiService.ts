@@ -5,7 +5,7 @@ import Tata from "./Tata";
 
 // Interface for user-friendly response
 export interface ContactOption {
-  type: 'email' | 'mobile' | 'phone' | 'other';
+  type: "email" | "mobile" | "phone" | "other";
   value: string;
   masked?: boolean;
 }
@@ -23,13 +23,16 @@ export interface FriendlyServiceData {
 export interface FriendlyCiResponse {
   success: boolean;
   cedula: string;
-  summary: {
-    totalServices: number;
-    availableServices: number;
-    totalPoints: number;
-    hasRegistrations: boolean;
+  data: {
+    summary: {
+      totalServices: number;
+      availableServices: number;
+      totalPoints: number;
+      hasRegistrations: boolean;
+    };
+    services: FriendlyServiceData[];
   };
-  services: FriendlyServiceData[];
+  error?: string;
   errors?: string[];
 }
 
@@ -64,13 +67,16 @@ export class ExternalCiService implements ICiService {
         return {
           success: false,
           cedula: ci,
-          summary: {
-            totalServices: 0,
-            availableServices: 0,
-            totalPoints: 0,
-            hasRegistrations: false,
+          data: {
+            summary: {
+              totalServices: 0,
+              availableServices: 0,
+              totalPoints: 0,
+              hasRegistrations: false,
+            },
+            services: [],
           },
-          services: [],
+          error: [rawResponse.error || "Failed to fetch data"].join(", "),
           errors: [rawResponse.error || "Failed to fetch data"],
         };
       }
@@ -111,11 +117,12 @@ export class ExternalCiService implements ICiService {
 
           if (content.valid) {
             availableServices++;
-            const contactOptions: ContactOption[] = content.options?.map((opt: any) => ({
-              type: opt.type === 'email' ? 'email' : 'mobile',
-              value: opt.value,
-              masked: opt.value.includes('*')
-            })) || [];
+            const contactOptions: ContactOption[] =
+              content.options?.map((opt: any) => ({
+                type: opt.type === "email" ? "email" : "mobile",
+                value: opt.value,
+                masked: opt.value.includes("*"),
+              })) || [];
 
             services.push({
               service: "Farmashop",
@@ -147,9 +154,9 @@ export class ExternalCiService implements ICiService {
           // Active member with contact data
           availableServices++;
           const contactOptions: ContactOption[] = persona.tata.map((contact: any) => ({
-            type: contact.type === 'EMAIL' ? 'email' : 'other',
+            type: contact.type === "EMAIL" ? "email" : "other",
             value: contact.contactData,
-            masked: contact.contactData.includes('*')
+            masked: contact.contactData.includes("*"),
           }));
 
           services.push({
@@ -189,26 +196,32 @@ export class ExternalCiService implements ICiService {
       return {
         success: true,
         cedula: ci,
-        summary: {
-          totalServices: services.length,
-          availableServices: availableServices,
-          totalPoints: totalPoints,
-          hasRegistrations: services.some((s) => ["registered", "available"].includes(s.status)),
+        data: {
+          summary: {
+            totalServices: services.length,
+            availableServices: availableServices,
+            totalPoints: totalPoints,
+            hasRegistrations: services.some((s) => ["registered", "available"].includes(s.status)),
+          },
+          services: services,
         },
-        services: services,
+        error: errors.length > 0 ? errors.join(", ") : undefined,
         errors: errors.length > 0 ? errors : undefined,
       };
     } catch (error) {
       return {
         success: false,
         cedula: ci,
-        summary: {
-          totalServices: 0,
-          availableServices: 0,
-          totalPoints: 0,
-          hasRegistrations: false,
+        data: {
+          summary: {
+            totalServices: 0,
+            availableServices: 0,
+            totalPoints: 0,
+            hasRegistrations: false,
+          },
+          services: [],
         },
-        services: [],
+        error: [error instanceof Error ? error.message : "Unknown error occurred"].join(", "),
         errors: [error instanceof Error ? error.message : "Unknown error occurred"],
       };
     }
