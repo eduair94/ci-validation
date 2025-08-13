@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from "axios";
 
 // Request interface for Forum API
 export interface ForumRequest {
@@ -9,7 +9,7 @@ export interface ForumRequest {
 export interface ForumMember {
   ci: string;
   idCliente: string;
-  status: 'active' | 'no_points' | 'not_registered';
+  status: "active" | "no_points" | "not_registered";
   executionTime: number;
 }
 
@@ -36,21 +36,21 @@ interface ForumApiResponse {
 }
 
 export class ForumService {
-  private readonly baseUrl = 'https://www.forum.com.uy/puntos/consulta';
-  
+  private readonly baseUrl = "https://www.forum.com.uy/puntos/consulta";
+
   private readonly headers = {
-    'Accept': '*/*',
-    'Accept-Language': 'es-ES,es;q=0.9,bg;q=0.8',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
-    'Content-Type': 'application/json',
-    'Origin': 'https://www.forum.com.uy',
-    'Pragma': 'no-cache',
-    'Referer': 'https://www.forum.com.uy/puntos',
-    'Sec-Fetch-Dest': 'empty',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Site': 'same-origin',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36'
+    Accept: "*/*",
+    "Accept-Language": "es-ES,es;q=0.9,bg;q=0.8",
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+    "Content-Type": "application/json",
+    Origin: "https://www.forum.com.uy",
+    Pragma: "no-cache",
+    Referer: "https://www.forum.com.uy/puntos",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
   };
 
   /**
@@ -60,25 +60,21 @@ export class ForumService {
    */
   async checkMember(request: ForumRequest): Promise<ForumResponse> {
     const startTime = Date.now();
-    
+
     try {
       const payload = {
         documento: request.ci,
-        recaptcha: "logged in"
+        recaptcha: "logged in",
       };
 
-      const response: AxiosResponse<ForumApiResponse> = await axios.post(
-        this.baseUrl,
-        payload,
-        { headers: this.headers }
-      );
+      const response: AxiosResponse<ForumApiResponse> = await axios.post(this.baseUrl, payload, { headers: this.headers });
 
       return this.parseResponse(response.data, request.ci, Date.now() - startTime);
     } catch (error) {
       return {
         success: false,
         hasUser: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: error instanceof Error ? error.message : "Unknown error occurred",
       };
     }
   }
@@ -100,28 +96,28 @@ export class ForumService {
           hasUser: true,
           member: {
             ci,
-            idCliente: apiResponse.idCliente || '',
-            status: 'no_points',
-            executionTime
+            idCliente: apiResponse.idCliente || "",
+            status: "no_points",
+            executionTime,
           },
           points: {
             available: 0,
-            minimumExchange: apiResponse.minimoCanje || 0
-          }
+            minimumExchange: apiResponse.minimoCanje || 0,
+          },
         };
       } else if (apiResponse.message.includes("No se encontró un cliente")) {
         // User not registered
         return {
           success: true,
           hasUser: false,
-          error: "Usuario no registrado en el programa Forum"
+          error: "Usuario no registrado en el programa Forum",
         };
       } else {
         // Other error
         return {
           success: false,
           hasUser: false,
-          error: apiResponse.message.replace(/<[^>]*>/g, '') // Remove HTML tags
+          error: apiResponse.message.replace(/<[^>]*>/g, ""), // Remove HTML tags
         };
       }
     } else {
@@ -132,13 +128,13 @@ export class ForumService {
         member: {
           ci,
           idCliente: apiResponse.idCliente,
-          status: 'active',
-          executionTime
+          status: "active",
+          executionTime,
         },
         points: {
           available: apiResponse.puntos,
-          minimumExchange: apiResponse.minimoCanje || 0
-        }
+          minimumExchange: apiResponse.minimoCanje || 0,
+        },
       };
     }
   }

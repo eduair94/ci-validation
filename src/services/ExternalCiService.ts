@@ -4,6 +4,7 @@ import { ForumService } from "./Forum";
 import PuntosMas from "./PuntosMas";
 import { SanRoqueService } from "./SanRoque";
 import { SisiService } from "./Sisi";
+import { SmiService } from "./Smi";
 import Tata from "./Tata";
 
 // Interface for user-friendly response
@@ -50,14 +51,8 @@ export class ExternalCiService implements ICiService {
     const sisiService = new SisiService();
     const sanRoqueService = new SanRoqueService();
     const forumService = new ForumService();
-    const requests = [
-      new PuntosMas(ci).getPoints(), 
-      new Farmashop(ci).getPoints(), 
-      new Tata(ci).getPoints(), 
-      sisiService.checkUser({ ci }),
-      sanRoqueService.checkMember({ ci }),
-      forumService.checkMember({ ci })
-    ];
+    const smiService = new SmiService();
+    const requests = [new PuntosMas(ci).getPoints(), new Farmashop(ci).getPoints(), new Tata(ci).getPoints(), sisiService.checkUser({ ci }), sanRoqueService.checkMember({ ci }), forumService.checkMember({ ci }), smiService.checkUser({ ci })];
     const responses = await Promise.allSettled(requests);
     return {
       success: true,
@@ -70,6 +65,7 @@ export class ExternalCiService implements ICiService {
           sisi: responses[3].status === "fulfilled" ? responses[3].value : null,
           sanRoque: responses[4].status === "fulfilled" ? responses[4].value : null,
           forum: responses[5].status === "fulfilled" ? responses[5].value : null,
+          smi: responses[6].status === "fulfilled" ? responses[6].value : null,
         },
       },
     };
@@ -254,7 +250,7 @@ export class ExternalCiService implements ICiService {
           availableServices++;
           const member = persona.sanRoque.member;
           const points = persona.sanRoque.points?.available || 0;
-          
+
           if (points > 0) {
             totalPoints += points;
           }
@@ -290,7 +286,7 @@ export class ExternalCiService implements ICiService {
           availableServices++;
           const member = persona.forum.member;
           const points = persona.forum.points?.available || 0;
-          
+
           if (points > 0) {
             totalPoints += points;
           }
@@ -314,6 +310,64 @@ export class ExternalCiService implements ICiService {
             message: persona.forum.error || "Error al consultar el servicio Forum",
           });
           errors.push(`Forum: ${persona.forum.error || "Error de conexión"}`);
+        }
+      }
+
+      // Process SMI
+      if (persona.smi) {
+        if (persona.smi.success && persona.smi.hasUser && persona.smi.member) {
+          availableServices++;
+          const member = persona.smi.member;
+          const userData = member.userData;
+
+          // Extract contact options if userData is available
+          const contactOptions: ContactOption[] = [];
+          if (userData) {
+            if (userData.perMail && userData.perMail !== "") {
+              contactOptions.push({
+                type: "email",
+                value: userData.perMail,
+                masked: userData.perMail.includes("*"),
+              });
+            }
+            if (userData.domicTel && userData.domicTel !== "") {
+              contactOptions.push({
+                type: "phone",
+                value: userData.domicTel,
+                masked: userData.domicTel.includes("*"),
+              });
+            }
+          }
+
+          services.push({
+            service: "SMI",
+            status: "registered",
+            message: userData ? `Usuario registrado en SMI - ID: ${userData.perID}` : "Usuario registrado en SMI",
+            contactOptions: contactOptions.length > 0 ? contactOptions : undefined,
+          });
+        } else if (persona.smi.success && !persona.smi.hasUser) {
+          services.push({
+            service: "SMI",
+            status: "not_registered",
+            message: persona.smi.error === "no_user" ? "No estás registrado en SMI" : persona.smi.error || "No estás registrado en SMI",
+          });
+        } else {
+          // Handle authentication errors more gracefully
+          if (persona.smi.error && persona.smi.error.includes("autenticación")) {
+            services.push({
+              service: "SMI",
+              status: "needs_action",
+              message: "SMI requiere autenticación adicional",
+              actionRequired: "Iniciar sesión en SMI para verificar registro",
+            });
+          } else {
+            services.push({
+              service: "SMI",
+              status: "error",
+              message: persona.smi.error || "Error al consultar el servicio SMI",
+            });
+            errors.push(`SMI: ${persona.smi.error || "Error de conexión"}`);
+          }
         }
       }
 
