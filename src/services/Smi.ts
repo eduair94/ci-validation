@@ -1,6 +1,10 @@
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 import * as crypto from "crypto";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
 
 // Request interface for SMI API
 export interface SmiRequest {
@@ -80,19 +84,74 @@ export class SmiService {
   };
 
   /**
+   * Create axios instance with proxy configuration if available
+   * @returns Configured axios instance
+   */
+  private createAxiosInstance() {
+    const config: any = {
+      timeout: 40000,
+    };
+
+    // Support for simple PROXY URL format (e.g., http://179.27.158.18:80)
+    if (process.env.PROXY) {
+      try {
+        const proxyUrl = new URL(process.env.PROXY);
+        config.proxy = {
+          protocol: proxyUrl.protocol.replace(':', ''),
+          host: proxyUrl.hostname,
+          port: parseInt(proxyUrl.port, 10),
+        };
+
+        // Add proxy authentication if provided in URL
+        if (proxyUrl.username && proxyUrl.password) {
+          config.proxy.auth = {
+            username: proxyUrl.username,
+            password: proxyUrl.password,
+          };
+        }
+      } catch (error) {
+        console.error('Invalid PROXY URL format:', process.env.PROXY, error);
+      }
+    } 
+    // Fallback to individual environment variables for backward compatibility
+    else if (process.env.PROXY_HOST && process.env.PROXY_PORT) {
+      config.proxy = {
+        host: process.env.PROXY_HOST,
+        port: parseInt(process.env.PROXY_PORT, 10),
+      };
+
+      // Add proxy authentication if provided
+      if (process.env.PROXY_USERNAME && process.env.PROXY_PASSWORD) {
+        config.proxy.auth = {
+          username: process.env.PROXY_USERNAME,
+          password: process.env.PROXY_PASSWORD,
+        };
+      }
+
+      // Support for proxy protocol (http/https)
+      if (process.env.PROXY_PROTOCOL) {
+        config.proxy.protocol = process.env.PROXY_PROTOCOL;
+      }
+    }
+
+    return axios.create(config);
+  }
+
+  /**
    * Initialize session by making a GET request to the login page
    * @returns Promise with session initialization result
    */
   async initializeSession(): Promise<boolean> {
     try {
+      const axiosInstance = this.createAxiosInstance();
+      
       // First request to get initial cookies
-      const initialResponse = await axios.get(this.loginUrl, {
+      const initialResponse = await axiosInstance.get(this.loginUrl, {
         headers: {
           Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Language": "es-ES,es;q=0.9",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         },
-        timeout: 10000,
       });
 
       // Extract session cookies from first response
@@ -109,7 +168,7 @@ export class SmiService {
       }
 
       // Second request using the obtained cookies to get proper session state
-      const sessionResponse = await axios.get(this.loginUrl, {
+      const sessionResponse = await axiosInstance.get(this.loginUrl, {
         headers: {
           Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
           "Accept-Language": "es-ES,es;q=0.9",
@@ -133,7 +192,7 @@ export class SmiService {
       const cacheBuster = Date.now();
       const recoveryHash = this.sessionData.recoveryPageHash;
       const url = `${this.baseUrl}?${this.sessionData.recoveryPageHash},gx-no-cache=${cacheBuster}`;
-      const newSession = await axios.get(url, {
+      const newSession = await axiosInstance.get(url, {
         headers: {
           Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
           "Accept-Language": "es-ES,es;q=0.9",
@@ -255,6 +314,7 @@ export class SmiService {
    */
   async executeForgotPassword(): Promise<boolean> {
     try {
+      const axiosInstance = this.createAxiosInstance();
       const cacheBuster = Date.now();
       const hash = this.generateLoginPageHash(); // Use login page hash for forgot password action
       const url = `${this.loginUrl}?${hash},gx-no-cache=${cacheBuster}`;
@@ -277,7 +337,7 @@ export class SmiService {
         "X-GXAUTH-TOKEN": this.sessionData.gxAuthToken,
       };
 
-      const response: AxiosResponse<any> = await axios.post(url, payload, {
+      const response: AxiosResponse<any> = await axiosInstance.post(url, payload, {
         headers: requestHeaders,
         timeout: 10000,
       });
@@ -295,6 +355,7 @@ export class SmiService {
    */
   async initializeRecoveryPage(): Promise<boolean> {
     try {
+      const axiosInstance = this.createAxiosInstance();
       const getHeaders = {
         Accept: "*/*",
         "Accept-Language": "es-ES,es;q=0.9",
@@ -311,7 +372,7 @@ export class SmiService {
         AJAX_SECURITY_TOKEN: this.sessionData.ajaxSecurityToken,
       };
 
-      const response = await axios.get(this.baseUrl, {
+      const response = await axiosInstance.get(this.baseUrl, {
         headers: getHeaders,
         timeout: 10000,
       });
@@ -330,6 +391,7 @@ export class SmiService {
    */
   async performFinalValidation(finalUrl: string): Promise<any> {
     try {
+      const axiosInstance = this.createAxiosInstance();
       const cacheBuster = Date.now();
       const refererUrl = `${this.baseUrl}?${this.sessionData.recoveryPageHash},gx-no-cache=${cacheBuster}`;
 
@@ -352,7 +414,7 @@ export class SmiService {
         AJAX_SECURITY_TOKEN: this.sessionData.ajaxSecurityToken,
       };
 
-      const response = await axios.get(finalUrl, {
+      const response = await axiosInstance.get(finalUrl, {
         headers: validationHeaders,
         timeout: 10000,
       });
@@ -422,7 +484,7 @@ export class SmiService {
         AJAX_SECURITY_TOKEN: this.sessionData.ajaxSecurityToken,
         "X-GXAUTH-TOKEN": this.sessionData.gxAuthToken,
       };
-      const response: AxiosResponse<any> = await axios
+      const response: AxiosResponse<any> = await this.createAxiosInstance()
         .post(url, payload, {
           headers: requestHeaders,
           timeout: 10000, // 10 second timeout

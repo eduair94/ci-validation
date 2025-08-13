@@ -271,6 +271,77 @@ Valida una cédula de identidad uruguaya
 }
 ```
 
+### POST /api/ci/smi
+Consulta información específica de SMI (Sociedad de Medicina del Interior) por cédula
+
+**Request Body:**
+```json
+{
+  "ci": "19119365"
+}
+```
+
+**También disponible como GET:**
+```bash
+GET /api/ci/smi?ci=19119365
+```
+
+**Respuesta exitosa (usuario registrado):**
+```json
+{
+  "success": true,
+  "data": {
+    "success": true,
+    "hasUser": true,
+    "member": {
+      "ci": "19119365",
+      "status": "registered",
+      "executionTime": 1250,
+      "userData": {
+        "perID": "12345",
+        "perCI": "19119365",
+        "perMail": "user@email.com",
+        "domicTel": "099123456",
+        "isValidUser": true
+      }
+    }
+  },
+  "timestamp": "2025-08-13T12:00:00.000Z",
+  "executionTime": {
+    "total": 1300,
+    "validation": 5,
+    "query": 1250
+  }
+}
+```
+
+**Respuesta exitosa (usuario no registrado):**
+```json
+{
+  "success": true,
+  "data": {
+    "success": true,
+    "hasUser": false,
+    "error": "Usuario no registrado en SMI"
+  },
+  "timestamp": "2025-08-13T12:00:00.000Z",
+  "executionTime": {
+    "total": 800,
+    "validation": 5,
+    "query": 750
+  }
+}
+```
+
+**Respuesta con error:**
+```json
+{
+  "success": false,
+  "error": "Cédula inválida: formato incorrecto",
+  "code": "INVALID_FORMAT"
+}
+```
+
 ### GET /api/ci/demo
 Endpoint de demostración con una cédula de ejemplo
 
@@ -328,6 +399,7 @@ api/
 ├── index.ts          # Endpoint raíz (GET /)
 ├── health.ts         # Health check (GET /health)
 ├── validate.ts       # Validación (POST /api/ci/validate)
+├── smi.ts           # Consulta SMI (POST /api/ci/smi)
 └── demo.ts          # Demo API (GET /api/ci/demo)
 public/
 └── index.html       # Página demo (GET /demo)
@@ -344,6 +416,38 @@ public/
 
 - `NODE_ENV`: `production`
 - `PORT`: Puerto del servidor (automático en Vercel)
+
+#### Configuración de Proxy (Opcional)
+
+Para enrutar las peticiones HTTP a través de un servidor proxy, puedes usar cualquiera de estos métodos:
+
+**Método 1: URL completa (recomendado)**
+- `PROXY`: URL completa del proxy (ej: `http://179.27.158.18:80`)
+
+**Método 2: Variables individuales (para compatibilidad)**
+- `PROXY_HOST`: Dirección del servidor proxy (ej: `proxy.empresa.com`)
+- `PROXY_PORT`: Puerto del proxy (ej: `8080`)
+- `PROXY_PROTOCOL`: Protocolo del proxy (`http` o `https`, por defecto `http`)
+- `PROXY_USERNAME`: Usuario para autenticación del proxy (opcional)
+- `PROXY_PASSWORD`: Contraseña para autenticación del proxy (opcional)
+
+**Ejemplos de configuración en `.env`:**
+```bash
+# Método simple (recomendado)
+PROXY=http://179.27.158.18:80
+
+# Con autenticación
+PROXY=http://usuario:contraseña@proxy.empresa.com:8080
+
+# Método alternativo (variables individuales)
+PROXY_HOST=proxy.empresa.com
+PROXY_PORT=8080
+PROXY_PROTOCOL=http
+PROXY_USERNAME=mi_usuario
+PROXY_PASSWORD=mi_contraseña
+```
+
+> **Nota**: El soporte de proxy está disponible para todas las consultas a servicios externos (SMI, lotería, etc.)
 
 ## 📁 Estructura del Proyecto
 

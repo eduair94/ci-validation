@@ -26,6 +26,14 @@
       "destination": "/api/validate"
     },
     {
+      "source": "/api/ci/smi",
+      "destination": "/api/smi"
+    },
+    {
+      "source": "/api/smi",
+      "destination": "/api/smi"
+    },
+    {
       "source": "/api/ci/demo",
       "destination": "/api/demo"
     },

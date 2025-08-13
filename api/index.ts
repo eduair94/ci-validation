@@ -34,6 +34,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       endpoints: {
         health: "GET /health",
         validate: "POST /api/validate (body) | GET /api/validate?ci=xxx (query)",
+        smi: "POST /api/smi (body) | GET /api/smi?ci=xxx (query)",
         demo: "GET /api/demo",
         demoPage: "GET /demo",
         docs: "GET /api-docs",

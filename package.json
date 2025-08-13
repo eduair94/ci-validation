@@ -16,6 +16,7 @@
   },
   "scripts": {
     "test_smi": "ts-node src/services/Smi.test.ts",
+    "test_smi_api": "ts-node -e \"import('./api/smi').then(m => console.log('SMI API endpoint compiled successfully'))\"",
     "test_new_ci_service": "ts-node src/test_new_ci_service.ts",
     "dev": "nodemon src/index.ts",
     "build": "tsc && npm run build:cli && npm run build:npm",

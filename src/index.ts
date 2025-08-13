@@ -112,6 +112,7 @@ class App {
         endpoints: {
           health: "GET /health",
           validate: "POST /api/ci/validate (body) | GET /api/ci/validate?ci=xxx (query)",
+          smi: "POST /api/ci/smi (body) | GET /api/ci/smi?ci=xxx (query)",
           demo: "GET /api/ci/demo",
           demoPage: "GET /demo",
           docs: "GET /api-docs",
