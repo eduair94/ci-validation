@@ -19,12 +19,11 @@ export interface CiValidationData {
     | {
         persona: {
           nombre: string;
-          apellido: string;
         };
         message: string;
         status: number;
       }
-    | string;
+    | any;
 }
 
 export interface CiValidationRequest {
