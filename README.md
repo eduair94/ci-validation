@@ -9,10 +9,10 @@
 > - **Impacto**: Pérdida de conveniencia y eficiencia en trámites gubernamentales
 >
 > **✅❌ SOLUCIÓN AIN CON PROBLEMA OPERACIONAL**:
-> - **AIN**: Vulnerabilidad solucionada mediante remoción del endpoint de autocompletado
-> - **Consecuencia**: Todos los formularios AIN que dependían del autocompletado ahora están rotos
-> - **Estado**: Seguro pero no funcional - usuarios deben ingresar datos manualmente
-> - **Impacto**: Pérdida de funcionalidad en formularios de trámites gubernamentales
+> - **AIN**: Vulnerabilidad corregida mediante remoción del endpoint de autocompletado
+> - **Consecuencia**: La agenda de la aplicación dejó de funcionar por ausencia del autocompletado
+> - **Estado**: Seguro pero no funcional - usuarios no pueden usar la funcionalidad de agenda
+> - **Impacto**: Pérdida de funcionalidad crítica en la agenda de citas y trámites
 >
 > **🆘 NUEVA VULNERABILIDAD CRÍTICA DETECTADA**:
 > - **ANV**: Aplicación móvil oficial expone nombres completos, apellidos y fecha de nacimiento por autocompletado de cédula
@@ -23,7 +23,7 @@
 >
 > **🚨 ESTADO ACTUAL DE VULNERABILIDADES GUBERNAMENTALES**:
 > - **MEF**: ✅ **VULNERABILIDAD SOLUCIONADA** - Endpoint removido, pero ❌ **FORMULARIOS ROTOS** - Autocompletado no funciona
-> - **AIN**: ✅ **VULNERABILIDAD SOLUCIONADA** - Endpoint removido, pero ❌ **FORMULARIOS ROTOS** - Autocompletado no funciona
+> - **AIN**: ✅ **VULNERABILIDAD SOLUCIONADA** - Endpoint removido, pero ❌ **AGENDA ROTA** - Funcionalidad de agenda no funciona
 > - **ANV**: **NUEVA** - Aplicación móvil oficial expone información personal completa sin autenticación
 > - **Impacto operacional**: Remoción de endpoints MEF y AIN rompió funcionalidad de autocompletado en formularios gubernamentales
 > - **Sin verificación de identidad**: ANV no verifica si el trámite se realiza para uno mismo o para terceros
@@ -38,11 +38,11 @@
 > - **Fecha de nacimiento completa** 
 > - **Nombre completo** de cualquier ciudadano
 > 
-> **⚠️ VULNERABILIDAD AIN RESURGIÓ**:
-> La vulnerabilidad en el formulario https://tramites.ain.gub.uy que se consideraba solucionada ha vuelto a aparecer, exponiendo nuevamente:
-> - **Primer nombre** del titular
-> - **Primer apellido** del titular
-> - **Autocompletado automático** sin autenticación efectiva
+> **⚠️ VULNERABILIDAD AIN CORREGIDA**:
+> La vulnerabilidad en el formulario https://tramites.ain.gub.uy fue corregida mediante la remoción del endpoint de autocompletado, pero esto comprometió la funcionalidad de la agenda:
+> - **Primer nombre** del titular ya no se expone
+> - **Primer apellido** del titular ya no se expone
+> - **Agenda de la aplicación** dejó de funcionar por ausencia del autocompletado
 > 
 > **� PROBLEMA DE SEGURIDAD CRÍTICO**:
 > - El sistema permite autocompletar datos personales sensibles con solo ingresar una cédula
@@ -60,7 +60,7 @@
 > 
 > **📊 ESTADO ACTUAL DE SERVICIOS GUBERNAMENTALES**:
 > - ✅❌ **Formulario MEF SOLUCIONADO PERO ROTO**: Vulnerabilidad eliminada mediante remoción del endpoint, pero formularios no funcionan
-> - ✅❌ **Formulario AIN SOLUCIONADO PERO ROTO**: Vulnerabilidad eliminada mediante remoción del endpoint, pero formularios no funcionan
+> - ✅❌ **Formulario AIN SOLUCIONADO PERO ROTO**: Vulnerabilidad eliminada mediante remoción del endpoint, pero agenda no funciona
 > - ❌ **Formularios de Lotería inoperativos**: Todos los formularios que requieren cédula permanecen fuera de servicio desde 31/07/2025
 > - 🆘 **Aplicación ANV VULNERABILIDAD CRÍTICA**: App móvil oficial expone nombres, apellidos y fecha de nacimiento por autocompletado
 > 
