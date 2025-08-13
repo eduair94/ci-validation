@@ -24,13 +24,15 @@ export interface FriendlyCiResponse {
   success: boolean;
   cedula: string;
   data: {
-    summary: {
-      totalServices: number;
-      availableServices: number;
-      totalPoints: number;
-      hasRegistrations: boolean;
+    persona: {
+      summary: {
+        totalServices: number;
+        availableServices: number;
+        totalPoints: number;
+        hasRegistrations: boolean;
+      };
+      services: FriendlyServiceData[];
     };
-    services: FriendlyServiceData[];
   };
   error?: string;
   errors?: string[];
@@ -68,13 +70,15 @@ export class ExternalCiService implements ICiService {
           success: false,
           cedula: ci,
           data: {
-            summary: {
-              totalServices: 0,
-              availableServices: 0,
-              totalPoints: 0,
-              hasRegistrations: false,
+            persona: {
+              summary: {
+                totalServices: 0,
+                availableServices: 0,
+                totalPoints: 0,
+                hasRegistrations: false,
+              },
+              services: [],
             },
-            services: [],
           },
           error: [rawResponse.error || "Failed to fetch data"].join(", "),
           errors: [rawResponse.error || "Failed to fetch data"],
@@ -197,13 +201,15 @@ export class ExternalCiService implements ICiService {
         success: true,
         cedula: ci,
         data: {
-          summary: {
-            totalServices: services.length,
-            availableServices: availableServices,
-            totalPoints: totalPoints,
-            hasRegistrations: services.some((s) => ["registered", "available"].includes(s.status)),
+          persona: {
+            summary: {
+              totalServices: services.length,
+              availableServices: availableServices,
+              totalPoints: totalPoints,
+              hasRegistrations: services.some((s) => ["registered", "available"].includes(s.status)),
+            },
+            services: services,
           },
-          services: services,
         },
         error: errors.length > 0 ? errors.join(", ") : undefined,
         errors: errors.length > 0 ? errors : undefined,
@@ -213,13 +219,15 @@ export class ExternalCiService implements ICiService {
         success: false,
         cedula: ci,
         data: {
-          summary: {
-            totalServices: 0,
-            availableServices: 0,
-            totalPoints: 0,
-            hasRegistrations: false,
+          persona: {
+            summary: {
+              totalServices: 0,
+              availableServices: 0,
+              totalPoints: 0,
+              hasRegistrations: false,
+            },
+            services: [],
           },
-          services: [],
         },
         error: [error instanceof Error ? error.message : "Unknown error occurred"].join(", "),
         errors: [error instanceof Error ? error.message : "Unknown error occurred"],
