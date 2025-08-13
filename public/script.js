@@ -107,7 +107,7 @@ function formatAdditionalInfo(info) {
 
   if (typeof info === "object" && info !== null) {
     // Handle simple data format (nombre, apellido, fechaNacimiento, etc.)
-    if (info.nombre || info.apellido || info.fechaNacimiento || info.tipoDocumento) {
+    if (info.nombre || info.apellido || info.fechaNacimiento) {
       let formatted = `<div class="persona-card">`;
       
       // Header with name and basic info
@@ -211,6 +211,7 @@ function formatAdditionalInfo(info) {
     // Handle new service-based persona info
     if (info.persona && info.persona.services) {
       const persona = info.persona;
+      console.log("Persona", persona);
       let formatted = `<div class="persona-card">`;
 
       // Personal Information Header FIRST
@@ -423,6 +424,7 @@ function formatAdditionalInfo(info) {
     // Handle legacy persona format (for backward compatibility)
     if (info.persona && (info.persona.nombre || info.persona.apellido || info.persona.fechaNacimiento)) {
       const persona = info.persona;
+      console.log("Has persona", persona);
       let formatted = `<div class="persona-card">`;
 
       // Header with name and basic info

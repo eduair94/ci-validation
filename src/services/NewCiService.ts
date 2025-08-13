@@ -812,8 +812,8 @@ export class NewCiService implements ICiService {
     if (res.success && res.data) {
       return {
         cedula: document,
-        nombres: this.fixWhiteSpaces(res.data.primer_nombre?.trim() + " " + res.data.segundo_nombre?.trim()),
-        apellidos: this.fixWhiteSpaces(res.data.primer_apellido?.trim() + " " + res.data.segundo_apellido?.trim()),
+        nombres: res.data.primer_nombre || res.data.segundo_nombre ? this.fixWhiteSpaces(res.data.primer_nombre?.trim() + " " + res.data.segundo_nombre?.trim()) : "",
+        apellidos: res.data.primer_apellido || res.data.segundo_apellido ? this.fixWhiteSpaces(res.data.primer_apellido?.trim() + " " + res.data.segundo_apellido?.trim()) : "",
         fechaNacimiento: res.data.fecha_nacimiento?.trim(),
       };
     }
