@@ -15,7 +15,7 @@ async function main() {
 
 async function check(ci: string) {
   const ciService = new ExternalCiService();
-  const res = await ciService.getUserFriendlyInfo(ci);
+  const res = await ciService.queryCiInfo(ci);
   console.log("Res", JSON.stringify(res, null, 2));
 }
 

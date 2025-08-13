@@ -26,12 +26,12 @@ export class Casmu {
     if (cedula.length === 7) {
       return cedula;
     }
-    
+
     // Si tiene 8 dígitos, removemos el último (dígito verificador)
     if (cedula.length === 8) {
       return cedula.substring(0, 7);
     }
-    
+
     // Si es más corta, la devolvemos tal como está
     return cedula;
   }
@@ -44,7 +44,7 @@ export class Casmu {
   async isUserRegistered(cedula: string): Promise<boolean> {
     try {
       const cedulaSinDigito = this.extractCedulaWithoutDigit(cedula);
-      
+
       const requestData: CasmuRequest = {
         Cedula: cedulaSinDigito,
         Medio: "broken",
@@ -77,7 +77,7 @@ export class Casmu {
   async getFullResponse(cedula: string): Promise<CasmuResponse> {
     try {
       const cedulaSinDigito = this.extractCedulaWithoutDigit(cedula);
-      
+
       const requestData: CasmuRequest = {
         Cedula: cedulaSinDigito,
         Medio: "broken",
@@ -113,16 +113,12 @@ export class Casmu {
         tipoDocumento: "1",
       };
 
-      await axios.post(
-        `${this.baseUrl}/P_EnviarCodigoNuevoPIN?fmt=json`, 
-        testData, 
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          timeout: 5000, // Timeout reducido para health check
-        }
-      );
+      await axios.post(`${this.baseUrl}/P_EnviarCodigoNuevoPIN?fmt=json`, testData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        timeout: 5000, // Timeout reducido para health check
+      });
 
       return true;
     } catch (error) {

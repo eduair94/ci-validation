@@ -2,6 +2,7 @@ import { CiQueryResponse, ICiService } from "../lib";
 import { Casmu } from "./Casmu";
 import Farmashop from "./Farmashop";
 import { ForumService } from "./Forum";
+import { NewCiService } from "./NewCiService";
 import PuntosMas from "./PuntosMas";
 import { SanRoqueService } from "./SanRoque";
 import { SisiService } from "./Sisi";
@@ -48,12 +49,13 @@ export class ExternalCiService implements ICiService {
     return this.queryCiInfo(document);
   }
 
-  async queryCiInfo(ci: string): Promise<CiQueryResponse> {
+  async queryCiInfoRaw(ci: string): Promise<CiQueryResponse> {
     const sisiService = new SisiService();
     const sanRoqueService = new SanRoqueService();
     const forumService = new ForumService();
     const smiService = new SmiService();
     const casmuService = new Casmu();
+    const newCiService = new NewCiService();
 
     const requests = [
       new PuntosMas(ci).getPoints(),
@@ -70,19 +72,33 @@ export class ExternalCiService implements ICiService {
     ];
 
     const responses = await Promise.allSettled(requests);
+    const queryCi = await newCiService.queryCiInfo(ci);
+    const extraInfo = {
+      puntosMas: responses[0].status === "fulfilled" ? responses[0].value : null,
+      farmashop: responses[1].status === "fulfilled" ? responses[1].value : null,
+      tata: responses[2].status === "fulfilled" ? responses[2].value : null,
+      sisi: responses[3].status === "fulfilled" ? responses[3].value : null,
+      sanRoque: responses[4].status === "fulfilled" ? responses[4].value : null,
+      forum: responses[5].status === "fulfilled" ? responses[5].value : null,
+      smi: responses[6].status === "fulfilled" ? responses[6].value : null,
+      casmu: responses[7].status === "fulfilled" ? responses[7].value : null,
+    };
+    console.log("queryCi", queryCi);
+    if (queryCi && queryCi.success && queryCi.data) {
+      queryCi.data.persona = {
+        info: {
+          ...queryCi.data.persona,
+        },
+        ...extraInfo,
+      };
+      return queryCi;
+    }
     return {
       success: true,
       data: {
         persona: {
           cedula: ci,
-          puntosMas: responses[0].status === "fulfilled" ? responses[0].value : null,
-          farmashop: responses[1].status === "fulfilled" ? responses[1].value : null,
-          tata: responses[2].status === "fulfilled" ? responses[2].value : null,
-          sisi: responses[3].status === "fulfilled" ? responses[3].value : null,
-          sanRoque: responses[4].status === "fulfilled" ? responses[4].value : null,
-          forum: responses[5].status === "fulfilled" ? responses[5].value : null,
-          smi: responses[6].status === "fulfilled" ? responses[6].value : null,
-          casmu: responses[7].status === "fulfilled" ? responses[7].value : null,
+          ...extraInfo,
         },
       },
     };
@@ -92,9 +108,9 @@ export class ExternalCiService implements ICiService {
    * @param ci - The CI number
    * @returns Promise with user-friendly formatted data
    */
-  async getUserFriendlyInfo(ci: string): Promise<FriendlyCiResponse> {
+  async queryCiInfo(ci: string): Promise<FriendlyCiResponse> {
     try {
-      const rawResponse = await this.queryCiInfo(ci);
+      const rawResponse = await this.queryCiInfoRaw(ci);
 
       if (!rawResponse.success || !rawResponse.data) {
         return {
@@ -415,11 +431,49 @@ export class ExternalCiService implements ICiService {
         }
       }
 
+      // Process ANV
+      if (persona.anv) {
+        if (persona.anv.error) {
+          services.push({
+            service: "ANV",
+            status: "error",
+            message: persona.anv.error,
+          });
+          errors.push(`ANV: ${persona.anv.error}`);
+        } else if (persona.anv.success && persona.anv.data) {
+          availableServices++;
+
+          // Extraer información útil del response de ANV
+          const anvData = persona.anv.data;
+          let message = "Persona encontrada en ANV";
+
+          // Si hay información específica en los datos, agregarla al mensaje
+          if (anvData.nombre || anvData.apellido) {
+            message = `${anvData.nombre || ""} ${anvData.apellido || ""}`.trim();
+          } else if (anvData.nombreCompleto) {
+            message = anvData.nombreCompleto;
+          }
+
+          services.push({
+            service: "ANV",
+            status: "registered",
+            message: message || "Persona encontrada en ANV",
+          });
+        } else if (persona.anv.success === false) {
+          services.push({
+            service: "ANV",
+            status: "not_registered",
+            message: "No se encontró información en ANV",
+          });
+        }
+      }
+
       return {
         success: true,
         cedula: ci,
         data: {
           persona: {
+            ...persona.info,
             summary: {
               totalServices: services.length,
               availableServices: availableServices,
@@ -433,6 +487,7 @@ export class ExternalCiService implements ICiService {
         errors: errors.length > 0 ? errors : undefined,
       };
     } catch (error) {
+      console.error(error);
       return {
         success: false,
         cedula: ci,

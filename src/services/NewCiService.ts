@@ -10,6 +10,7 @@ import { SessionData, TaskData } from "../interfaces/ISessionStorage";
 import { ISessionStorage, SessionStorageFactory } from "../storage";
 import { DateUtils } from "../utils/dateUtils";
 import { PersonaUtils } from "../utils/personaUtils";
+import { ANV } from "./ANV";
 dotenv.config();
 
 // Type definitions for iframe parsing
@@ -799,6 +800,27 @@ export class NewCiService implements ICiService {
     }
   }
 
+  async check(document: string, options?: any, att?: number): Promise<NewCiResponse> {
+    const anvService = new ANV();
+    const res = await anvService.buscarPersona(document).then((response) => response);
+
+    if (res.success && res.data) {
+      return {
+        cedula: document,
+        nombres: res.data.primer_nombre + " " + res.data.segundo_nombre,
+        apellidos: res.data.primer_apellido + " " + res.data.segundo_apellido,
+        fechaNacimiento: res.data.fecha_nacimiento,
+      };
+    }
+
+    return {
+      cedula: document,
+      nombres: "",
+      apellidos: "",
+      fechaNacimiento: "",
+    };
+  }
+
   /**
    * Performs a GET request to the MEF portal and saves the response
    * This method uses the MEF "Consulta/Reclamación o Denuncia en Materia de Relaciones de Consumo" form
@@ -808,7 +830,7 @@ export class NewCiService implements ICiService {
    * @param options.ignoreCache - If true, bypasses cache and performs a fresh check
    * @returns Promise<any> - The response data
    */
-  async check(document: string, options?: { ignoreCache?: boolean; forceRefresh?: boolean }, att = 0): Promise<NewCiResponse> {
+  async checkOld(document: string, options?: { ignoreCache?: boolean; forceRefresh?: boolean }, att = 0): Promise<NewCiResponse> {
     let hasRefreshed = false;
     try {
       // ignoreCache not implemented.
@@ -970,6 +992,7 @@ export class NewCiService implements ICiService {
         },
       };
     } catch (error) {
+      console.error(error);
       return this.handleError(error);
     }
   }
