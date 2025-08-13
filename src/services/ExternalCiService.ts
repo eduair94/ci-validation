@@ -1,6 +1,7 @@
 import { CiQueryResponse, ICiService } from "../lib";
 import Farmashop from "./Farmashop";
 import PuntosMas from "./PuntosMas";
+import { SisiService } from "./Sisi";
 import Tata from "./Tata";
 
 // Interface for user-friendly response
@@ -44,7 +45,8 @@ export class ExternalCiService implements ICiService {
   }
 
   async queryCiInfo(ci: string): Promise<CiQueryResponse> {
-    const requests = [new PuntosMas(ci).getPoints(), new Farmashop(ci).getPoints(), new Tata(ci).getPoints()];
+    const sisiService = new SisiService();
+    const requests = [new PuntosMas(ci).getPoints(), new Farmashop(ci).getPoints(), new Tata(ci).getPoints(), sisiService.checkUser({ ci })];
     const responses = await Promise.allSettled(requests);
     return {
       success: true,
@@ -54,6 +56,7 @@ export class ExternalCiService implements ICiService {
           puntosMas: responses[0].status === "fulfilled" ? responses[0].value : null,
           farmashop: responses[1].status === "fulfilled" ? responses[1].value : null,
           tata: responses[2].status === "fulfilled" ? responses[2].value : null,
+          sisi: responses[3].status === "fulfilled" ? responses[3].value : null,
         },
       },
     };
@@ -196,6 +199,39 @@ export class ExternalCiService implements ICiService {
               });
               errors.push(`Tata: ${persona.tata.message}`);
           }
+        }
+      }
+
+      // Process Sisi
+      if (persona.sisi) {
+        if (persona.sisi.success && persona.sisi.hasUser) {
+          availableServices++;
+          const userInfo = persona.sisi.userInfo;
+
+          // Extract points if available
+          const points = userInfo?.points || 0;
+          if (points > 0) {
+            totalPoints += points;
+          }
+
+          services.push({
+            service: "Sisi",
+            status: userInfo?.status === "active" || persona.sisi.hasUser ? "available" : "registered",
+            message: userInfo?.message || `Usuario encontrado en el sistema${points > 0 ? ` con ${points} puntos` : ""}`,
+          });
+        } else if (persona.sisi.success && !persona.sisi.hasUser) {
+          services.push({
+            service: "Sisi",
+            status: "not_registered",
+            message: "No estás registrado en el programa Sisi",
+          });
+        } else {
+          services.push({
+            service: "Sisi",
+            status: "error",
+            message: persona.sisi.error || "Error al consultar el servicio Sisi",
+          });
+          errors.push(`Sisi: ${persona.sisi.error || "Error de conexión"}`);
         }
       }
 
