@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { SmiService, SmiRequest, SmiResponse } from "../src/services/Smi";
+import { SmiRequest, SmiResponse, SmiService } from "../src/services/Smi";
 import { UruguayanCiValidator } from "../src/validators/CiValidator";
 
 // Interface for API response

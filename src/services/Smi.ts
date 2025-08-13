@@ -97,7 +97,7 @@ export class SmiService {
       try {
         const proxyUrl = new URL(process.env.PROXY);
         config.proxy = {
-          protocol: proxyUrl.protocol.replace(':', ''),
+          protocol: proxyUrl.protocol.replace(":", ""),
           host: proxyUrl.hostname,
           port: parseInt(proxyUrl.port, 10),
         };
@@ -110,9 +110,9 @@ export class SmiService {
           };
         }
       } catch (error) {
-        console.error('Invalid PROXY URL format:', process.env.PROXY, error);
+        console.error("Invalid PROXY URL format:", process.env.PROXY, error);
       }
-    } 
+    }
     // Fallback to individual environment variables for backward compatibility
     else if (process.env.PROXY_HOST && process.env.PROXY_PORT) {
       config.proxy = {
@@ -144,7 +144,7 @@ export class SmiService {
   async initializeSession(): Promise<boolean> {
     try {
       const axiosInstance = this.createAxiosInstance();
-      
+
       // First request to get initial cookies
       const initialResponse = await axiosInstance.get(this.loginUrl, {
         headers: {
@@ -435,6 +435,120 @@ export class SmiService {
     const startTime = Date.now();
 
     try {
+      // Check if SMI_PROXY is configured to use external proxy
+      if (process.env.SMI_PROXY) {
+        return await this.checkUserViaProxy(request, startTime);
+      }
+
+      // Original direct SMI implementation
+      return await this.checkUserDirect(request, startTime);
+    } catch (error) {
+      // Handle different types of errors
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 403 || error.response?.status === 401) {
+          return {
+            success: false,
+            hasUser: false,
+            error: "Acceso denegado: API requiere autenticación válida",
+          };
+        } else if (error.response && error.response.status >= 500) {
+          return {
+            success: false,
+            hasUser: false,
+            error: "Error del servidor SMI",
+          };
+        }
+      }
+
+      return {
+        success: error instanceof Error && error.message === "not_registered",
+        hasUser: false,
+        error: error instanceof Error ? error.message : "Error desconocido al consultar SMI",
+      };
+    }
+  }
+
+  /**
+   * Check user via external proxy (when SMI_PROXY is set)
+   * @param request - Object containing the CI
+   * @param startTime - Start time for execution timing
+   * @returns Promise with SMI response data
+   */
+  private async checkUserViaProxy(request: SmiRequest, startTime: number): Promise<SmiResponse> {
+    try {
+      const axiosInstance = this.createAxiosInstance();
+      const proxyUrl = process.env.SMI_PROXY!;
+
+      // Ensure proxy URL ends with slash for proper path joining
+      const baseUrl = proxyUrl.endsWith("/") ? proxyUrl.slice(0, -1) : proxyUrl;
+      const url = `${baseUrl}/api/ci/smi?ci=${encodeURIComponent(request.ci)}`;
+
+      console.log(`🔄 Using SMI proxy: ${url}`);
+
+      const response = await axiosInstance.get(url, {
+        timeout: 30000, // 30 second timeout for proxy requests
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "ci-validation-service/1.0",
+        },
+      });
+
+      // The proxy should return our standard API response format
+      if (response.data && response.data.success !== undefined) {
+        const proxyResponse = response.data;
+
+        // If the proxy response has data.success, extract the SMI response from data.data
+        if (proxyResponse.data && typeof proxyResponse.data === "object") {
+          const smiResponse: SmiResponse = proxyResponse.data;
+
+          // Update execution time to include our processing time
+          const totalTime = Date.now() - startTime;
+          if (smiResponse.member) {
+            smiResponse.member.executionTime = totalTime;
+          }
+
+          return smiResponse;
+        }
+
+        // If it's already a direct SMI response
+        return proxyResponse as SmiResponse;
+      }
+
+      // Fallback: treat response as direct SMI response
+      return response.data as SmiResponse;
+    } catch (error) {
+      console.error(`❌ Error using SMI proxy (${process.env.SMI_PROXY}):`, error);
+
+      if (axios.isAxiosError(error)) {
+        if (error.code === "ECONNREFUSED" || error.code === "ENOTFOUND") {
+          return {
+            success: false,
+            hasUser: false,
+            error: `No se pudo conectar al proxy SMI: ${process.env.SMI_PROXY}`,
+          };
+        }
+
+        if (error.response?.status === 404) {
+          return {
+            success: false,
+            hasUser: false,
+            error: `Endpoint SMI no encontrado en el proxy: ${process.env.SMI_PROXY}/api/smi`,
+          };
+        }
+      }
+
+      throw error; // Re-throw to be handled by the main catch block
+    }
+  }
+
+  /**
+   * Direct SMI check (original implementation)
+   * @param request - Object containing the CI
+   * @param startTime - Start time for execution timing
+   * @returns Promise with SMI response data
+   */
+  private async checkUserDirect(request: SmiRequest, startTime: number): Promise<SmiResponse> {
+    try {
       // Initialize session first
       const sessionInitialized = await this.initializeSession();
       if (!sessionInitialized) {
@@ -510,28 +624,7 @@ export class SmiService {
         throw new Error("not_registered");
       }
     } catch (error) {
-      // Handle different types of errors
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 403 || error.response?.status === 401) {
-          return {
-            success: false,
-            hasUser: false,
-            error: "Acceso denegado: API requiere autenticación válida",
-          };
-        } else if (error.response && error.response.status >= 500) {
-          return {
-            success: false,
-            hasUser: false,
-            error: "Error del servidor SMI",
-          };
-        }
-      }
-
-      return {
-        success: error instanceof Error && error.message === "not_registered",
-        hasUser: false,
-        error: error instanceof Error ? error.message : "Error desconocido al consultar SMI",
-      };
+      throw error; // Re-throw to be handled by the main catch block
     }
   }
 

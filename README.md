@@ -417,6 +417,20 @@ public/
 - `NODE_ENV`: `production`
 - `PORT`: Puerto del servidor (automático en Vercel)
 
+#### Configuración de Proxy SMI (Opcional)
+
+Para usar un proxy externo para las consultas SMI (útil cuando no se puede acceder directamente a SMI):
+
+- `SMI_PROXY`: URL completa del servidor proxy que tiene acceso a SMI (ej: `https://xxxxxx.com`)
+
+**Ejemplo de configuración en `.env`:**
+```bash
+# Usar proxy externo para SMI
+SMI_PROXY=https://xxxx.com
+```
+
+> **Nota**: Cuando se configura `SMI_PROXY`, el servicio hará peticiones a `{SMI_PROXY}/api/smi?ci=xxx` en lugar de conectar directamente a SMI.
+
 #### Configuración de Proxy (Opcional)
 
 Para enrutar las peticiones HTTP a través de un servidor proxy, puedes usar cualquiera de estos métodos:

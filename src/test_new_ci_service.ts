@@ -1,8 +1,16 @@
 import { ExternalCiService } from "./services/ExternalCiService";
 async function main() {
-  const ci = "47073450";
+  // Get CI from command line arguments
+  const ci = process.argv[2];
+
+  if (!ci) {
+    console.error("Error: Debe proporcionar un número de cédula como argumento");
+    console.log("Uso: npm run test_new_ci_service -- <numero_cedula>");
+    console.log("Ejemplo: npm run test_new_ci_service -- 14115499");
+    process.exit(1);
+  }
+
   await check(ci);
-  //await check(ci);
 }
 
 async function check(ci: string) {
