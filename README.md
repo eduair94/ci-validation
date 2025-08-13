@@ -1,16 +1,30 @@
-# API de Validación de  ** **� PROBLEMAS DE SEGURIDAD CRÍTICOS**:
-> - **MEF**: Sistema permite autocompletar datos personales sensibles (fecha nacimiento + nombres) con solo ingresar una cédula
+# API de Validación de Cédulas Uruguayas
+
+> **⚠️ ACTUALIZACIÓN CRÍTICA 13/08/2025 - SOLUCIÓN MEF Y NUEVA VULNERABILIDAD ANV**:
+>
+> **✅❌ SOLUCIÓN MEF CON PROBLEMA OPERACIONAL**:
+> - **MEF**: Vulnerabilidad eliminada mediante remoción del endpoint de autocompletado
+> - **Consecuencia**: Todos los formularios MEF que dependían del autocompletado ahora están rotos
+> - **Estado**: Seguro pero no funcional - usuarios deben ingresar datos manualmente
+> - **Impacto**: Pérdida de conveniencia y eficiencia en trámites gubernamentales
+>
+> **🆘 NUEVA VULNERABILIDAD CRÍTICA DETECTADA**:
+> - **ANV**: Aplicación móvil oficial expone nombres completos, apellidos y fecha de nacimiento por autocompletado de cédula
+> - La app está disponible en Apple Store y Google Play Store para todos los ciudadanos
+> - Cualquier persona puede descargar la aplicación y acceder a datos personales de otros ciudadanos
+> - **Sin autenticación**: La aplicación no requiere verificación de identidad para mostrar datos sensibles
+> - **Contexto sensible**: Exposición de datos en trámites de vivienda social
+>
+> **🚨 ESTADO ACTUAL DE VULNERABILIDADES GUBERNAMENTALES**:
+> - **MEF**: ✅ **VULNERABILIDAD SOLUCIONADA** - Endpoint removido, pero ❌ **FORMULARIOS ROTOS** - Autocompletado no funciona
 > - **AIN**: Vulnerabilidad considerada solucionada ha resurgido, autocompletado activo nuevamente
 > - **CGN**: Formularios judiciales exponen información personal sin verificación de autorización
-> - **Falta de verificación**: Ningún sistema valida si el usuario está autenticado correctamente
-> - **Sin verificación de identidad**: No verifican si el trámite se realiza para uno mismo o para terceros
-> - **Exposición masiva**: Información personal accesible sin autorización adecuada en múltiples organismosTADO ACTUAL DE SERVICIOS GUBERNAMENTALES**:
-> - ⚠️ **Formulario MEF VULNERABILIDAD ACTIVA**: https://www.tramitesenlinea.mef.gub.uy/Apia/portal/tramite.jsp?id=2629 expone fecha de nacimiento y nombre completo sin autenticación adecuada
-> - ⚠️ **Formulario AIN VULNERABILIDAD RESURGIÓ**: https://tramites.ain.gub.uy autocompletado de primer nombre y primer apellido activo nuevamente
-> - ❌ **Formularios de Lotería inoperativos**: Todos los formularios que requieren cédula permanecen fuera de servicio desde 31/07/2025
-> - ⚠️ **Formulario CGN VULNERABLE**: Devolución de timbre judicial funciona con autocompletado no autorizado
-> 
-> **📊 Estado crítico**: Múltiples vulnerabilidades gubernamentales activas simultáneamente. Uruguayas
+> - **ANV**: **NUEVA** - Aplicación móvil oficial expone información personal completa sin autenticación
+> - **Impacto operacional**: Remoción del endpoint MEF rompió funcionalidad de autocompletado en formularios gubernamentales
+> - **Sin verificación de identidad**: Sistemas restantes no verifican si el trámite se realiza para uno mismo o para terceros
+> - **Crisis dual**: MEF ahora seguro pero no funcional, otros organismos funcionales pero vulnerables
+>
+> **📊 Estado crítico**: Solución de seguridad MEF causó crisis operacional en formularios gubernamentales.
 
 > **📅 ACTUALIZACIÓN DE SEGURIDAD 07/08/2025**: 
 > 
@@ -45,12 +59,13 @@
 > - ✅ **Logging mejorado**: Mayor detalle en los logs para debugging y monitoreo
 > 
 > **📊 ESTADO ACTUAL DE SERVICIOS GUBERNAMENTALES**:
-> - ⚠️ **Formulario MEF VULNERABILIDAD ACTIVA**: https://www.tramitesenlinea.mef.gub.uy/Apia/portal/tramite.jsp?id=2629 expone fecha de nacimiento y nombre completo sin autenticación adecuada
-> - ✅ **Formulario AIN parcialmente solucionado**: Requiere autenticación pero algunos endpoints aún accesibles
+> - ✅❌ **Formulario MEF SOLUCIONADO PERO ROTO**: Vulnerabilidad eliminada mediante remoción del endpoint, pero formularios no funcionan
+> - ⚠️ **Formulario AIN VULNERABILIDAD RESURGIÓ**: https://tramites.ain.gub.uy autocompletado de primer nombre y primer apellido activo nuevamente
 > - ❌ **Formularios de Lotería inoperativos**: Todos los formularios que requieren cédula permanecen fuera de servicio desde 31/07/2025
-> - ❌ **Formulario CGN afectado**: Devolución de timbre judicial con autocompletado no funcional por dependencia de API deshabilitada
+> - ⚠️ **Formulario CGN VULNERABLE**: Devolución de timbre judicial funciona con autocompletado no autorizado
+> - 🆘 **Aplicación ANV VULNERABILIDAD CRÍTICA**: App móvil oficial expone nombres, apellidos y fecha de nacimiento por autocompletado
 > 
->  **📊 Estado crítico**: Nueva vulnerabilidad de privacidad detectada en sistemas MEF.
+> **📊 Estado crítico**: Solución MEF creó crisis operacional - formularios seguros pero inutilizables. Otros servicios mantienen vulnerabilidades activas.
 > 
 > Ver [reporte completo actualizado](./SECURITY_VULNERABILITY.md) para detalles técnicos.
 
