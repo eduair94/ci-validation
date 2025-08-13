@@ -1,4 +1,5 @@
 import { CiQueryResponse, ICiService } from "../lib";
+import { Casmu } from "./Casmu";
 import Farmashop from "./Farmashop";
 import { ForumService } from "./Forum";
 import PuntosMas from "./PuntosMas";
@@ -52,7 +53,22 @@ export class ExternalCiService implements ICiService {
     const sanRoqueService = new SanRoqueService();
     const forumService = new ForumService();
     const smiService = new SmiService();
-    const requests = [new PuntosMas(ci).getPoints(), new Farmashop(ci).getPoints(), new Tata(ci).getPoints(), sisiService.checkUser({ ci }), sanRoqueService.checkMember({ ci }), forumService.checkMember({ ci }), smiService.checkUser({ ci })];
+    const casmuService = new Casmu();
+
+    const requests = [
+      new PuntosMas(ci).getPoints(),
+      new Farmashop(ci).getPoints(),
+      new Tata(ci).getPoints(),
+      sisiService.checkUser({ ci }),
+      sanRoqueService.checkMember({ ci }),
+      forumService.checkMember({ ci }),
+      smiService.checkUser({ ci }),
+      casmuService
+        .isUserRegistered(ci)
+        .then((isRegistered) => ({ isRegistered }))
+        .catch((error) => ({ error: error.message })),
+    ];
+
     const responses = await Promise.allSettled(requests);
     return {
       success: true,
@@ -66,6 +82,7 @@ export class ExternalCiService implements ICiService {
           sanRoque: responses[4].status === "fulfilled" ? responses[4].value : null,
           forum: responses[5].status === "fulfilled" ? responses[5].value : null,
           smi: responses[6].status === "fulfilled" ? responses[6].value : null,
+          casmu: responses[7].status === "fulfilled" ? responses[7].value : null,
         },
       },
     };
@@ -367,6 +384,33 @@ export class ExternalCiService implements ICiService {
               message: persona.smi.error || "Error al consultar el servicio SMI",
             });
             errors.push(`SMI: ${persona.smi.error || "Error de conexión"}`);
+          }
+        }
+      }
+
+      // Process Casmu
+      if (persona.casmu) {
+        if (persona.casmu.error) {
+          services.push({
+            service: "Casmu",
+            status: "error",
+            message: persona.casmu.error,
+          });
+          errors.push(`Casmu: ${persona.casmu.error}`);
+        } else if (persona.casmu.isRegistered !== undefined) {
+          if (persona.casmu.isRegistered) {
+            availableServices++;
+            services.push({
+              service: "Casmu",
+              status: "registered",
+              message: "Usuario registrado en Casmu",
+            });
+          } else {
+            services.push({
+              service: "Casmu",
+              status: "not_registered",
+              message: "No estás registrado en Casmu",
+            });
           }
         }
       }
