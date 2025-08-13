@@ -1,6 +1,7 @@
 import { CiQueryResponse, ICiService } from "../lib";
 import Farmashop from "./Farmashop";
 import PuntosMas from "./PuntosMas";
+import { SanRoqueService } from "./SanRoque";
 import { SisiService } from "./Sisi";
 import Tata from "./Tata";
 
@@ -46,7 +47,14 @@ export class ExternalCiService implements ICiService {
 
   async queryCiInfo(ci: string): Promise<CiQueryResponse> {
     const sisiService = new SisiService();
-    const requests = [new PuntosMas(ci).getPoints(), new Farmashop(ci).getPoints(), new Tata(ci).getPoints(), sisiService.checkUser({ ci })];
+    const sanRoqueService = new SanRoqueService();
+    const requests = [
+      new PuntosMas(ci).getPoints(), 
+      new Farmashop(ci).getPoints(), 
+      new Tata(ci).getPoints(), 
+      sisiService.checkUser({ ci }),
+      sanRoqueService.checkMember({ ci })
+    ];
     const responses = await Promise.allSettled(requests);
     return {
       success: true,
@@ -57,6 +65,7 @@ export class ExternalCiService implements ICiService {
           farmashop: responses[1].status === "fulfilled" ? responses[1].value : null,
           tata: responses[2].status === "fulfilled" ? responses[2].value : null,
           sisi: responses[3].status === "fulfilled" ? responses[3].value : null,
+          sanRoque: responses[4].status === "fulfilled" ? responses[4].value : null,
         },
       },
     };
@@ -232,6 +241,42 @@ export class ExternalCiService implements ICiService {
             message: persona.sisi.error || "Error al consultar el servicio Sisi",
           });
           errors.push(`Sisi: ${persona.sisi.error || "Error de conexión"}`);
+        }
+      }
+
+      // Process SanRoque
+      if (persona.sanRoque) {
+        if (persona.sanRoque.success && persona.sanRoque.hasUser && persona.sanRoque.member) {
+          availableServices++;
+          const member = persona.sanRoque.member;
+          const points = persona.sanRoque.points?.available || 0;
+          
+          if (points > 0) {
+            totalPoints += points;
+          }
+
+          // Use firstName or fallback to a generic name
+          const memberName = member.firstName || "Miembro";
+
+          services.push({
+            service: "San Roque",
+            status: points > 0 ? "available" : "registered",
+            points: points,
+            message: `${memberName} - ${points > 0 ? `${points} puntos disponibles` : "Miembro registrado"}`,
+          });
+        } else if (persona.sanRoque.success && !persona.sanRoque.hasUser) {
+          services.push({
+            service: "San Roque",
+            status: "not_registered",
+            message: "No estás registrado en el programa San Roque",
+          });
+        } else {
+          services.push({
+            service: "San Roque",
+            status: "error",
+            message: persona.sanRoque.error || "Error al consultar el servicio San Roque",
+          });
+          errors.push(`San Roque: ${persona.sanRoque.error || "Error de conexión"}`);
         }
       }
 
